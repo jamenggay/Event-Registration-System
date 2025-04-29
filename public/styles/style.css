@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Vibur&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+.title {
+    font-size: 150px;
+    font-family: 'Vibur';
+    color: oklch(0.65 0.3 342.857147);
+    text-align: center;
+    transform: translateY(100%);
+}
+
+body {
+    background: #0075BB1A;
+    background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
+    background-size: 30px 30px;
+}
