@@ -12,8 +12,41 @@
     transform: translateY(100%);
 }
 
+.diamond {
+    height: 50px;
+    width: 50px;
+}
+
+svg:hover .diamond {
+    transform: rotate(360deg);
+    transform-origin: center;
+    transition: transform 2s ease-in-out;
+}
+  
+
 body {
     background: #0075BB1A;
     background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
     background-size: 30px 30px;
 }
+
+
+.tear-icon {
+    width: 120px;
+    height: 50px;
+    transition: all 0.3s ease;
+  }
+  
+  .path-left,
+  .path-right {
+    transition: transform 2s ease;
+  }
+  
+  .tear-icon:hover .path-left {
+    transform: translateX(-3px);
+  }
+  
+  .tear-icon:hover .path-right {
+    transform: translateX(3px);
+  }
+  
