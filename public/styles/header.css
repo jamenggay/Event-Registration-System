@@ -1,16 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Vibur&display=swap');
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background: #0075BB1A;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-  background-size: 30px 30px;
-  font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 .navbar {
@@ -21,7 +14,7 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-ul {
+.ul-header {
   list-style: none;
   display: flex;
   align-items: center;
@@ -42,10 +35,16 @@ ul {
 }
 
 .logo {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-family: 'Vibur', cursive;
-  color: black;
+  color: gray;
   margin-right: auto;
+  margin-left: -10px;
+  transition: color 0.3s;
+}
+
+.logo:hover {
+    color: black;
 }
 
 .nav-item-wrapper {
@@ -56,13 +55,13 @@ ul {
 
 .nav-icon {
   display: inline-flex;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
   width: 20px;
   height: 20px;
 }
 
 .nav-item:hover .nav-icon {
-  transform: rotate(360deg); /* Ensures it rotates smoothly on hover */
+  transform: rotate(270deg);
 }
 
 .nav-text {
