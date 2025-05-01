@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Vibur&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Vibur&display=swap');
+
+
+.footer {
+    padding: 40px 20px;
+    border-top: 1px solid gray;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    color: gray;
+}
+
+@media (max-width: 900px) {
+    footer {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .footer-section:first-child {
+        flex: unset;
+    }
+  }
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-section:first-child {
+    flex: 3;
+}
+
+.footer-logo {
+    font-size: 2rem;
+    font-family: 'Vibur', cursive;
+    color: black;
+}
+
+.description {
+    font-size: 1rem;
+    color: oklch(0.65 0.3 342.857147);
+
+}
+
+.footer-heading {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+    font-size: 1rem;
+}
+
+.footer-links li {
+    margin-bottom: 0px;
+    transition: color 0.3s;
+}
+
+.footer-links li:hover {
+    color: black;
+}
+
+
+.footer-links a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 14px;
+    color: #333;
+}
