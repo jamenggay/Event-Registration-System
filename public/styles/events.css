@@ -6,10 +6,6 @@
   padding: 0;
 }
 
-.content {
-  margin-bottom: 20rem;
-}
-
 body {
   background: #0075BB1A;
   background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
@@ -33,13 +29,16 @@ body::after {
 
 .event_container {
   display: flex;
+  flex-direction: column;
   max-width: 400px;
   margin: 30px auto;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   background: #fff;
+  height: 100%;
 }
+
 
 .event_bg {
   flex: 2;
