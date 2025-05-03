@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Vibur&display=swap');
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.form-box {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 2s ease;
+}
+
+.form-box input,
+.form-box button {
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-box button {
+    background-color:hsla(209, 100%, 47%);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.toggle {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+.toggle a {
+    color: gray;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .toggle a:hover {
+    color: #00376b;
+  }
+
+  .hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    position: absolute;
+  }

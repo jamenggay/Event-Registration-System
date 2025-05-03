@@ -1,12 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Vibur&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Vibur&display=swap');
-
-
 .footer {
     padding: 40px 20px;
-    border-top: 1px solid gray;
     font-family: "Plus Jakarta Sans", sans-serif;
-    color: gray;
+    color: #4d4d4d;
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5.8px);
+    -webkit-backdrop-filter: blur(5.8px);
 }
 
 @media (max-width: 900px) {
@@ -38,16 +39,22 @@
     flex: 3;
 }
 
+.footer-section:first-child > * {
+    max-width: 300px;
+    margin-right: 300px;
+    text-align: center;
+  }
+
 .footer-logo {
-    font-size: 2rem;
+    font-size: 3rem;
     font-family: 'Vibur', cursive;
-    color: black;
+    color: #4d4d4d;
 }
 
 .description {
     font-size: 1rem;
-    color: oklch(0.65 0.3 342.857147);
-
+    font-family: 'Mansalva';
+    color: #4d4d4d;
 }
 
 .footer-heading {
