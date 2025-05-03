@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Vibur&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Vibur&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Mansalva&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Vibur&display=swap');
+
 .footer {
     padding: 40px 20px;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     color: #4d4d4d;
     background: rgba(255, 255, 255, 0);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -12,14 +14,15 @@
 
 @media (max-width: 900px) {
     footer {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
+
     .footer-section:first-child {
         flex: 1;
     }
-  }
+}
 
 .footer-container {
     display: flex;
@@ -39,20 +42,14 @@
     flex: 3;
 }
 
-.footer-section:first-child > * {
-    max-width: 300px;
-    margin-right: 300px;
-    text-align: center;
-  }
-
 .footer-logo {
-    font-size: 3rem;
+    font-size: 4rem;
     font-family: 'Vibur', cursive;
     color: #4d4d4d;
 }
 
 .description {
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-family: 'Mansalva';
     color: #4d4d4d;
 }
@@ -91,3 +88,11 @@
     font-size: 14px;
     color: #333;
 }
+
+.tagline-event {
+    color: oklch(65% 0.3 310);
+  }
+  
+  .tagline-experience {
+    color: oklch(65% 0.3 230);
+  }
