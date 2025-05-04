@@ -46,17 +46,24 @@
     font-size: 4rem;
     font-family: 'Vibur', cursive;
     color: #4d4d4d;
+    pointer-events: none;
 }
 
 .description {
     font-size: 1.5rem;
     font-family: 'Mansalva';
     color: #4d4d4d;
+    pointer-events: none;
 }
 
 .footer-heading {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    pointer-events: none;
+}
+
+.footer-section p {
+    pointer-events: none;
 }
 
 .footer-links {
@@ -78,6 +85,7 @@
 
 
 .footer-links a {
+    font-weight: 400 !important;
     color: inherit;
     text-decoration: none;
 }
@@ -87,6 +95,7 @@
     margin-top: 40px;
     font-size: 14px;
     color: #333;
+    pointer-events: none;
 }
 
 .tagline-event {
