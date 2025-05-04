@@ -1,6 +1,7 @@
 CREATE DATABASE daloDB;
 USE daloDB;
 
+<<<<<<< HEAD
 CREATE TABLE userTable (
     userID INT PRIMARY KEY IDENTITY(1,1),
     firstName VARCHAR(50) NOT NULL,
@@ -27,3 +28,6 @@ CREATE TABLE eventsTable (
 
     FOREIGN KEY (creatorID) REFERENCES userTable(userID)
 );
+=======
+--Try commit changes -rishaye
+>>>>>>> 71b1ceec936b107ca17ecacd4806658367dbcec0
