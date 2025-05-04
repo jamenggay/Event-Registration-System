@@ -27,3 +27,36 @@ CREATE TABLE eventsTable (
 
     FOREIGN KEY (creatorID) REFERENCES userTable(userID)
 );
+
+CREATE TABLE registrationTable (
+	registrationID INT PRIMARY KEY IDENTITY(1,1),
+    eventID INT NOT NULL,
+    userID INT NOT NULL,
+	status VARCHAR(10) CHECK (status IN ('Pending', 'Approved', 'Declined')) NOT NULL DEFAULT 'Pending'
+
+    FOREIGN KEY (eventID) REFERENCES eventsTable(eventID),
+    FOREIGN KEY (userID) REFERENCES userTable(userID),
+    CONSTRAINT UNIQUE_registration UNIQUE (eventID, userID) -- prevent duplicate registration per event per user
+);
+
+CREATE TABLE attendeeTable (
+    attendanceID INT PRIMARY KEY IDENTITY(1,1),
+    eventID INT NOT NULL,
+    userID INT NOT NULL,
+    checkedInAt DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY (eventID) REFERENCES eventsTable(eventID),
+    FOREIGN KEY (userID) REFERENCES userTable(userID),
+    CONSTRAINT UNIQUE_attendance UNIQUE (eventID, userID) -- prevent double attendance per event per user
+);
+
+CREATE TABLE feedbackTable (
+    feedbackID INT PRIMARY KEY IDENTITY(1,1),
+    eventID INT NOT NULL,
+    userID INT NOT NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5) NOT NULL,
+
+    FOREIGN KEY (eventID) REFERENCES eventsTable(eventID),
+    FOREIGN KEY (userID) REFERENCES userTable(userID),
+    CONSTRAINT UNIQUE_feedback UNIQUE (eventID, userID) -- prevent duplicate feedback per user per event
+);
