@@ -36,17 +36,17 @@
 }
 
 .form-btn {
-  background-color: oklch(70% 0.2 var(--hue, 220));
-  color: white;
+  background-color: oklch(70% 0.2 var(--hue, 220)) !important;
+  color: white !important;
   font-weight: bold;
   cursor: pointer;
-  border: none;
+  border: none !important;
   transition: background-color 0.3s ease;
 }
 
 
 .form-btn:hover {
-  background-color: oklch(65% 0.3 var(--hue, 220));
+  background-color: oklch(65% 0.3 var(--hue, 220)) !important;
 }
 
 .toggle {
