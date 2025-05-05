@@ -19,7 +19,7 @@
 }
 
 .form-box input,
-.form-box button {
+.form-btn {
   padding: 10px;
   border: 1px solid color-mix(in oklch, canvasText, transparent 85%);
   border-radius: 6px;
@@ -35,7 +35,7 @@
   box-shadow: 0 0 0 3px color-mix(in oklch, canvasText, transparent 90%);
 }
 
-.form-box button {
+.form-btn {
   background-color: oklch(70% 0.2 var(--hue, 220));
   color: white;
   font-weight: bold;
@@ -45,7 +45,7 @@
 }
 
 
-.form-box button:hover {
+.form-btn:hover {
   background-color: oklch(65% 0.3 var(--hue, 220));
 }
 
