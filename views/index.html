@@ -23,20 +23,21 @@
         <div class="form-box" id="login-form">
           <input type="text" placeholder="Username" required/>
           <input type="password" placeholder="Password" required/>
-          <button onclick="window.location.href='../views/events.html'">Log in</button>
+          <input class="form-btn" type="submit" value="Log in" onclick="window.location.href='../views/events.html'"/>
           <div class="toggle">Don't have an account? <a href="#" id="show-signup">Sign up</a></div>
         </div>
         
-        <div class="form-box hidden" id="signup-form">
+        <form class="form-box hidden" id="signup-form">
           <input type="email" placeholder="Email" required/>
           <input type="tel" placeholder="Mobile Number" pattern="[0-9]{11,14}" required/>
           <input type="text" placeholder="Full Name" pattern="[A-Za-z\s]{2,}" required/>
           <input type="text" placeholder="Username" pattern="^[A-Za-z0-9_]{3,15}$" required/>
           <input type="password" placeholder="Password" pattern="{8, 20}" required/>
-          <button>Sign up</button>
+          <input class="form-btn" type="submit" value="Sign up"/>
+      
           <div class="toggle">Already have an account? <a href="#" id="show-login">Log in</a></div>
 
-        </div>
+        </form>
       </div>
     </div>
       <div class="fluid landingpage-bottom-section">
