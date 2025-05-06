@@ -27,12 +27,22 @@ document.addEventListener("DOMContentLoaded", function () {
   
   endTime.value = `${endHours}:${endMinutes}`;
 
+  // Modal Functions with Animations
   function openModal(modalId) {
-    document.getElementById(modalId).style.display = "block";
+    const modal = document.getElementById(modalId);
+    modal.style.display = "block"; // Make sure the modal is displayed
+    modal.classList.remove("hide");
+    modal.classList.add("show");
   }
 
   function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
+    const modal = document.getElementById(modalId);
+    modal.classList.remove("show");
+    modal.classList.add("hide");
+
+    setTimeout(() => {
+      modal.style.display = "none"; // Actually hide it after animation ends
+    }, 300); // Match this timeout with the animation duration
   }
 
   window.saveDescription = function () {
@@ -105,9 +115,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     closeModal("capacityModal");
   };
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+  // Theme Switching
   const themeButton = document.querySelector(".switch_color_button");
   let themeIndex = 1;
   const totalThemes = 12;
@@ -119,8 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   document.body.classList.add("theme-1");
-});
-document.addEventListener("DOMContentLoaded", function () {
+
+  // Image Upload
   const uploadButton = document.querySelector(".upload_button");
   const imageInput = document.getElementById("imageUpload");
   const illustrationColor = document.querySelector(".illustration_color");
@@ -163,19 +172,21 @@ document.addEventListener("DOMContentLoaded", function () {
       console.warn("Not an image file.");
     }
   });
-});
-document.getElementById('imageUpload').addEventListener('change', function (event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    
-    reader.onload = function (e) {
-      // Set the image as the background of the .illustration_color div
-      document.querySelector('.illustration_color').style.backgroundImage = `url(${e.target.result})`;
-      document.querySelector('.illustration_color').style.backgroundSize = 'cover'; // Ensure it covers the area
-      document.querySelector('.illustration_color').style.backgroundPosition = 'center'; // Center the image
-    };
-    
-    reader.readAsDataURL(file); // Read the file as a data URL
-  }
+
+  // Background Image Upload
+  document.getElementById('imageUpload').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onload = function (e) {
+        // Set the image as the background of the .illustration_color div
+        document.querySelector('.illustration_color').style.backgroundImage = `url(${e.target.result})`;
+        document.querySelector('.illustration_color').style.backgroundSize = 'cover'; // Ensure it covers the area
+        document.querySelector('.illustration_color').style.backgroundPosition = 'center'; // Center the image
+      };
+      
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
+  });
 });

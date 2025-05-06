@@ -24,11 +24,17 @@ body {
   position: relative;
   margin-top: 50px;
 }
+.illustration_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
 .illustration {
   flex-shrink: 0;
-  width: 450px;
-  height: 450px;
+  width: 100%;
+  height: 100%;
   background-color: rgba(255, 255, 255, 0.8);
   color: black;
   border-radius: 25px;
@@ -40,8 +46,8 @@ body {
 }
 
 .illustration_color {
-  width: 100%;
-  height: 100%;
+  width: 450px;
+  height: 450px;
   background-color: #eee;
   display: flex;
   justify-content: center;
@@ -61,54 +67,31 @@ body {
   left: 0;
 }
 
-.switch_color_button {
+.illustration_controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.illustration_controls button {
   background-color: white;
   color: black;
-  padding: 12px;
-  margin-top: 600px;
-  text-align: center;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: normal;
-  font-size: 16px;
-  display: inline-block;
   border: none;
-}
-
-.switch_color_button:hover {
-  background-color: rgba(220, 230, 250, 0.9);
-}
-
-.switch_color_button h2 {
-  margin: 0;
-  font-weight: normal;
-  color: black;
-}
-
-.upload_button {
-  background-color: white;
-  color: black;
-  padding: 12px;
-  margin-top: 550px;
-  text-align: center;
-  border-radius: 12px;
+  padding: 14px 28px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: normal;
-  font-size: 16px;
-  display: inline-block;
-  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.upload_button:hover {
+.illustration_controls button:hover {
   background-color: rgba(220, 230, 250, 0.9);
-}
-
-.upload_button h2 {
-  margin: 0;
-  font-weight: normal;
-  color: black;
 }
 
 .event_details {
@@ -267,6 +250,7 @@ form select:focus {
   cursor: pointer;
 }
 
+/* === MODALS WITH ANIMATION === */
 .modal {
   display: none;
   position: fixed;
@@ -277,6 +261,37 @@ form select:focus {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal.show {
+  display: block;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal.hide {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
 }
 
 .modal-content {
@@ -435,7 +450,6 @@ form select:focus {
   border: 1px solid rgba(0, 117, 187, 0.15);
   backdrop-filter: blur(4px);
   transition: all 0.3s ease;
-  border: 1px solid rgba(0, 117, 187, 0.15);
 }
 
 .event_approval_capacity input {
@@ -465,62 +479,16 @@ form select:focus {
   background-color: #eef5ff;
 }
 
-body.theme-1 {
-  background-color: #f0f8ff;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-2 {
-  background-color: #fff5f0;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-3 {
-  background-color: #f5fff0;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-4 {
-  background-color: #f0fff5;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-5 {
-  background-color: #fff0f8;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-6 {
-  background-color: #f9f0ff;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-7 {
-  background-color: #f0f0ff;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-8 {
-  background-color: #f0fff0;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-9 {
-  background-color: #fffaf0;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-10 {
-  background-color: #f0fcff;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-11 {
-  background-color: #fff0f0;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
-
-body.theme-12 {
-  background-color: #f8fff0;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-}
+/* Theme backgrounds */
+body.theme-1 { background-color: #f0f8ff; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-2 { background-color: #fff5f0; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-3 { background-color: #f5fff0; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-4 { background-color: #f0fff5; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-5 { background-color: #fff0f8; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-6 { background-color: #f9f0ff; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-7 { background-color: #f0f0ff; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-8 { background-color: #f0fff0; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-9 { background-color: #fffaf0; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-10 { background-color: #f0fcff; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-11 { background-color: #fff0f0; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
+body.theme-12 { background-color: #f8fff0; background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0); }
