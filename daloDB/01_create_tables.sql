@@ -60,3 +60,14 @@ CREATE TABLE feedbackTable (
     FOREIGN KEY (userID) REFERENCES userTable(userID),
     CONSTRAINT UNIQUE_feedback UNIQUE (eventID, userID) -- prevent duplicate feedback per user per event
 );
+
+
+
+--userTable ALTER (base on UI)
+ALTER TABLE userTable
+DROP COLUMN firstName, lastName;
+
+ALTER TABLE userTable
+ADD 
+  fullName VARCHAR(100) NOT NULL,
+  mobileNumber VARCHAR(20) NOT NULL;
