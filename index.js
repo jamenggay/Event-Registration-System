@@ -14,6 +14,7 @@ const port = 3000;
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+// const upload = multer({ dest : '/public/assets/'})
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
@@ -23,6 +24,13 @@ app.post("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
 })
 
+app.post("/create-event", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
+})
+
+app.post("/create-event", upload.single('event-photo'), (req, res) => {
+    console.log(req.file, req.body)
+})
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
