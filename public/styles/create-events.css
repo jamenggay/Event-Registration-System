@@ -230,8 +230,8 @@ form select:focus {
 }
 
 .icon-flex {
-  height: 1.5em; /* Match the height to the font size of h3 */
-  width: auto; /* Maintain the aspect ratio */
+  height: 1.5em;
+  width: auto;
 }
 
 .event_date_location_container {
