@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover</title>
-    <link rel="stylesheet" href="../styles/discover.css">;
+  <meta charset="UTF-8">
+  <title>Folder Shape with Tab</title>
+  <style>
+    body {
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .folder {
+      position: relative;
+      width: 300px;
+      height: 400px;
+      background-color: #ffa500;
+      border-radius: 0 30px 30px 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .folder::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      left: 0;
+      width: 150px;
+      height: 30px;
+      background-color: #ffa500;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 25px;
+    }
+  </style>
 </head>
 <body>
-<div class="parent">
-    <div class="div1">1</div>
-    <div class="div2">2</div>
-    <div class="div3">3</div>
-    <div class="div4">4</div>
-    <div class="div5">5</div>
-    <div class="div6">6</div>
-    <div class="div7">7</div>
-    <div class="div8">8</div>
-</div>
-    
+
+  <div class="folder"></div>
+
 </body>
 </html>
