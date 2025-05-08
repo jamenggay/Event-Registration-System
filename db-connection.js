@@ -1,22 +1,17 @@
-import sql from 'mssql'
+import sql from "mssql/msnodesqlv8.js";
 
 const config = {
-    user : 'rishaye',
-    password : 'forworkpurposes',
-    server : 'LAPTOP-7IVFRHU7\\SQLEXPRESS01',
-    database : "daloDB",
-    options : {
-        encrypt : false,
-        trustServerCertificate: true
-    }
+  driver: "msnodesqlv8",
+  connectionString: "Driver={ODBC Driver 17 for SQL Server};Server=localhost;Database=daloDB;Trusted_Connection=yes;TrustServerCertificate=yes;" //ANG ARTE KAILNGAN NASA CONNECTION STRING?!
+};
+
+  let pool;
+
+try {
+  pool = await sql.connect(config);
+  console.log("connected");
+} catch (err) {
+  console.error("failed:", err.message);
 }
 
-console.log("Connecting to database...")
-
-sql.connect(config, (error) => {
-    if (error) {
-        console.log("Connection error: ", error)
-    }
-    
-    console.log("Connection successful")
-})
+export { pool, sql }; 
