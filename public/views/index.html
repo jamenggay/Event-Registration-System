@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dalo</title>
-    <link rel="stylesheet" href="../styles/style.css">
-    <link rel="stylesheet" href="../styles/form.css">
-    <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/form.css">
+    <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="../scripts/toggle-forms.js"></script>
-    <script src="../scripts/footer.js"></script>
+    <script src="/scripts/toggle-forms.js"></script>
+    <script src="/scripts/footer.js"></script>
 </head>
 <body>
   <div class="landingpage-container">
@@ -20,20 +20,20 @@
       </div>
       <div class="landingpage-form">
 
-        <form class="form-box" id="login-form" action="/events" method="POST">
-          <input type="text" placeholder="Username" required/>
-          <input type="password" placeholder="Password" required/>
-          <input class="form-btn" type="submit" value="Log in"/>
+        <form class="form-box" id="login-form">
+          <input type="text" placeholder="Username" id="userName" required/>
+          <input type="password" placeholder="Password" id="password" required/>
+          <input class="form-btn" type="submit" id="submit" value="Log in"/>
           <div class="toggle">Don't have an account? <a href="#" id="show-signup">Register</a></div>
         </form>
         
         <form class="form-box hidden" id="signup-form">
-          <input type="email" placeholder="Email" required/>
-          <input type="tel" placeholder="Mobile Number" pattern="[0-9]{11,14}" required/>
-          <input type="text" placeholder="Full Name" pattern="[A-Za-z\s]{2,}" required/>
-          <input type="text" placeholder="Username" pattern="^[A-Za-z0-9_]{3,15}$" required/>
-          <input type="password" placeholder="Password" pattern="{8, 20}" required/>
-          <input class="form-btn" type="submit" value="Sign up"/>
+          <input type="email" id="email" placeholder="Email" required/>
+          <input type="tel" placeholder="Mobile Number" id="mobileNum" pattern="[0-9]{11,14}" required/>
+          <input type="text" placeholder="Full Name" id="fullName" pattern="[A-Za-z\s]{2,}" required/>
+          <input type="text" placeholder="Username" id="userName" pattern="^[A-Za-z0-9_]{3,15}$" required/>
+          <input type="password" placeholder="Password" id="password" pattern="{8, 20}" required/>
+          <input class="form-btn" type="submit" id="submit" value="Sign up"/>
       
           <div class="toggle">Already have an account? <a href="#" id="show-login">Log in</a></div>
 
@@ -68,5 +68,57 @@
     <footer>
       <div id="footer"></div>
     </footer>
+
+    <script>
+
+      //Sign-up form
+      document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const data = {
+            email: document.getElementById('email').value,
+            mobileNum: document.getElementById('mobileNum').value,
+            fullName: document.getElementById('fullName').value,
+            userName: document.getElementById('userName').value,
+            password: document.getElementById('password').value            
+        };
+
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: {'Content-type': 'application/json'}, //sending json file
+          body: JSON.stringify(data) //converts object into JSON string
+        });
+
+        const result = await response.json();
+        alert(result.message);
+
+        if(result.success){
+          document.getElementById("signup-form").classList.add("hidden");
+          document.getElementById("login-form").classList.remove("hidden");
+        }
+      });
+        //LOGIN FORM
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const data = {
+            userName: document.getElementById('userName').value,
+            password: document.getElementById('password').value
+          };
+
+          const response = await fetch("/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+          });
+          const result = await response.json();
+          alert(result.message);
+
+        if(result.success){
+          window.location.href = "/events"
+        }
+
+        });
+    </script>
 </body>
 </html>
