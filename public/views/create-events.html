@@ -36,6 +36,7 @@
           <h1 class="event_name" contenteditable="true" name="event-name">Event Name</h1>
         </div>
 
+        <div class="event_date_location_container">
         <div class="event_date">
           <div class="event_start">
             <div class="date_label">
@@ -59,7 +60,11 @@
         </div>
 
         <div class="event_location" onclick="openLocationModal()">
-          <h3> Event Location</h3>
+          <div class="icon-heading">
+            <img src="../assets/icons/location-icon.png" class="icon-flex">
+            <h3>Event Location</h3>
+          </div>          
+          <br>
           <p>Offline location or virtual link</p>
         </div>
 
@@ -71,9 +76,13 @@
             <button type="button" onclick="saveLocation()">Save</button>
           </div>
         </div>
+      </div>
 
         <div class="event_description" onclick="openDescriptionModal()">
-          <h3>Description</h3>
+          <div class="icon-heading">
+            <img src="../assets/icons/description-icon.png" class="icon-flex">
+            <h3>Description</h3>
+          </div>          
           <p>Add description here</p>
         </div>
 
@@ -86,8 +95,28 @@
           </div>
         </div>
 
+        <div class="event_category">
+          <div class="icon-heading">
+            <img src="../assets/icons/category-icon.png" class="icon-flex">
+            <h3>Event Category</h3>
+          </div>                    
+          <select name="event-category" id="event-category" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="conference">Conference</option>
+            <option value="workshop">Workshop</option>
+            <option value="webinar">Webinar</option>
+            <option value="meetup">Meetup</option>
+            <option value="concert">Concert</option>
+            <option value="festival">Festival</option>
+            <option value="competition">Competition</option>
+          </select>
+        </div>
+                
         <div class="event_feedback" onclick="openFeedbackModal()">
-          <h3>Feedback Link:</h3>
+          <div class="icon-heading">
+            <img src="../assets/icons/feedback-icon.png" class="icon-flex">
+            <h3>Feedbank Link</h3>
+          </div>                    
           <p>Click to add feedback link</p>
         </div>
 
@@ -106,7 +135,10 @@
 
         <div class="event_approval">
           <div class="event_approval_capacity">
-            <h3>Require Approval</h3>
+            <div class="icon-heading">
+              <img src="../assets/icons/approval-icon.png" class="icon-flex">
+              <h3>Require Approval</h3>
+            </div>          
             <div class="toggle-wrapper">
               <label class="toggle-label">
                 <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
@@ -117,7 +149,10 @@
         </div>
 
         <div class="event_capacity" onclick="openCapacityModal()">
-          <h3>Max Capacity</h3>
+          <div class="icon-heading">
+            <img src="../assets/icons/capacity-icon.png" class="icon-flex">
+            <h3>Maximum Capacity</h3>
+          </div>          
           <p>Click to set the maximum capacity for your event.</p>
         </div>
       
