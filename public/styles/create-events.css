@@ -31,18 +31,22 @@ body::after {
   width: 100%;
   background: transparent;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  gap: 15px;
+  gap: 40px;
   padding: 20px 15px 15px;
   position: relative;
   margin-top: 50px;
 }
+
 .illustration_container {
+  flex: 0 0 480px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  padding: 15px;
 }
 
 .illustration {
@@ -57,6 +61,7 @@ body::after {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .illustration_color {
@@ -74,11 +79,15 @@ body::after {
 .illustration_color img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 25px;
   position: absolute;
   top: 0;
   left: 0;
+}
+
+#imageUpload {
+  display: none;
 }
 
 .illustration_controls {
@@ -87,7 +96,7 @@ body::after {
   justify-content: center;
   align-items: center;
   gap: 16px;
-  margin-top: 20px;
+  width: 100%;
 }
 
 .illustration_controls button {
@@ -109,11 +118,11 @@ body::after {
 }
 
 .event_details {
-  flex: 1;
+  flex: 1 1 0%;
   min-width: 0;
   color: black;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   flex-direction: column;
   gap: 15px;
   min-height: 450px;
@@ -480,25 +489,32 @@ form select:focus {
 }
 
 .create_event_button {
-  display: inline-block;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.create_event_button button {
   background-color: white;
   color: black;
-  text-align: center;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  padding: 12px 24px;
   border: none;
-  font-size: 16px;
-  line-height: 1;
+  border-radius: 12px;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 117, 187, 0.2);
+  width: 100%;
+  text-align: center;
 }
 
-.create_event_button:hover {
+.create_event_button button:hover {
   background-color: rgba(220, 230, 250, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 117, 187, 0.3);
 }
 
-.create_event_button:focus {
+.create_event_button button:focus {
   outline: none;
   box-shadow: 0 2px 6px rgba(0, 117, 187, 0.2);
 }
@@ -506,9 +522,10 @@ form select:focus {
 .create_event_button h2 {
   margin: 0;
   padding: 0;
-  border: none;
-  outline: none;
+  font-size: 1.2rem;
+  font-weight: 600;
   color: black;
+  text-align: center;
 }
 
 .event_approval_capacity {
