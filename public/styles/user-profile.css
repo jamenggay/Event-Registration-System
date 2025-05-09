@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Vibur&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0075BB1A;
+  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
+  background-size: 30px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.7) 60%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+  z-index: -1;
+}
+
+.info_events_container{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.user_info_container{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 200px;
+    margin-top: 50px;
+}
+
+.user_photo_container{
+    gap: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.photo_container{
+    height: 450px;
+    width: 450px;
+    border-radius: 100%;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.photo_container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo_button{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.photo_button button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.photo_button button:hover {
+    background-color: rgba(220, 230, 250, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.user_details_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.name_container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.firstname_container,
+.lastname_container,
+.bio_container{
+  background-color: rgba(240, 248, 255, 0.75);
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  color: black;
+  border: 1px solid rgba(0, 117, 187, 0.15);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 117, 187, 0.2);
+}
+
+.firstname_container,
+.lastname_container {
+  width: 250px;
+}
+
+.bio_container {
+  width: 530px; /* This matches the total width of firstname + lastname + gap */
+}
+
+.firstname_container:hover,
+.lastname_container:hover,
+.bio_container:hover{
+  cursor: pointer;
+  background-color: rgba(220, 230, 250, 0.9);
+  box-shadow: 0 4px 10px rgba(0, 117, 187, 0.1);
+  transform: scale(1.01);
+border: 1px solid #7aa9d6;
+
+}
+
+input[type="text"] {
+    width: 100%;
+    border-radius: 6px;
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid #aaccee;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+textarea {
+    width: 100%;
+    border-radius: 6px;
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid #aaccee;
+    background-color: rgba(255, 255, 255, 0.95);
+    min-height: 100px;
+    resize: vertical;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+}
+
+label {
+    font-size: 1.17em;
+    font-family: 'Inter', sans-serif;
+}
+.events_created_container{
+    background-color: blueviolet;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
