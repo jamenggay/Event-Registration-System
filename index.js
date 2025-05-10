@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
 import multer from "multer";
+import bodyParser from 'body-parser'
+import fs from 'fs'
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -13,110 +15,128 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const port = 3000;
 
 //middleware setup
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, "public")));
-const upload = multer({ dest : path.join(__dirname, 'public', 'assets') })
+const upload = multer({ dest : path.join(__dirname, 'public', 'uploads', 'featureImage') })
+
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
 })
 
-// app.post("/register", async (req, res) => {
-//     const { email, mobileNum, fullName, userName, password } = req.body;
+app.post("/register", async (req, res) => {
+    const { email, mobileNum, fullName, userName, password } = req.body;
 
-//     try {
-//         await pool.request()
-//             .input('email', sql.VarChar, email)
-//             .input('mobileNum', sql.VarChar, mobileNum)
-//             .input('fullName', sql.VarChar, fullName)
-//             .input('userName', sql.VarChar, userName)
-//             .input('password', sql.VarChar, password)
-//             .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @password)');
+    try {
+        await pool.request()
+            .input('email', sql.VarChar, email)
+            .input('mobileNum', sql.VarChar, mobileNum)
+            .input('fullName', sql.VarChar, fullName)
+            .input('userName', sql.VarChar, userName)
+            .input('password', sql.VarChar, password)
+            .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @password)');
 
-//         res.json({ success: true, message: 'Registration successful!' });
+        res.json({ success: true, message: 'Registration successful!' });
 
-//     }
-//     catch (err) {
-//         console.error("Error during registration:", err);
-//         res.status(500).json({ message: 'Registration Failed' });
-//     }
-// });
+    }
+    catch (err) {
+        console.error("Error during registration:", err);
+        res.status(500).json({ message: 'Registration Failed' });
+    }
+});
 
-// app.post("/login", async (req, res) => {
-//     const { userName, password } = req.body;
+app.post("/login", async (req, res) => {
+    const { userName, password } = req.body;
 
-//     try {
-//         const result = await pool.request()
-//             .input('userName', sql.VarChar, userName)
-//             .query('SELECT * FROM userTABLE WHERE username = @userName')
+    try {
+        const result = await pool.request()
+            .input('userName', sql.VarChar, userName)
+            .query('SELECT * FROM userTABLE WHERE username = @userName')
 
-//         const user = result.recordset[0]; //stores the result to user variable
+        const user = result.recordset[0]; //stores the result to user variable
         
-//         //login validation
+        //login validation
 
-//         if (!user) {
-//             return res.json({ success: false, message: "Incorrect username or password!" });
-//         }
+        if (!user) {
+            return res.json({ success: false, message: "Incorrect username or password!" });
+        }
 
-//         if (user.password !== password) {
-//             return res.json({ success: false, message: "Incorrect username or password!" });
-//         }
-//         return res.json({ success: true, message: "Login success!" });
+        if (user.password !== password) {
+            return res.json({ success: false, message: "Incorrect username or password!" });
+        }
+        return res.json({ success: true, message: "Login success!" });
 
-//     }
-//     catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: 'Server Error' })
-//     }
-// });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server Error' })
+    }
+});
 
 app.get("/create-event", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 })
 
-app.post("/create-event", upload.single('event-photo'), async (req, res) => {
-    const featureImage = req.file.path
+app.post("/create-event", async (req, res) => {   
+    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, startDateTime, endDateTime, location, description, 
+            category, feedback, requireApproval, capacity, allowWaitlist,
+            lastUpdated} = req.body
 
-    const { 'event-name' : eventName,
-            'start-date' : startDate,
-            'start-time' : startTime,
-            'end-date' : endDate,
-            'end-time' : endTime,
-            'event-location' : eventLocation,
-            'event-description' : eventDescription,
-            'event-category' : eventCategory,
-            'event-feedback' : eventFeedback,
-            'event-capacity' : eventCapacity,
-        } = req.body
+    function getBinaryValue(base64FeatureImage) {
+        const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+        const response = {};
 
-    const startDateTime  = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
-    const endDateTime = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
-    const requireApproval = req.body['require-approval'] === 'on' ? 'Yes' : 'No'
-    const waitlistToggle = req.body['waitlist-toggle'] === 'on' ? 'Yes' : 'No'
-    const lastUpdated = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+        if (matches.length !== 3) {
+            console.log('Invalid input string');
+        }
 
+        response.type = matches[1];
+        response.data = Buffer.from(matches[2], 'base64');
+
+        return response;
+    }
+
+    const binaryFeatureImage = getBinaryValue(base64FeatureImage);
+
+    if (!binaryFeatureImage) {
+        return res.json({ success: false, message: 'Invalid image format.' });
+    }
+    
+    const imagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${imageFileName}.${imageFileExtension}`);
+
+    fs.writeFile(imagePath, binaryFeatureImage.data, (error) => { 
+        if (error) { 
+            console.log("Image Creation Failed: ", error) 
+        }
+    });
+
+    console.log("Image saved successfully.");
+
+    return
     try {
         await pool.request()
+            .input('featureImage', sql.VarChar, featureImage)
             .input('eventName', sql.VarChar, eventName)
-            .input('eventDescription', sql.VarChar, eventDescription)
-            .input('eventLocation', sql.VarChar, eventLocation)
             .input('startDateTime', sql.DateTime, startDateTime)
             .input('endDateTime', sql.DateTime, endDateTime) 
-            .input('featureImage', sql.VarChar, featureImage)
+            .input('location', sql.VarChar, location)
+            .input('description', sql.VarChar, description)
+            .input('category', sql.VarChar, category)
+            .input('feedbackLink', sql.VarChar, feedback)
             .input('requireApproval', sql.VarChar, requireApproval)
-            .input('capacity', sql.Int, eventCapacity)
-            .input('feedbackLink', sql.VarChar, eventFeedback)
+            .input('capacity', sql.Int, capacity)
+            .input('allowWaitlist', sql.VarChar, allowWaitlist)
             .input('lastUpdated', sql.DateTime, lastUpdated)
-            .query(`INSERT INTO eventsTable (eventName, description, location, startDateTime, endDateTime, featureImage, requireApproval, capacity, feedbackLink, lastUpdated) 
-                    VALUES (@eventName, @eventDescription, @eventLocation, @startDateTime, @endDateTime, @featureImage, @requireApproval, @capacity, @feedbackLink, @lastUpdated)`)
+            .query(`INSERT INTO eventsTable (eventName, description, category, location, startDateTime, endDateTime, featureImage, requireApproval, capacity, feedbackLink, allowWaitlist, lastUpdated) 
+                    VALUES (@eventName, @description, @category, @location, @startDateTime, @endDateTime, @featureImage, @requireApproval, @capacity, @feedbackLink, @allowWaitlist, @lastUpdated)`)
 
-        console.log(res.json({ success: true, message: 'Event creation successful' }))
+        console.log('Event creation successful')
+        return res.json({ success: true, message: "Event creation succesful" })
     }
-    catch (error) {
-        console.log("Event Creation Error: ", error)
-        res.status(500).json({ message: 'Even Creation failed' });
-        // console.log(res.json({ message: 'Even Creation failed' }))
+    catch (e) {
+        console.log("Event Creation Failed: ", e)
+        return res.json({ success: false, message: "Event creation failed", error: e })
     }
 })
 
