@@ -16,14 +16,18 @@
         <div id="header"></div>
     </header>
     <div class="info_events_container">
+        <div class="account_settings">
+            <h2>Account Settings</h2>
+            <div class="divider"></div>
+        </div>
         <div class = "user_info_container">
             <div class="user_photo_container">
                 <div class="photo_container">
                     <img id="profilePreview" src="../assets/icons/profile-icon.jpeg" alt="Profile Photo">
-                </div>
-                <div class="photo_button">
                     <input type="file" id="profileUpload" accept="image/*" style="display: none;">
-                    <button type="button" id="uploadButton">Upload Photo</button>
+                    <button type="button" id="uploadButton" class="upload_button">
+                        <img src="../assets/icons/upload-icon.png" alt="Upload" class="upload_icon">
+                    </button>
                 </div>
             </div>
             <div class="user_details_container">
@@ -41,16 +45,36 @@
                     <label for="bio">Bio</label><br>
                     <input type="text" id="bio" name="bio">
                 </div>
-                <div class="change_password_container">
-                    <h2>Change Password</h2>
+                <div class="change_password_container" onclick="openPasswordModal()">
+                    <label>Change Password</label><br>
+                    <p>Click to change your password</p>
                 </div>
             </div>
         </div>
 
+        <div class="events_created_section">
+            <h2>Events Created</h2>
+            <div class="divider"></div>
+        </div>
         <div class="events_created_container">
-            <h1>Events Created</h1>
+            <!-- Events will be listed here -->
         </div>
     </div>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Change Password</h2>
+            <div class="password-fields">
+                <input type="password" id="oldPassword" name="oldPassword" placeholder="Current Password" required>
+                <input type="password" id="newPassword" name="newPassword" placeholder="New Password" required>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password" required>
+            </div>
+            <button type="button" onclick="savePassword()">Save Changes</button>
+        </div>
+    </div>
+
     <footer>
         <div id="footer"></div>
       </footer>

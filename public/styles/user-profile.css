@@ -43,7 +43,7 @@ body::after {
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
-    gap: 200px;
+    gap: 100px;
     margin-top: 50px;
 }
 
@@ -55,48 +55,59 @@ body::after {
     align-items: center;
 }
 
-.photo_container{
-    height: 450px;
-    width: 450px;
+.photo_container {
+    height: 400px;
+    width: 400px;
     border-radius: 100%;
-    overflow: hidden;
+    overflow: visible;
     background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .photo_container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 100%;
 }
 
-.photo_button{
-    width: 100%;
+.upload_button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: white;
+    border: none;
+    cursor: pointer;
     display: flex;
     justify-content: center;
-}
-
-.photo_button button {
-    background-color: white;
-    color: black;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 15px;
-    font-size: 18px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
+    align-items: center;
+    padding: 0;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
 }
 
-.photo_button button:hover {
-    background-color: rgba(220, 230, 250, 0.9);
+.upload_button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    background-color: #f8f8f8;
+}
+
+.upload_icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.photo_button {
+    display: none;
 }
 
 .user_details_container{
@@ -121,7 +132,7 @@ body::after {
 .lastname_container,
 .bio_container{
   background-color: rgba(240, 248, 255, 0.75);
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   padding: 15px;
   border-radius: 8px;
   color: black;
@@ -137,7 +148,8 @@ body::after {
 }
 
 .bio_container {
-  width: 530px; /* This matches the total width of firstname + lastname + gap */
+  width: 530px;
+  overflow-wrap: break-word;
 }
 
 .firstname_container:hover,
@@ -184,4 +196,207 @@ label {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
+}
+
+.change_password_container {
+    background-color: rgba(240, 248, 255, 0.75);
+    margin-bottom: 8px;
+    padding: 15px;
+    border-radius: 8px;
+    color: black;
+    border: 1px solid rgba(0, 117, 187, 0.15);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 117, 187, 0.2);
+    cursor: pointer;
+    width: 530px;
+}
+
+.change_password_container:hover {
+    background-color: rgba(220, 230, 250, 0.9);
+    box-shadow: 0 4px 10px rgba(0, 117, 187, 0.1);
+    transform: scale(1.01);
+    border: 1px solid #7aa9d6;
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal.hide {
+    animation: fadeOut 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}
+
+.modal-content {
+    background-color: white;
+    color: black;
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+}
+
+.password-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.modal-content input:focus {
+    border-color: #0075BB;
+    box-shadow: 0 0 0 2px rgba(0, 117, 187, 0.1);
+    outline: none;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0075BB;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #005c94;
+    transform: translateY(-1px);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: #333;
+}
+
+.account_settings {
+    margin: 20px auto 40px;
+    width: 100%;
+    max-width: 1200px;
+    text-align: left;
+    padding: 0 20px;
+}
+
+.account_settings h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    padding-left: 10%;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(0, 117, 187, 0.1), rgba(0, 117, 187, 0.5), rgba(0, 117, 187, 0.1));
+    margin: 0 auto;
+    width: 80%;
+}
+
+.events_created_section {
+    margin: 60px auto 40px;
+    width: 100%;
+    max-width: 1200px;
+    text-align: left;
+    padding: 0 20px;
+}
+
+.events_created_section h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    padding-left: 10%;
+}
+
+.events_created_section .divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(0, 117, 187, 0.1), rgba(0, 117, 187, 0.5), rgba(0, 117, 187, 0.1));
+    margin: 0 auto;
+    width: 80%;
+}
+
+.events_created_container {
+    margin: 30px auto;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.event_feedback p a {
+    color: #0075BB;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.event_feedback p a:hover {
+    color: #005c94;
+    text-decoration: underline;
 }
