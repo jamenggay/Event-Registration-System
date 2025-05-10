@@ -182,32 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Set the hidden event name value
     hiddenInput.value = h1.textContent.trim();
-    
-    // Create FormData object
-    const formData = new FormData(this);
-    
-    try {
-      const response = await fetch('/api/events', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Event created successfully:', result);
-        // Show success message
-        alert('Event created successfully!');
-        // Redirect to events page or dashboard
-        window.location.href = '/events';
-      } else {
-        const error = await response.json();
-        console.error('Failed to create event:', error);
-        alert('Failed to create event. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('An error occurred. Please try again.');
-    }
   });
 
   // Background Image Upload
