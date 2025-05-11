@@ -3,9 +3,10 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
-import multer from "multer";
+import multer from 'multer'
 import bodyParser from 'body-parser'
 import fs from 'fs'
+import cookieSession from 'cookie-session'
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -19,7 +20,10 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, "public")));
 const upload = multer({ dest : path.join(__dirname, 'public', 'uploads', 'featureImage') })
-
+app.use(cookieSession({
+  name: 'session',
+  keys: ['cooKey'], 
+}));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
@@ -65,6 +69,12 @@ app.post("/login", async (req, res) => {
         if (user.password !== password) {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
+
+        // cookie store logged-in user credentials
+        req.session.user = {
+            id: user.userID,
+            username: user.username
+        };
         return res.json({ success: true, message: "Login success!" });
 
     }
@@ -74,14 +84,20 @@ app.post("/login", async (req, res) => {
     }
 });
 
-app.get("/create-event", (req, res) => {
+app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 })
 
-app.post("/create-event", async (req, res) => {   
-    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, startDateTime, endDateTime, location, description, 
-            category, feedback, requireApproval, capacity, allowWaitlist,
-            lastUpdated} = req.body
+app.post("/create-events", async (req, res) => {   
+    if (!req.session.user) {
+        return res.status(401).json({ message: 'Unauthorized'});
+    }
+    
+    const creatorID = req.session.user.id;
+
+    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
+            startDateTime, endDateTime, location, description, category, 
+            feedback, requireApproval, capacity, allowWaitlist, lastUpdated} = req.body
 
     function getBinaryValue(base64FeatureImage) {
         const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
@@ -100,23 +116,34 @@ app.post("/create-event", async (req, res) => {
     const binaryFeatureImage = getBinaryValue(base64FeatureImage);
 
     if (!binaryFeatureImage) {
-        return res.json({ success: false, message: 'Invalid image format.' });
+        return res.json({ message: 'Invalid image format.' });
     }
     
-    const imagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${imageFileName}.${imageFileExtension}`);
+    let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
+    let featureImageFileName = `${imageFileName}.${imageFileExtension}`
 
-    fs.writeFile(imagePath, binaryFeatureImage.data, (error) => { 
+    for (let i = 1; i <= uploadsfeatureImagesFileName.length; i++) {
+        if (uploadsfeatureImagesFileName.includes(featureImageFileName)) {
+            featureImageFileName = `${imageFileName} (${i}).${imageFileExtension}`
+        }
+        else {
+            break
+        }
+    }
+    console.log(featureImageFileName)
+
+    const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
+
+    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
         if (error) { 
             console.log("Image Creation Failed: ", error) 
         }
     });
 
-    console.log("Image saved successfully.");
-
-    return
     try {
         await pool.request()
-            .input('featureImage', sql.VarChar, featureImage)
+            .input('creatorID', sql.Int, creatorID)
+            .input('featureImage', sql.VarChar, featureImagePath)
             .input('eventName', sql.VarChar, eventName)
             .input('startDateTime', sql.DateTime, startDateTime)
             .input('endDateTime', sql.DateTime, endDateTime) 
@@ -128,15 +155,21 @@ app.post("/create-event", async (req, res) => {
             .input('capacity', sql.Int, capacity)
             .input('allowWaitlist', sql.VarChar, allowWaitlist)
             .input('lastUpdated', sql.DateTime, lastUpdated)
-            .query(`INSERT INTO eventsTable (eventName, description, category, location, startDateTime, endDateTime, featureImage, requireApproval, capacity, feedbackLink, allowWaitlist, lastUpdated) 
-                    VALUES (@eventName, @description, @category, @location, @startDateTime, @endDateTime, @featureImage, @requireApproval, @capacity, @feedbackLink, @allowWaitlist, @lastUpdated)`)
+            .query(`INSERT INTO eventsTable (eventName, description, category, location, startDateTime, 
+                                endDateTime, featureImage, requireApproval, capacity, feedbackLink, 
+                                allowWaitlist, lastUpdated, creatorID) 
+                    SELECT @eventName, @description, @category, @location, @startDateTime, 
+                            @endDateTime, @featureImage, @requireApproval, @capacity, @feedbackLink,
+                            @allowWaitlist, @lastUpdated, u.userID
+                    FROM userTable u
+                    WHERE userID = @creatorID`)
 
         console.log('Event creation successful')
-        return res.json({ success: true, message: "Event creation succesful" })
+        return res.status(201).json({ message: "Event creation successful" })
     }
     catch (e) {
         console.log("Event Creation Failed: ", e)
-        return res.json({ success: false, message: "Event creation failed", error: e })
+        return res.status(500).json({ message: "Event creation failed", error: e })
     }
 })
 
