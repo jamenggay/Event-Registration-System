@@ -21,9 +21,9 @@
       <div class="landingpage-form">
 
         <form class="form-box" id="login-form">
-          <input type="text" placeholder="Username" id="userName" required/>
-          <input type="password" placeholder="Password" id="password" required/>
-          <input class="form-btn" type="submit" id="submit" value="Log in"/>
+          <input type="text" placeholder="Username" id="login_userName" required/>
+          <input type="password" placeholder="Password" id="login_password" required/>
+          <input class="form-btn" type="submit" id="login_submit" value="Log in"/>
           <div class="toggle">Don't have an account? <a href="#" id="show-signup">Register</a></div>
         </form>
         
@@ -102,8 +102,8 @@
           e.preventDefault();
           
           const data = {
-            userName: document.getElementById('userName').value,
-            password: document.getElementById('password').value
+            userName: document.getElementById('login_userName').value,
+            password: document.getElementById('login_password').value
           };
 
           const response = await fetch("/login", {
@@ -115,6 +115,7 @@
           alert(result.message);
 
         if(result.success){
+          localStorage.setItem('currentUser', data.userName)
           window.location.href = "/events"
         }
 
