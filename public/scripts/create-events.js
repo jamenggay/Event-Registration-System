@@ -183,7 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Set the hidden event name value
     hiddenInput.value = h1.textContent.trim();
   });
-
   // Background Image Upload
   document.getElementById('imageUpload').addEventListener('change', function (event) {
     const file = event.target.files[0];
