@@ -61,6 +61,16 @@ CREATE TABLE feedbackTable (
     CONSTRAINT UNIQUE_feedback UNIQUE (eventID, userID) -- prevent duplicate feedback per user per event
 );
 
+--userTable ALTER (base on UI)
+ALTER TABLE userTable
+DROP COLUMN firstName, lastName;
+
+ALTER TABLE userTable
+ADD 
+  fullName VARCHAR(100) NOT NULL,
+  mobileNumber VARCHAR(20) NOT NULL;
+
+--eventsTable ALTER (based on UI)
 ALTER TABLE eventsTable
 ADD
     category VARCHAR(15),
