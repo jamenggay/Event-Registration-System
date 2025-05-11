@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dalo</title>
-  <link rel="stylesheet" href="/styles/create-events.css" />
+  <link rel="stylesheet" href="../styles/create-events.css" />
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <script src="/scripts/header.js"></script>
-  <script src="/scripts/footer.js"></script>
-  <script src="/scripts/create-events.js" defer></script>
+  <script src="../scripts/header.js"></script>
+  <script src="../scripts/footer.js"></script>
+  <script src="../scripts/create-events.js" defer></script>
 </head>
 <body>
   <header>
@@ -19,73 +20,67 @@
     <div class="illustration_container">
       <div class="illustration">
         <div class="illustration_color">
-          <input type="file" id="imageUpload" accept="image/*" style="display: none;" />
+          <img id="previewImage" alt="" style="display: none;">
         </div>
       </div>
-    
       <div class="illustration_controls">
-        <button class="switch_color_button">Switch Color</button>
-        <button class="upload_button">Upload Photo</button>
+        <button type="button" class="switch_color_button">Switch Color</button>
+        <button type="button" class="upload_button">Upload Photo</button>
       </div>
     </div>
     
-
     <div class="event_details">
-      <form id="eventForm">
+      <form id="eventForm" enctype="multipart/form-data">
+        <input type="file" id="imageUpload" name="event-image" accept="image/*" style="display: none;" />
+        <input type="hidden" name="event-name" id="hiddenEventName">
         <div class="event_name-wrapper">
-          <h1 class="event_name" contenteditable="true" name="event-name">Event Name</h1>
+          <h1 class="event_name" contenteditable="true">Event Name</h1>
         </div>
-
         <div class="event_date_location_container">
-        <div class="event_date">
-          <div class="event_start">
-            <div class="date_label">
-              <h3 class="start-label">Start</h3>
+          <div class="event_date">
+            <div class="event_start">
+              <div class="date_label">
+                <h3 class="start-label">Start</h3>
+              </div>
+              <div class="date-time-input">
+                <input type="date" id="start-date" class="date-input" name="start-date" />
+                <input type="time" id="start-time" class="time-input" name="start-time" step="600" />
+              </div>
             </div>
-            <div class="date-time-input">
-              <input type="date" id="start-date" class="date-input" name="start-date" />
-              <input type="time" id="start-time" class="time-input" name="start-time" step="600" />
+            <div class="event_end">
+              <div class="date_label">
+                <h3 class="end-label">End</h3>
+              </div>
+              <div class="date-time-input">
+                <input type="date" id="end-date" class="date-input" name="end-date" />
+                <input type="time" id="end-time" class="time-input" name="end-time" step="600" />
+              </div>
             </div>
           </div>
-
-          <div class="event_end">
-            <div class="date_label">
-              <h3 class="end-label">End</h3>
+          <div class="event_location" onclick="openLocationModal()">
+            <div class="icon-heading">
+              <img src="../assets/icons/location-icon.png" class="icon-flex">
+              <h3>Event Location</h3>
             </div>
-            <div class="date-time-input">
-              <input type="date" id="end-date" class="date-input" name="end-date" />
-              <input type="time" id="end-time" class="time-input" name="end-time" step="600" />
+            <br>
+            <p>Offline location or virtual link</p>
+          </div>
+          <div id="locationModal" class="modal">
+            <div class="modal-content">
+              <span class="close" onclick="closeLocationModal()">&times;</span>
+              <h2>Add Event Location</h2>
+              <input type="text" id="locationText" name="event-location" placeholder="Enter event location...">
+              <button type="button" onclick="saveLocation()">Save</button>
             </div>
           </div>
         </div>
-
-        <div class="event_location" onclick="openLocationModal()">
-          <div class="icon-heading">
-            <img src="/assets/icons/location-icon.png" class="icon-flex">
-            <h3>Event Location</h3>
-          </div>          
-          <br>
-          <p>Offline location or virtual link</p>
-        </div>
-
-        <div id="locationModal" class="modal">
-          <div class="modal-content">
-            <span class="close" onclick="closeLocationModal()">&times;</span>
-            <h2>Add Event Location</h2>
-            <input type="text" id="locationText" name="event-location" placeholder="Enter event location...">
-            <button type="button" onclick="saveLocation()">Save</button>
-          </div>
-        </div>
-      </div>
-
         <div class="event_description" onclick="openDescriptionModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/description-icon.png" class="icon-flex">
+            <img src="../assets/icons/description-icon.png" class="icon-flex">
             <h3>Description</h3>
-          </div>          
+          </div>
           <p>Add description here</p>
         </div>
-
         <div id="descriptionModal" class="modal">
           <div class="modal-content">
             <span class="close" onclick="closeDescriptionModal()">&times;</span>
@@ -94,12 +89,11 @@
             <button type="button" onclick="saveDescription()">Save</button>
           </div>
         </div>
-
         <div class="event_category">
           <div class="icon-heading">
-            <img src="/assets/icons/category-icon.png" class="icon-flex">
+            <img src="../assets/icons/category-icon.png" class="icon-flex">
             <h3>Event Category</h3>
-          </div>                    
+          </div>
           <select name="event-category" id="event-category" required>
             <option value="" disabled selected>Select a category</option>
             <option value="conference">Conference</option>
@@ -111,15 +105,13 @@
             <option value="competition">Competition</option>
           </select>
         </div>
-                
         <div class="event_feedback" onclick="openFeedbackModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/feedback-icon.png" class="icon-flex">
+            <img src="../assets/icons/feedback-icon.png" class="icon-flex">
             <h3>Feedbank Link</h3>
-          </div>                    
+          </div>
           <p>Click to add feedback link</p>
         </div>
-
         <div id="feedbackModal" class="modal">
           <div class="modal-content">
             <span class="close" onclick="closeFeedbackModal()">&times;</span>
@@ -128,17 +120,15 @@
             <button type="button" onclick="saveFeedback()">Save</button>
           </div>
         </div>
-
         <div class="event_option">
           <h3>Event Options</h3>
         </div>
-
         <div class="event_approval">
           <div class="event_approval_capacity">
             <div class="icon-heading">
-              <img src="/assets/icons/approval-icon.png" class="icon-flex">
+              <img src="../assets/icons/approval-icon.png" class="icon-flex">
               <h3>Require Approval</h3>
-            </div>          
+            </div>
             <div class="toggle-wrapper">
               <label class="toggle-label">
                 <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
@@ -147,23 +137,19 @@
             </div>
           </div>
         </div>
-
         <div class="event_capacity" onclick="openCapacityModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/capacity-icon.png" class="icon-flex">
+            <img src="../assets/icons/capacity-icon.png" class="icon-flex">
             <h3>Maximum Capacity</h3>
-          </div>          
+          </div>
           <p>Click to set the maximum capacity for your event.</p>
         </div>
-      
         <div id="capacityModal" class="modal">
           <div class="modal-content">
             <span class="close" onclick="closeCapacityModal()">&times;</span>
             <h2>Max Capacity</h2>
-
             <label for="capacityInput">Max Capacity:</label>
-            <input type="number" id="capacityInput" name="event-capacity" placeholder="Enter max capacity" /> 
-
+            <input type="number" id="capacityInput" name="event-capacity" placeholder="Enter max capacity" />
             <div class="event_approval_capacity">
               <label for="waitlistToggle">Over-Capacity Waitlist</label>
               <div class="toggle-wrapper">
@@ -173,21 +159,98 @@
                 </label>
               </div>
             </div>
-
             <button type="button" onclick="saveCapacity()">Set Limit</button>
           </div>
         </div>
-
         <div class="create_event_button">
+          <button type="submit">
             <h2>Create Event</h2>
           </button>
         </div>
       </form>
-    </div>  
+    </div>
   </div>
 
   <footer>
     <div id="footer"></div>
   </footer>
+
+  <script>
+    const eventForm = document.getElementById('eventForm')
+
+    eventForm.addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      const rawFeatureImage = document.getElementById('imageUpload').files[0]
+
+      const getBase64 = rawFeatureImage => new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(rawFeatureImage);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+      });
+
+      const featureImage = await getBase64(rawFeatureImage)
+      const imageFileName = rawFeatureImage.name.replace(/\.[^/.]+$/, '')
+      const imageFileExtension = rawFeatureImage.name.split('.').pop().toLowerCase()
+
+      const rawEventName = document.querySelector('.event_name');
+      const eventName = document.getElementById('hiddenEventName');
+      eventName.value = rawEventName.textContent.trim();
+
+      const startDate = document.getElementById('start-date').value
+      const startTime = document.getElementById('start-time').value
+      const endDate   = document.getElementById('end-date').value
+      const endTime   = document.getElementById('end-time').value
+
+      const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
+      const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
+      const requireApproval = document.getElementById('require-approval').checked === 'on' ? 'Yes' : 'No'
+      const waitlistToggle  = document.getElementById('waitlistToggle').checked === 'on' ? 'Yes' : 'No'
+      const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+
+      const eventData = {
+        base64FeatureImage  : featureImage,
+        imageFileName       : imageFileName,
+        imageFileExtension  : imageFileExtension,
+        eventName       : eventName.value,
+        startDateTime   : startDateTime,
+        endDateTime     : endDateTime,
+        location        : document.getElementById('locationText').value,
+        description     : document.getElementById('descriptionText').value,
+        category        : document.getElementById('event-category').value,
+        feedback        : document.getElementById('feedbackLinkText').value,
+        requireApproval : requireApproval,
+        capacity        : document.getElementById('capacityInput').value,
+        allowWaitlist   : waitlistToggle,
+        lastUpdated     : lastUpdated,
+      }
+
+      try { 
+        const response = await fetch("/create-events", {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json' },
+          body: JSON.stringify(eventData)
+        })
+
+        if (response.ok) {
+          const result = await response.json()
+          console.log("Server Success: ", result)
+          alert("Event creation success")
+          window.location.href = "/events"
+        }
+        else if (response.status == 401) {
+          const result = await response.json();
+          console.error('Server Failed:', result);
+          alert("Please log in first.")
+          window.location.href = "/login"
+        }
+      }
+      catch (e) {
+        console.log("Client Error: ", e)
+        alert("An error occurred while creating the event");
+      }
+    })
+  </script>
 </body>
 </html>
