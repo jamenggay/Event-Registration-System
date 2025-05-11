@@ -1,22 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover</title>
-    <link rel="stylesheet" href="../styles/discover.css">;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Filter</title>
+  <style>
+    .discover-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .image-card {
+      width: 150px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .card-label {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 5px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .explore-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-left: 10px;
+    }
+
+    .slider-container {
+      margin-top: 20px;
+    }
+
+    .slider {
+      list-style: none;
+      padding: 0;
+    }
+
+    .item {
+      margin-bottom: 20px;
+      padding: 20px;
+      background-size: cover;
+      background-position: center;
+      color: white;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .item button {
+      margin-top: 10px;
+      padding: 6px 12px;
+    }
+
+    .event-content {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .event-date {
+      background: rgba(255,255,255,0.8);
+      color: black;
+      padding: 5px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
-<div class="parent">
-    <div class="div1">1</div>
-    <div class="div2">2</div>
-    <div class="div3">3</div>
-    <div class="div4">4</div>
-    <div class="div5">5</div>
-    <div class="div6">6</div>
-    <div class="div7">7</div>
-    <div class="div8">8</div>
-</div>
-    
+
+  <!-- Category Cards -->
+  <div class="discover-container">
+    <div class="image-card" data-category="arts">
+      <img src="../assets/images/discover-arts.jpg" alt="Discover Arts" />
+      <span class="card-label">Arts</span>
+    </div>
+    <div class="image-card" data-category="business">
+      <img src="../assets/images/discover-business.jpg" alt="Discover Business" />
+      <span class="card-label">Business</span>
+    </div>
+    <div class="image-card" data-category="education">
+      <img src="../assets/images/discover-education.jpg" alt="Discover Education" />
+      <span class="card-label">Education</span>
+    </div>
+    <div class="image-card" data-category="entertainment">
+      <img src="../assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
+      <span class="card-label">Entertainment</span>
+    </div>
+    <div class="image-card" data-category="health">
+      <img src="../assets/images/discover-health.jpg" alt="Discover Health" />
+      <span class="card-label">Health</span>
+    </div>
+    <div class="image-card" data-category="outreach">
+      <img src="../assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
+      <span class="card-label">Outreach</span>
+    </div>
+    <div class="image-card" data-category="technology">
+      <img src="../assets/images/discover-technology.avif" alt="Discover Technology" />
+      <span class="card-label">Technology</span>
+    </div>
+    <div class="div8">
+      <button class="explore-btn" onclick="showAllEvents()">Explore All Events →</button>
+    </div>
+  </div>
+
+  <!-- Events Carousel -->
+  <div class="slider-container" id="events-slider">
+    <ul class="slider">
+      <li class="item" data-category="entertainment" style="background-image: url('../assets/images/clubbing-event.jpg')">
+        <span class="event-date">May 11, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">PURE VENOM: The After Party</h2>
+          <p class="event-description">Celebrate the grand finale of the Philippine Blockchain Week's PBWx 2024 at the
+            PURE VENOM After Party.</p>
+          <p class="event-location">Location: 512 Main Building, National University</p>
+          <button>Register</button>
+        </div>
+      </li>
+
+      <li class="item" data-category="arts" style="background-image: url('../assets/images/art-event.jpg')">
+        <span class="event-date">May 12, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">Estrange Bond</h2>
+          <p class="event-description">A captivating art exhibition.</p>
+          <p class="event-location">Location: Sampaloc, Manila</p>
+          <button>Register</button>
+        </div>
+      </li>
+
+      <li class="item" data-category="business" style="background-image: url('../assets/images/business-event.jpg')">
+        <span class="event-date">May 13, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">Apple WWDC 2025</h2>
+          <p class="event-description">Join industry experts at Apple.</p>
+          <p class="event-location">Location: BGC, Taguig</p>
+          <button>Register</button>
+        </div>
+      </li>
+
+      <li class="item" data-category="outreach" style="background-image: url('../assets/images/outreach-event.jpg')">
+        <span class="event-date">May 14, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">Last Trace Of Us</h2>
+          <p class="event-description">A community outreach initiative.</p>
+          <p class="event-location">Location: Resorts World Manila</p>
+          <button>Register</button>
+        </div>
+      </li>
+
+      <li class="item" data-category="technology" style="background-image: url('../assets/images/tech-event.avif')">
+        <span class="event-date">May 15, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">Urban Decay</h2>
+          <p class="event-description">Discussion on smart cities and tech.</p>
+          <p class="event-location">Location: Solaire, North Edsa</p>
+          <button>Register</button>
+        </div>
+      </li>
+
+      <li class="item" data-category="education" style="background-image: url('../assets/images/education-event.jpg')">
+        <span class="event-date">May 16, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">EdTalks 2025</h2>
+          <p class="event-description">Latest in education systems.</p>
+          <p class="event-location">Location: NU Fairview Campus</p>
+          <button>Register</button>
+        </div>
+      </li>
+
+      <li class="item" data-category="health" style="background-image: url('../assets/images/health-event.jpg')">
+        <span class="event-date">May 17, 2025</span>
+        <div class="event-content">
+          <h2 class="event-title">FitNation Conference</h2>
+          <p class="event-description">Fitness and wellness expo.</p>
+          <p class="event-location">Location: PICC, Manila</p>
+          <button>Register</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.querySelectorAll('.image-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const selectedCategory = card.getAttribute('data-category');
+        const items = document.querySelectorAll('#events-slider .item');
+
+        items.forEach(item => {
+          if (item.getAttribute('data-category') === selectedCategory) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        document.getElementById('events-slider').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    function showAllEvents() {
+      document.querySelectorAll('#events-slider .item').forEach(item => {
+        item.style.display = 'block';
+      });
+
+      document.getElementById('events-slider').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
 </body>
 </html>
