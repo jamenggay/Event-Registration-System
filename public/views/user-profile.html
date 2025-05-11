@@ -15,39 +15,59 @@
     <header>
         <div id="header"></div>
     </header>
+
     <div class="info_events_container">
         <div class="account_settings">
             <h2>Account Settings</h2>
             <div class="divider"></div>
         </div>
-        <div class = "user_info_container">
+
+        <div class="user_info_container">
             <div class="user_photo_container">
                 <div class="photo_container">
                     <img id="profilePreview" src="../assets/icons/profile-icon.jpeg" alt="Profile Photo">
-                    <input type="file" id="profileUpload" accept="image/*" style="display: none;">
+                    <input type="file" id="profileUpload" accept="image/*">
                     <button type="button" id="uploadButton" class="upload_button">
-                        <img src="../assets/icons/upload-icon.png" alt="Upload" class="upload_icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="upload_icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
                     </button>
                 </div>
             </div>
+
             <div class="user_details_container">
-                <div class="name_container">
-                    <div class="firstname_container">
-                    <label for="fname">First Name</label><br>
-                    <input type="text" id="fname" name="fname"><br><br>
-                    </div>
-                    <div class="lastname_container">
-                    <label for="lname">Last Name</label><br>
-                    <input type="text" id="lname" name="lname"><br><br>
-                    </div>
+                <div class="fullname_container">
+                    <label for="fullname">Full Name</label>
+                    <input type="text" id="fullname" name="fullname" class="preview-field" readonly placeholder="No name set">
                 </div>
+
+                <div class="username_container">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="preview-field" readonly placeholder="No username set">
+                </div>
+
+                <div class="email_container">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="preview-field" readonly placeholder="No email set">
+                </div>
+
+                <div class="mobile_container">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" id="mobile" name="mobile" pattern="[0-9]{11}" class="preview-field" readonly placeholder="No mobile number set">
+                </div>
+
                 <div class="bio_container">
-                    <label for="bio">Bio</label><br>
-                    <input type="text" id="bio" name="bio">
+                    <label for="bio">Bio</label>
+                    <input type="text" id="bio" name="bio" class="preview-field" readonly placeholder="No bio set">
                 </div>
-                <div class="change_password_container" onclick="openPasswordModal()">
-                    <label>Change Password</label><br>
-                    <p>Click to change your password</p>
+
+                <div class="edit_button_container">
+                    <button type="button" class="edit_button" onclick="openEditModal()">
+                        <img src="../assets/icons/edit-icon.png" alt="Edit" class="edit_icon">
+                        Edit Profile
+                    </button>
                 </div>
             </div>
         </div>
@@ -57,27 +77,101 @@
             <div class="divider"></div>
         </div>
         <div class="events_created_container">
-            <!-- Events will be listed here -->
+            <div class="event_container">
+                <div class="event_bg" style="background-image: url('https://99designs-blog.imgix.net/blog/wp-content/uploads/2018/12/Gradient_builder_2.jpg?auto=format&q=60&w=1815&h=1815&fit=crop&crop=faces')"></div>
+                <div class="event_info">
+                    <div class="event_title">
+                        <h4>Google Developer Groups on Campus</h4>
+                    </div>
+                    <div class="event_desc">
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                    </div>
+                    <div class="event_footer">
+                        <div class="event_date">
+                            <p>May 01, 2025</p>
+                        </div>
+                        <div class="event_more">
+                            <a href="#" class="events-card-button">Info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event_container">
+                <div class="event_bg" style="background-image: url('https://99designs-blog.imgix.net/blog/wp-content/uploads/2018/12/Gradient_builder_2.jpg?auto=format&q=60&w=1815&h=1815&fit=crop&crop=faces')"></div>
+                <div class="event_info">
+                    <div class="event_title">
+                        <h4>AWS Cloud Club Philippines</h4>
+                    </div>
+                    <div class="event_desc">
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                    </div>
+                    <div class="event_footer">
+                        <div class="event_date">
+                            <p>May 01, 2025</p>
+                        </div>
+                        <div class="event_more">
+                            <a href="#" class="events-card-button">Info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event_container">
+                <div class="event_bg" style="background-image: url('https://99designs-blog.imgix.net/blog/wp-content/uploads/2018/12/Gradient_builder_2.jpg?auto=format&q=60&w=1815&h=1815&fit=crop&crop=faces')"></div>
+                <div class="event_info">
+                    <div class="event_title">
+                        <h4>Devcon Manila</h4>
+                    </div>
+                    <div class="event_desc">
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                    </div>
+                    <div class="event_footer">
+                        <div class="event_date">
+                            <p>May 01, 2025</p>
+                        </div>
+                        <div class="event_more">
+                            <a href="#" class="events-card-button">Info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Change Password Modal -->
-    <div id="passwordModal" class="modal">
+    <div id="editProfileModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Change Password</h2>
-            <div class="password-fields">
-                <input type="password" id="oldPassword" name="oldPassword" placeholder="Current Password" required>
-                <input type="password" id="newPassword" name="newPassword" placeholder="New Password" required>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password" required>
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Profile</h2>
+            <div class="edit-fields">
+                <div class="edit-field">
+                    <label for="edit-fullname">Full Name</label>
+                    <input type="text" id="edit-fullname" name="edit-fullname" required placeholder="Enter your full name">
+                </div>
+                <div class="edit-field">
+                    <label for="edit-username">Username</label>
+                    <input type="text" id="edit-username" name="edit-username" required placeholder="Enter your username">
+                </div>
+                <div class="edit-field">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" name="edit-email" required placeholder="Enter your email address">
+                </div>
+                <div class="edit-field">
+                    <label for="edit-mobile">Mobile Number</label>
+                    <input type="tel" id="edit-mobile" name="edit-mobile" pattern="[0-9]{11}" required placeholder="Enter 11-digit mobile number">
+                </div>
+                <div class="edit-field">
+                    <label for="edit-bio">Bio</label>
+                    <textarea id="edit-bio" name="edit-bio" rows="4" placeholder="Tell us about yourself"></textarea>
+                </div>
+                <button type="button" class="save_button" onclick="saveProfile()">Save Changes</button>
             </div>
-            <button type="button" onclick="savePassword()">Save Changes</button>
         </div>
     </div>
 
     <footer>
         <div id="footer"></div>
-      </footer>
+    </footer>
 </body>
 </html>
     

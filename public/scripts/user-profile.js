@@ -3,130 +3,164 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileUpload = document.getElementById('profileUpload');
     const profilePreview = document.getElementById('profilePreview');
 
-    // Trigger file input when upload button is clicked
     uploadButton.addEventListener('click', () => {
         profileUpload.click();
     });
 
-    // Handle file selection
     profileUpload.addEventListener('change', function(e) {
         const file = e.target.files[0];
-        if (file) {
-            // Check if the file is an image
-            if (!file.type.startsWith('image/')) {
-                alert('Please select an image file');
-                return;
-            }
+        if (!file) return;
 
-            // Create a FileReader to read the image
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                // Update the preview image
-                profilePreview.src = e.target.result;
-            };
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
 
-            reader.onerror = function() {
-                console.error('Error reading file');
-                alert('Error reading file. Please try again.');
-            };
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            profilePreview.src = e.target.result;
+        };
 
-            // Read the file as a data URL
-            reader.readAsDataURL(file);
+        reader.onerror = function() {
+            console.error('Error reading file');
+            alert('Error reading file. Please try again.');
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validateMobile(mobile) {
+        return /^[0-9]{11}$/.test(mobile);
+    }
+
+    function showValidationMessage(input, message) {
+        const existingMessage = input.parentElement.querySelector('.validation-message');
+        if (existingMessage) {
+            existingMessage.textContent = message;
+        } else {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'validation-message';
+            messageElement.textContent = message;
+            input.parentElement.appendChild(messageElement);
+        }
+    }
+
+    function clearValidationMessage(input) {
+        const message = input.parentElement.querySelector('.validation-message');
+        if (message) {
+            message.remove();
+        }
+    }
+
+    const emailInput = document.getElementById('edit-email');
+    const mobileInput = document.getElementById('edit-mobile');
+
+    emailInput.addEventListener('input', function() {
+        if (this.value && !validateEmail(this.value)) {
+            showValidationMessage(this, 'Please enter a valid email address');
+        } else {
+            clearValidationMessage(this);
         }
     });
 
-    // Auto-expand textarea functionality
-    document.querySelectorAll('textarea').forEach((textarea) => {
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
+    mobileInput.addEventListener('input', function() {
+        if (this.value && !validateMobile(this.value)) {
+            showValidationMessage(this, 'Please enter a 11-digit mobile number');
+        } else {
+            clearValidationMessage(this);
+        }
     });
 
-    // Password Modal Functions
-    function openPasswordModal() {
-        const modal = document.getElementById('passwordModal');
-        modal.style.display = "block";
-        modal.classList.remove("hide");
-        modal.classList.add("show");
+    window.openEditModal = function() {
+        const modal = document.getElementById('editProfileModal');
+        
+        document.getElementById('edit-fullname').value = document.getElementById('fullname').value;
+        document.getElementById('edit-username').value = document.getElementById('username').value;
+        document.getElementById('edit-email').value = document.getElementById('email').value;
+        document.getElementById('edit-mobile').value = document.getElementById('mobile').value;
+        document.getElementById('edit-bio').value = document.getElementById('bio').value;
+
+        document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
+
+        modal.style.display = "flex";
+        setTimeout(() => modal.classList.add("show"), 10);
     }
 
-    function closePasswordModal() {
-        const modal = document.getElementById('passwordModal');
+    window.closeEditModal = function() {
+        const modal = document.getElementById('editProfileModal');
         modal.classList.remove("show");
-        modal.classList.add("hide");
         setTimeout(() => {
             modal.style.display = "none";
+            document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
         }, 300);
     }
 
-    // Add click event to change password container
-    document.querySelector('.change_password_container').addEventListener('click', openPasswordModal);
+    window.saveProfile = async function() {
+        const fullname = document.getElementById('edit-fullname').value;
+        const username = document.getElementById('edit-username').value;
+        const email = document.getElementById('edit-email').value;
+        const mobile = document.getElementById('edit-mobile').value;
+        const bio = document.getElementById('edit-bio').value;
 
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-        const modal = document.getElementById('passwordModal');
-        if (event.target === modal) {
-            closePasswordModal();
+        document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
+
+        let hasError = false;
+
+        if (!fullname) {
+            showValidationMessage(document.getElementById('edit-fullname'), 'Full name is required');
+            hasError = true;
         }
-    });
-
-    // Close button functionality
-    document.querySelector('.close').addEventListener('click', closePasswordModal);
-
-    // Handle password form submission
-    async function savePassword() {
-        const oldPassword = document.getElementById('oldPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        // Basic validation
-        if (!oldPassword || !newPassword || !confirmPassword) {
-            alert('Please fill in all password fields');
-            return;
+        if (!username) {
+            showValidationMessage(document.getElementById('edit-username'), 'Username is required');
+            hasError = true;
         }
-
-        if (newPassword !== confirmPassword) {
-            alert('New passwords do not match!');
-            return;
+        if (!email || !validateEmail(email)) {
+            showValidationMessage(document.getElementById('edit-email'), 'Valid email address is required');
+            hasError = true;
+        }
+        if (!mobile || !validateMobile(mobile)) {
+            showValidationMessage(document.getElementById('edit-mobile'), 'Valid 11-digit mobile number is required');
+            hasError = true;
         }
 
-        if (newPassword.length < 8) {
-            alert('New password must be at least 8 characters long!');
-            return;
-        }
+        if (hasError) return;
 
         try {
-            // Here you would typically make an API call to your backend
-            const response = await fetch('/api/change-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    oldPassword,
-                    newPassword
-                })
-            });
+            // TODO: Implement API call to save profile changes
+            
+            document.getElementById('fullname').value = fullname;
+            document.getElementById('username').value = username;
+            document.getElementById('email').value = email;
+            document.getElementById('mobile').value = mobile;
+            document.getElementById('bio').value = bio;
 
-            if (response.ok) {
-                alert('Password changed successfully!');
-                closePasswordModal();
-                // Clear the inputs
-                document.getElementById('oldPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-            } else {
-                const data = await response.json();
-                alert(data.message || 'Failed to change password. Please try again.');
-            }
+            closeEditModal();
         } catch (error) {
-            console.error('Error changing password:', error);
-            alert('An error occurred while changing the password. Please try again.');
+            console.error('Error saving profile:', error);
+            alert('Failed to save profile changes. Please try again.');
         }
     }
 
-    // Add click event to save button
-    document.querySelector('.modal-content button').addEventListener('click', savePassword);
+    window.addEventListener('click', (event) => {
+        const editModal = document.getElementById('editProfileModal');
+        if (event.target === editModal) {
+            closeEditModal();
+        }
+    });
+
+    document.querySelector('.close').addEventListener('click', function() {
+        closeEditModal();
+    });
+
+    document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    });
 });
