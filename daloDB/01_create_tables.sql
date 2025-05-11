@@ -60,3 +60,8 @@ CREATE TABLE feedbackTable (
     FOREIGN KEY (userID) REFERENCES userTable(userID),
     CONSTRAINT UNIQUE_feedback UNIQUE (eventID, userID) -- prevent duplicate feedback per user per event
 );
+
+ALTER TABLE eventsTable
+ADD
+    category VARCHAR(15),
+    allowWaitlist VARCHAR(3) CHECK (allowWaitlist IN ('Yes', 'No'));
