@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.warn("Not an image file.");
     }
   });
-
+  
   // Background Image Upload
   document.getElementById('imageUpload').addEventListener('change', function (event) {
     const file = event.target.files[0];
