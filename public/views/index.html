@@ -102,8 +102,8 @@
           e.preventDefault();
           
           const data = {
-            login_userName: document.getElementById('login_userName').value,
-            login_password: document.getElementById('login_password').value
+            userName: document.getElementById('login_userName').value,
+            password: document.getElementById('login_password').value
           };
 
           const response = await fetch("/login", {
@@ -115,6 +115,7 @@
           alert(result.message);
 
         if(result.success){
+          localStorage.setItem('currentUser', data.userName)
           window.location.href = "/events"
         }
 
