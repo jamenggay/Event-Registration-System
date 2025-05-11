@@ -42,12 +42,12 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-    const { userName, password } = req.body;
+    const { login_userName, login_password } = req.body;
 
     try {
         const result = await pool.request()
-            .input('userName', sql.VarChar, userName)
-            .query('SELECT * FROM userTABLE WHERE username = @userName')
+            .input('login_userName', sql.VarChar, login_userName)
+            .query('SELECT * FROM userTABLE WHERE username = @login_userName')
 
         const user = result.recordset[0]; //stores the result to user variable
         
@@ -57,7 +57,7 @@ app.post("/login", async (req, res) => {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
 
-        if (user.password !== password) {
+        if (user.password !== login_password) {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
         return res.json({ success: true, message: "Login success!" });
