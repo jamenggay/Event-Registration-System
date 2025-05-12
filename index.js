@@ -3,11 +3,9 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
-import multer from 'multer'
 import bodyParser from 'body-parser'
 import fs from 'fs'
 import cookieSession from 'cookie-session'
-
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
 //declaring app
@@ -19,7 +17,6 @@ const port = 3000;
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, "public")));
-const upload = multer({ dest : path.join(__dirname, 'public', 'uploads', 'featureImage') })
 app.use(cookieSession({
   name: 'session',
   keys: ['cooKey'], 
@@ -27,7 +24,7 @@ app.use(cookieSession({
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
-})
+});
 
 app.post("/register", async (req, res) => {
     const { email, mobileNum, fullName, userName, password } = req.body;
@@ -86,7 +83,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
-})
+});
 
 app.post("/create-events", async (req, res) => {   
     if (!req.session.user) {
@@ -171,11 +168,15 @@ app.post("/create-events", async (req, res) => {
         console.log("Event Creation Failed: ", e)
         return res.status(500).json({ message: "Event creation failed", error: e })
     }
-})
+});
 
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
-})
+});
+
+app.get("/discover", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
