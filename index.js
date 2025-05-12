@@ -3,7 +3,6 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
-import bodyParser from 'body-parser'
 import fs from 'fs'
 import cookieSession from 'cookie-session'
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
@@ -14,9 +13,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const port = 3000;
 
 //middleware setup
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(cookieSession({
   name: 'session',
   keys: ['cooKey'], 
@@ -127,7 +127,6 @@ app.post("/create-events", async (req, res) => {
             break
         }
     }
-    console.log(featureImageFileName)
 
     const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
 
@@ -176,6 +175,47 @@ app.get("/events", (req, res) => {
 
 app.get("/discover", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
+});
+
+app.get("/user-profile", (req, res) => { 
+    res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))  
+})
+
+app.get("/api/user-profile", (req, res, next) => {
+    if (req.headers['accept'] !== 'application/json') {
+    // redirect to user profile if endpoint directly accessed in url browser
+    return res.redirect('/user-profile'); 
+  }
+  next();
+})
+
+app.get("/api/user-profile", async (req, res) => {
+    const userID = req.session.user.id;
+
+    try {
+        const result = await pool.request()
+                        // .input('userID', sql.Int, userID)
+                        .query('SELECT * FROM userTable WHERE userID = 1')
+
+        if (!result) {
+            console.log("No user found.")
+            return
+        }
+
+        const userData = { 
+            fullname        : result.recordset[0].fullName,
+            username        : result.recordset[0].username,
+            email           : result.recordset[0].email,
+            mobileNumber    : result.recordset[0].mobileNumber
+        }
+
+        console.log("User profile extraction success.")
+        return res.status(200).json(userData)
+    }
+    catch (e) {
+        console.log("User profile extraction failed.")
+        return res.status(500).json({ message: 'User profile extration failed'})
+    }
 });
 
 app.listen(port, () => {
