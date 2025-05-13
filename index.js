@@ -85,17 +85,18 @@ app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 });
 
-app.post("/create-events", async (req, res) => {   
-    if (!req.session.user) {
-        return res.status(401).json({ message: 'Unauthorized'});
+app.post("/create-events", async (req, res) => { 
+    const creatorID = req.session.user.id;
+  
+    if (!creatorID) {
+        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
     
-    const creatorID = req.session.user.id;
-
     const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
             startDateTime, endDateTime, location, description, category, 
-            feedback, requireApproval, capacity, allowWaitlist, lastUpdated} = req.body
+            feedback, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body
 
+    // convert base64 string of featureImage into binary
     function getBinaryValue(base64FeatureImage) {
         const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
         const response = {};
@@ -119,6 +120,7 @@ app.post("/create-events", async (req, res) => {
     let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
     let featureImageFileName = `${imageFileName}.${imageFileExtension}`
 
+    // checks for image duplication in uploads/featureImage folder
     for (let i = 1; i <= uploadsfeatureImagesFileName.length; i++) {
         if (uploadsfeatureImagesFileName.includes(featureImageFileName)) {
             featureImageFileName = `${imageFileName} (${i}).${imageFileExtension}`
@@ -130,6 +132,7 @@ app.post("/create-events", async (req, res) => {
 
     const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
 
+    // saves featureImage in uploads/featureImage folder
     fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
         if (error) { 
             console.log("Image Creation Failed: ", error) 
@@ -182,24 +185,29 @@ app.get("/user-profile", (req, res) => {
 })
 
 app.get("/api/user-profile", (req, res, next) => {
+    // redirect to /user-profile if endpoint directly accessed in url browser
     if (req.headers['accept'] !== 'application/json') {
-    // redirect to user profile if endpoint directly accessed in url browser
     return res.redirect('/user-profile'); 
   }
+
   next();
 })
 
 app.get("/api/user-profile", async (req, res) => {
     const userID = req.session.user.id;
 
+    if (!userID) {
+        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
+    }
+
     try {
         const result = await pool.request()
-                        // .input('userID', sql.Int, userID)
-                        .query('SELECT * FROM userTable WHERE userID = 1')
+                        .input('userID', sql.Int, userID)
+                        .query('SELECT * FROM userTable WHERE userID = @userID')
 
-        if (!result) {
-            console.log("No user found.")
-            return
+        if (!result?.recordset || result.recordset.length === 0) {
+            console.log("User not found.")
+            return res.status(404).json({ message : 'User not found.'})
         }
 
         const userData = { 
@@ -213,8 +221,40 @@ app.get("/api/user-profile", async (req, res) => {
         return res.status(200).json(userData)
     }
     catch (e) {
-        console.log("User profile extraction failed.")
-        return res.status(500).json({ message: 'User profile extration failed'})
+        console.log("User profile extraction failed: ", e)
+        return res.status(500).json({ message: 'User profile extration failed', error : e})
+    }
+});
+
+app.put("/user-profile", async (req, res) => {
+    const userID = req.session.user.id;
+
+    if (!userID) {
+        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
+    }
+
+    const { fullname, username, email, mobile, bio } = req.body
+
+    try {
+        await pool.request()
+            .input('userID', sql.Int, userID)
+            .input('fullname', sql.VarChar, fullname)
+            .input('username', sql.VarChar, username)
+            .input('email', sql.VarChar, email)
+            .input('mobileNum', sql.VarChar, mobile)
+            .query(`UPDATE userTable 
+                    SET fullName = @fullname, 
+                        username = @username,
+                        email = @email,
+                        mobileNumber = @mobileNum
+                    WHERE userID = @userID`);
+        
+            console.log("User information update success.")
+            return res.status(200).json({ message : "User information updated."})
+    }
+    catch (e) {
+        console.log("User information update failed.")
+        return res.status(500).json({ message : "User information update failed."})
     }
 });
 
