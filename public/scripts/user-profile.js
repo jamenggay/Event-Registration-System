@@ -1,4 +1,27 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    window.updatedUserData = {};
+
+    let userData = null
+
+    try {
+        userData = await window.originalUserDataReady;
+    } 
+    catch (e) {
+        console.error("Failed to load user data:", e);
+    }
+
+    const fullname = document.getElementById('fullname');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const mobile = document.getElementById('mobile');
+    const bio = document.getElementById('bio');
+
+    fullname.value = userData.fullname;
+    username.value = userData.username;
+    email.value = userData.email;
+    mobile.value = userData.mobileNumber;
+    bio.value = userData.bio || "";
+
     const uploadButton = document.getElementById('uploadButton');
     const profileUpload = document.getElementById('profileUpload');
     const profilePreview = document.getElementById('profilePreview');
@@ -29,6 +52,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
         reader.readAsDataURL(file);
     });
+
+    // const rawProfilePic = document.getElementById('profileUpload').files[0]
+    // console.log(rawProfilePic)
+
+    // const getBase64 = rawProfilePic => new Promise((resolve, reject) => {
+    //       const reader = new FileReader();
+    //       reader.readAsDataURL(rawProfilePic);
+    //       reader.onload = () => resolve(reader.result);
+    //       reader.onerror = reject;
+    //   });
+
+    // const profilePic = await getBase64(rawProfilePic)
+    // const imageFileName = rawProfilePic.name.replace(/\.[^/.]+$/, '')
+    // const imageFileExtension = rawProfilePic.name.split('.').pop().toLowerCase()
+
+    // window.updatedUserData.base64FProfilePic  = profilePic
+    // window.updatedUserData.imageFileName = imageFileName
+    // window.updatedUserData.imageFileExtension = imageFileExtension
+
+    // console.log(window.updatedUserData.base64FProfilePic, window.updatedUserData.imageFileName,
+    //     window.updatedUserData.imageFileExtension
+    // )
 
     function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -79,11 +124,11 @@ document.addEventListener('DOMContentLoaded', function() {
     window.openEditModal = function() {
         const modal = document.getElementById('editProfileModal');
         
-        document.getElementById('edit-fullname').value = document.getElementById('fullname').value;
-        document.getElementById('edit-username').value = document.getElementById('username').value;
-        document.getElementById('edit-email').value = document.getElementById('email').value;
-        document.getElementById('edit-mobile').value = document.getElementById('mobile').value;
-        document.getElementById('edit-bio').value = document.getElementById('bio').value;
+        document.getElementById('edit-fullname').value = fullname.value;
+        document.getElementById('edit-username').value = username.value;
+        document.getElementById('edit-email').value = email.value;
+        document.getElementById('edit-mobile').value = mobile.value;
+        document.getElementById('edit-bio').value = bio.value;
 
         document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
 
@@ -101,29 +146,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.saveProfile = async function() {
-        const fullname = document.getElementById('edit-fullname').value;
-        const username = document.getElementById('edit-username').value;
-        const email = document.getElementById('edit-email').value;
-        const mobile = document.getElementById('edit-mobile').value;
-        const bio = document.getElementById('edit-bio').value;
+        const new_fullname = document.getElementById('edit-fullname').value;
+        const new_username = document.getElementById('edit-username').value;
+        const new_email = document.getElementById('edit-email').value;
+        const new_mobile = document.getElementById('edit-mobile').value; 
+        const new_bio = document.getElementById('edit-bio').value || '';
 
         document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
 
         let hasError = false;
 
-        if (!fullname) {
+        if (!new_fullname) {
             showValidationMessage(document.getElementById('edit-fullname'), 'Full name is required');
             hasError = true;
         }
-        if (!username) {
+        if (!new_username) {
             showValidationMessage(document.getElementById('edit-username'), 'Username is required');
             hasError = true;
         }
-        if (!email || !validateEmail(email)) {
+        if (!new_email || !validateEmail(new_email)) {
             showValidationMessage(document.getElementById('edit-email'), 'Valid email address is required');
             hasError = true;
         }
-        if (!mobile || !validateMobile(mobile)) {
+        if (!new_mobile || !validateMobile(new_mobile)) {
             showValidationMessage(document.getElementById('edit-mobile'), 'Valid 11-digit mobile number is required');
             hasError = true;
         }
@@ -132,13 +177,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // TODO: Implement API call to save profile changes
-            
-            document.getElementById('fullname').value = fullname;
-            document.getElementById('username').value = username;
-            document.getElementById('email').value = email;
-            document.getElementById('mobile').value = mobile;
-            document.getElementById('bio').value = bio;
+            fullname.value = new_fullname;
+            username.value = new_username;
+            email.value = new_email;
+            mobile.value = new_mobile;
+            bio.value = new_bio;
 
+            window.updatedUserData.fullname = fullname.value,
+            window.updatedUserData.username = username.value,
+            window.updatedUserData.email = email.value,
+            window.updatedUserData.mobile = mobile.value,
+            window.updatedUserData.bio = bio.value
+
+            console.log(window.updatedUserData)
             closeEditModal();
         } catch (error) {
             console.error('Error saving profile:', error);
