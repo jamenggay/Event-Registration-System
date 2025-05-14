@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
 import fs from 'fs'
 import cookieSession from 'cookie-session'
+import { error } from "console";
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
 //declaring app
@@ -139,10 +140,12 @@ app.post("/create-events", async (req, res) => {
         }
     });
 
+    const publicFeatureImagePath = `/uploads/profilePic/${featureImageFileName}`;
+
     try {
         await pool.request()
             .input('creatorID', sql.Int, creatorID)
-            .input('featureImage', sql.VarChar, featureImagePath)
+            .input('featureImage', sql.VarChar, publicFeatureImagePath)
             .input('eventName', sql.VarChar, eventName)
             .input('startDateTime', sql.DateTime, startDateTime)
             .input('endDateTime', sql.DateTime, endDateTime) 
@@ -211,10 +214,11 @@ app.get("/api/user-profile", async (req, res) => {
         }
 
         const userData = { 
-            fullname        : result.recordset[0].fullName,
-            username        : result.recordset[0].username,
-            email           : result.recordset[0].email,
-            mobileNumber    : result.recordset[0].mobileNumber
+            fullname     : result.recordset[0].fullName,
+            username     : result.recordset[0].username,
+            email        : result.recordset[0].email,
+            mobileNumber : result.recordset[0].mobileNumber,
+            profilePic   : result.recordset[0].profilePic
         }
 
         console.log("User profile extraction success.")
@@ -233,28 +237,93 @@ app.put("/user-profile", async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
 
-    const { fullname, username, email, mobile, bio } = req.body
+    const { base64ProfilePic, imageFileName, imageFileExtension, fullname, username, email, mobile, bio } = req.body
 
-    try {
-        await pool.request()
-            .input('userID', sql.Int, userID)
-            .input('fullname', sql.VarChar, fullname)
-            .input('username', sql.VarChar, username)
-            .input('email', sql.VarChar, email)
-            .input('mobileNum', sql.VarChar, mobile)
-            .query(`UPDATE userTable 
-                    SET fullName = @fullname, 
-                        username = @username,
-                        email = @email,
-                        mobileNumber = @mobileNum
-                    WHERE userID = @userID`);
+    if (base64ProfilePic) {
+        // convert base64 string of profilePic into binary
+        function getBinaryValue(base64ProfilePic) {
+            const matches = base64ProfilePic.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+            const response = {};
+
+            if (!matches || matches.length !== 3) {
+                console.log('Invalid input string');
+                return null;
+            }
+
+            response.type = matches[1];
+            response.data = Buffer.from(matches[2], 'base64');
+
+            return response;
+        }
+
+        const binaryProfilePic = getBinaryValue(base64ProfilePic);
+
+        if (!binaryProfilePic) {
+            return res.json({ message: 'Invalid image format.' });
+        }
         
-            console.log("User information update success.")
-            return res.status(200).json({ message : "User information updated."})
+        let uploadsProfilePicFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'profilePic'))
+        let profilePicFileName = `${imageFileName}.${imageFileExtension}`
+
+        // checks for image duplication in uploads/profilePic folder
+        for (let i = 1; i <= uploadsProfilePicFileName.length; i++) {
+            if (uploadsProfilePicFileName.includes(profilePicFileName)) {
+                profilePicFileName = `${imageFileName} (${i}).${imageFileExtension}`
+            }
+            else {
+                break
+            }
+        }
+
+        const profilePicPath = path.join(__dirname, 'public', 'uploads', 'profilePic', `${profilePicFileName}`);
+
+        // saves profilePic in uploads/profilePic folder
+        fs.writeFile(profilePicPath, binaryProfilePic.data, (error) => { 
+            if (error) { 
+                console.log("Image Creation Failed: ", error) 
+            }
+        });
+
+        const publicProfilePicPath = `/uploads/profilePic/${profilePicFileName}`;
+
+        try {
+            await pool.request()
+                .input('userID', sql.Int, userID)
+                .input('profilePic', sql.VarChar, publicProfilePicPath)
+                .query(`UPDATE userTable 
+                        SET profilePic = @profilePic
+                        WHERE userID = @userID`);
+            
+                console.log("User pfp update success.")
+                return res.status(200).json({ message : "User pfp updated."})
+        }
+        catch (e) {
+            console.log("User pfp update failed: ", e)
+            return res.status(500).json({ message : "User pfp update failed.", error : e})
+        }
     }
-    catch (e) {
-        console.log("User information update failed.")
-        return res.status(500).json({ message : "User information update failed."})
+    else if (fullname || username || email || mobile || bio ) {
+        try {
+            await pool.request()
+                .input('userID', sql.Int, userID)
+                .input('fullname', sql.VarChar, fullname)
+                .input('username', sql.VarChar, username)
+                .input('email', sql.VarChar, email)
+                .input('mobileNum', sql.VarChar, mobile)
+                .query(`UPDATE userTable 
+                        SET fullName = @fullname, 
+                            username = @username,
+                            email = @email,
+                            mobileNumber = @mobileNum
+                        WHERE userID = @userID`);
+            
+                console.log("User information update success.")
+                return res.status(200).json({ message : "User information updated."})
+        }
+        catch (e) {
+            console.log("User information update failed: ", e)
+            return res.status(500).json({ message : "User information update failed.", error : e})
+        }
     }
 });
 
