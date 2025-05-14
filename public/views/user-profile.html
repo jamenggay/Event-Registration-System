@@ -172,8 +172,8 @@
     <footer>
         <div id="footer"></div>
     </footer>
-    <script defer>
-        window.originalUserDataReady = new Promise(async (resolve, reject) => { 
+    <script>
+        window.userDataReady = new Promise(async (resolve, reject) => { 
             try {
                 const response = await fetch("/api/user-profile", {
                     method: "GET",
@@ -196,10 +196,10 @@
                 reject("Client Error: ", e);
             }
         }) 
-
-        const updateButton = document.getElementById('save-button')
         
-        updateButton.addEventListener('click', async (event) => {
+        const saveChangesButton = document.getElementById('save-button')
+        
+        saveChangesButton.addEventListener('click', async (event) => {
             event.preventDefault();
 
             try {
