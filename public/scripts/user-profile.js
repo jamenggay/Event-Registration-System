@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let userData = null
 
     try {
-        userData = await window.originalUserDataReady;
+        userData = await window.userDataReady;
     } 
     catch (e) {
         console.error("Failed to load user data:", e);
@@ -15,13 +15,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     const email = document.getElementById('email');
     const mobile = document.getElementById('mobile');
     const bio = document.getElementById('bio');
+    const profilePic = document.getElementById('profilePreview');
 
     fullname.value = userData.fullname;
     username.value = userData.username;
     email.value = userData.email;
     mobile.value = userData.mobileNumber;
     bio.value = userData.bio || "";
-
+    profilePic.src = userData.profilePic 
+    profilePic.onerror =  function() {
+        this.onerror = null; // prevent infinite loop if fallback fails
+        this.src = "../assets/icons/profile-icon.jpeg";
+    };
+    
     const uploadButton = document.getElementById('uploadButton');
     const profileUpload = document.getElementById('profileUpload');
     const profilePreview = document.getElementById('profilePreview');
@@ -30,8 +36,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         profileUpload.click();
     });
 
-    profileUpload.addEventListener('change', function(e) {
-        const file = e.target.files[0];
+    profileUpload.addEventListener('change', async function(e) {
+        let file = e.target.files[0];
+
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
@@ -39,41 +46,56 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        const reader = new FileReader();
+        const getBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
         
-        reader.onload = function(e) {
-            profilePreview.src = e.target.result;
-        };
+            reader.onload = function(e) {
+                profilePreview.src = e.target.result;
+                resolve(reader.result)
+            };
 
-        reader.onerror = function() {
-            console.error('Error reading file');
-            alert('Error reading file. Please try again.');
-        };
+            reader.onerror = function() {
+                console.error('Error reading file');
+                alert('Error reading file. Please try again.');
+            };
 
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+        })
+
+        let profilePic = await getBase64(file)
+        let imageFileName = file.name.replace(/\.[^/.]+$/, '')
+        let imageFileExtension = file.name.split('.').pop().toLowerCase()
+
+        window.updatedUserData.base64ProfilePic = profilePic
+        window.updatedUserData.imageFileName = imageFileName
+        window.updatedUserData.imageFileExtension = imageFileExtension
+
+        console.log("Pfp Details: ", window.updatedUserData)
+        
+        try {
+            const response = await fetch("/user-profile", {
+                method: "PUT",
+                headers: { 'Content-Type' : 'application/json'},
+                body: JSON.stringify(window.updatedUserData)
+            })
+
+            if (response.ok) {
+                const result = await response.json()
+                console.log("Server Success: ", result)
+                alert("User profile edit success.")
+            }
+            else {
+                const result = await response.json();
+                console.log("Server Failed: ", result)
+                alert("User profile edit failed.")
+            }
+        }
+        catch (e) {
+            console.log("Client Error: ", e)
+            alert("An error occurred while updating user info.");
+        }
     });
 
-    // const rawProfilePic = document.getElementById('profileUpload').files[0]
-    // console.log(rawProfilePic)
-
-    // const getBase64 = rawProfilePic => new Promise((resolve, reject) => {
-    //       const reader = new FileReader();
-    //       reader.readAsDataURL(rawProfilePic);
-    //       reader.onload = () => resolve(reader.result);
-    //       reader.onerror = reject;
-    //   });
-
-    // const profilePic = await getBase64(rawProfilePic)
-    // const imageFileName = rawProfilePic.name.replace(/\.[^/.]+$/, '')
-    // const imageFileExtension = rawProfilePic.name.split('.').pop().toLowerCase()
-
-    // window.updatedUserData.base64FProfilePic  = profilePic
-    // window.updatedUserData.imageFileName = imageFileName
-    // window.updatedUserData.imageFileExtension = imageFileExtension
-
-    // console.log(window.updatedUserData.base64FProfilePic, window.updatedUserData.imageFileName,
-    //     window.updatedUserData.imageFileExtension
-    // )
 
     function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -189,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             window.updatedUserData.mobile = mobile.value,
             window.updatedUserData.bio = bio.value
 
-            console.log(window.updatedUserData)
+            console.log("User Details: ", window.updatedUserData)
             closeEditModal();
         } catch (error) {
             console.error('Error saving profile:', error);
