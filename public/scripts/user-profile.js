@@ -148,8 +148,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('click', (event) => {
         const editModal = document.getElementById('editProfileModal');
+        const changePasswordModal = document.getElementById('changePasswordModal');
         if (event.target === editModal) {
             closeEditModal();
+        }
+        if (event.target === changePasswordModal) {
+            closeChangePasswordModal();
         }
     });
 
@@ -162,5 +166,83 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.height = 'auto';
             this.style.height = this.scrollHeight + 'px';
         });
+    });
+
+    window.openChangePasswordModal = function() {
+        const modal = document.getElementById('changePasswordModal');
+        
+        // Clear password fields
+        document.getElementById('current-password').value = '';
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-password').value = '';
+
+        document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
+        
+        modal.style.display = "flex";
+        setTimeout(() => modal.classList.add("show"), 10);
+        
+        // Close the edit profile modal
+        closeEditModal();
+    }
+
+    window.closeChangePasswordModal = function() {
+        const modal = document.getElementById('changePasswordModal');
+        modal.classList.remove("show");
+        setTimeout(() => {
+            modal.style.display = "none";
+            document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
+        }, 300);
+    }
+
+    window.savePasswordChange = async function() {
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
+
+        let hasError = false;
+
+        if (!currentPassword) {
+            showValidationMessage(document.getElementById('current-password'), 'Current password is required');
+            hasError = true;
+        }
+        if (!newPassword) {
+            showValidationMessage(document.getElementById('new-password'), 'New password is required');
+            hasError = true;
+        }
+        if (!confirmPassword) {
+            showValidationMessage(document.getElementById('confirm-password'), 'Please confirm your new password');
+            hasError = true;
+        }
+        if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+            showValidationMessage(document.getElementById('confirm-password'), 'Passwords do not match');
+            hasError = true;
+        }
+        if (newPassword && newPassword.length < 8) {
+            showValidationMessage(document.getElementById('new-password'), 'Password must be at least 8 characters long');
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        try {
+            // TODO: Implement API call to change password
+            const passwordData = {
+                currentPassword,
+                newPassword
+            };
+            
+            // If successful, close the modal
+            closeChangePasswordModal();
+            alert('Password updated successfully!');
+        } catch (error) {
+            console.error('Error changing password:', error);
+            alert('Failed to change password. Please try again.');
+        }
+    }
+
+    document.querySelector('#changePasswordModal .close').addEventListener('click', function() {
+        closeChangePasswordModal();
     });
 });
