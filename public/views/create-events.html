@@ -32,7 +32,7 @@
     
     <div class="event_details">
       <form id="eventForm" enctype="multipart/form-data">
-        <input type="file" id="imageUpload" name="event-image" accept="image/*" style="display: none;" />
+        <input type="file" id="imageUpload" name="event-image" accept="image/*" style="display: none;"/>
         <input type="hidden" name="event-name" id="hiddenEventName">
         <div class="event_name-wrapper">
           <h1 class="event_name" contenteditable="true">Event Name</h1>
@@ -181,6 +181,11 @@
     eventForm.addEventListener('submit', async (e) => {
       e.preventDefault()
 
+      if (!document.getElementById('imageUpload').files || document.getElementById('imageUpload').files.length === 0) {
+        alert("Please upload an image.");
+        return
+      }
+
       const rawFeatureImage = document.getElementById('imageUpload').files[0]
 
       const getBase64 = rawFeatureImage => new Promise((resolve, reject) => {
@@ -205,8 +210,8 @@
 
       const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
       const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
-      const requireApproval = document.getElementById('require-approval').checked === 'on' ? 'Yes' : 'No'
-      const waitlistToggle  = document.getElementById('waitlistToggle').checked === 'on' ? 'Yes' : 'No'
+      const requireApproval = document.getElementById('require-approval').value === 'on' ? 'Yes' : 'No'
+      const waitlistToggle  = document.getElementById('waitlistToggle').value === 'on' ? 'Yes' : 'No'
       const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
 
       const eventData = {
