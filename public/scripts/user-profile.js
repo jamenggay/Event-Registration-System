@@ -10,6 +10,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error("Failed to load user data:", e);
     }
 
+    let userEventsCreated = null
+
+    try {
+        userEventsCreated = await window.userEventsCreatedReady;
+    } 
+    catch (e) {
+        console.error("Failed to load user data:", e);
+    }
+
+    console.log(userEventsCreated)
+
     const fullname = document.getElementById('fullname');
     const username = document.getElementById('username');
     const email = document.getElementById('email');
@@ -236,4 +247,30 @@ document.addEventListener('DOMContentLoaded', async function() {
             this.style.height = this.scrollHeight + 'px';
         });
     });
+
+    // if (!userData.eventsCreated.length == 0) {
+    //     const eventsCreatedContainer = document.querySelector('.events_created_container')
+
+    //     eventsCreatedContainer.innerHTML = `
+    //         <div class="event_container">
+    //             <div class="event_bg" style="background-image: url('https://99designs-blog.imgix.net/blog/wp-content/uploads/2018/12/Gradient_builder_2.jpg?auto=format&q=60&w=1815&h=1815&fit=crop&crop=faces')"></div>
+    //             <div class="event_info">
+    //                 <div class="event_title">
+    //                     <h4></h4>
+    //                 </div>
+    //                 <div class="event_desc">
+    //                     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+    //                 </div>
+    //                 <div class="event_footer">
+    //                     <div class="event_date">
+    //                         <p>May 01, 2025</p>
+    //                     </div>
+    //                     <div class="event_more">
+    //                         <a href="#" class="events-card-button">Info</a>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     `
+    // }
 });
