@@ -87,9 +87,9 @@ app.get("/create-events", (req, res) => {
 });
 
 app.post("/create-events", async (req, res) => { 
-    const creatorID = req.session.user.id;
+    const userID = req.session.user.id;
   
-    if (!creatorID) {
+    if (!userID) {
         return res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
     
@@ -144,7 +144,7 @@ app.post("/create-events", async (req, res) => {
 
     try {
         await pool.request()
-            .input('creatorID', sql.Int, creatorID)
+            .input('creatorID', sql.Int, userID)
             .input('featureImage', sql.VarChar, publicFeatureImagePath)
             .input('eventName', sql.VarChar, eventName)
             .input('startDateTime', sql.DateTime, startDateTime)
@@ -187,16 +187,16 @@ app.get("/user-profile", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))  
 })
 
-app.get("/api/user-profile", (req, res, next) => {
+app.get("/user-info", (req, res, next) => {
     // redirect to /user-profile if endpoint directly accessed in url browser
     if (req.headers['accept'] !== 'application/json') {
-    return res.redirect('/user-profile'); 
+    return res.redirect('/user-info'); 
   }
 
   next();
 })
 
-app.get("/api/user-profile", async (req, res) => {
+app.get("/user-info", async (req, res) => {
     const userID = req.session.user.id;
 
     if (!userID) {
@@ -206,7 +206,9 @@ app.get("/api/user-profile", async (req, res) => {
     try {
         const result = await pool.request()
                         .input('userID', sql.Int, userID)
-                        .query('SELECT * FROM userTable WHERE userID = @userID')
+                        .query(`SELECT * 
+                                FROM userTable 
+                                WHERE userID = @userID`)
 
         if (!result?.recordset || result.recordset.length === 0) {
             console.log("User not found.")
@@ -214,11 +216,11 @@ app.get("/api/user-profile", async (req, res) => {
         }
 
         const userData = { 
-            fullname     : result.recordset[0].fullName,
-            username     : result.recordset[0].username,
-            email        : result.recordset[0].email,
-            mobileNumber : result.recordset[0].mobileNumber,
-            profilePic   : result.recordset[0].profilePic
+            fullname      : result.recordset[0].fullName,
+            username      : result.recordset[0].username,
+            email         : result.recordset[0].email,
+            mobileNumber  : result.recordset[0].mobileNumber,
+            profilePic    : result.recordset[0].profilePic,
         }
 
         console.log("User profile extraction success.")
@@ -230,6 +232,41 @@ app.get("/api/user-profile", async (req, res) => {
     }
 });
 
+app.get("/user-events-created", async (req, res) => {
+    const userID = req.session.user.id;
+
+    if (!userID) {
+        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
+    }
+
+    try {
+        const result = await pool.request()
+                        .input('userID', sql.Int, userID)
+                        .query(`SELECT * 
+                                FROM eventsTable 
+                                WHERE creatorID = @userID`)
+
+        if (!result?.recordset || result.recordset.length === 0) {
+            console.log("User not found.")
+            return res.status(404).json({ message : 'User not found.'})
+        }
+
+        const userData = {
+            eventsCreated : result.recordset.map(event => ({
+                                                eventName: event.eventName,
+                                                description: event.description }))
+        }
+
+        console.log("User events created extraction success.")
+        return res.status(200).json(userData)
+    }
+    catch (e) {
+        console.log("User events created extraction failed: ", e)
+        return res.status(500).json({ message: 'User events created extration failed', error : e})
+    }
+});
+
+// separate update route for pfp and user info
 app.put("/user-profile", async (req, res) => {
     const userID = req.session.user.id;
 
