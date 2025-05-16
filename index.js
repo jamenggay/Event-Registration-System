@@ -140,7 +140,7 @@ app.post("/create-events", async (req, res) => {
         }
     });
 
-    const publicFeatureImagePath = `/uploads/profilePic/${featureImageFileName}`;
+    const publicFeatureImagePath = `/uploads/featureImage/${featureImageFileName}`;
 
     try {
         await pool.request()
@@ -251,14 +251,24 @@ app.get("/user-events-created", async (req, res) => {
             return res.status(404).json({ message : 'User not found.'})
         }
 
-        const userData = {
-            eventsCreated : result.recordset.map(event => ({
-                                                eventName: event.eventName,
-                                                description: event.description }))
-        }
+        const eventsData = result.recordset.map(event => ({
+                                                eventID         : event.eventID,
+                                                eventName       : event.eventName,
+                                                description     : event.description,
+                                                location        : event.location,
+                                                startDateTime   : event.startDateTime,
+                                                endDateTime     : event.endDateTime, 
+                                                featureImage    : event.featureImage,
+                                                requireApproval : event.requireApproval,
+                                                capacity        : event.capacity,
+                                                feedbackLink    : event.feedbackLink,
+                                                lastUpdated     : event.lastUpdated,
+                                                category        : event.category,
+                                                allowWaitlist   : event.allowWaitlist
+                                            }))
 
         console.log("User events created extraction success.")
-        return res.status(200).json(userData)
+        return res.status(200).json(eventsData)
     }
     catch (e) {
         console.log("User events created extraction failed: ", e)
@@ -266,7 +276,78 @@ app.get("/user-events-created", async (req, res) => {
     }
 });
 
-// separate update route for pfp and user info
+app.patch("/user-pfp", async (req, res) => {
+    const userID = req.session.user.id;
+
+    if (!userID) {
+        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
+    }
+
+    const { base64ProfilePic, imageFileName, imageFileExtension } = req.body
+
+    // convert base64 string of profilePic into binary
+    function getBinaryValue(base64ProfilePic) {
+        const matches = base64ProfilePic.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+        const response = {};
+
+        if (!matches || matches.length !== 3) {
+            console.log('Invalid input string');
+            return null;
+        }
+
+        response.type = matches[1];
+        response.data = Buffer.from(matches[2], 'base64');
+
+        return response;
+    }
+
+    const binaryProfilePic = getBinaryValue(base64ProfilePic);
+
+    if (!binaryProfilePic) {
+        return res.json({ message: 'Invalid image format.' });
+    }
+    
+    let uploadsProfilePicFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'profilePic'))
+    let profilePicFileName = `${imageFileName}.${imageFileExtension}`
+
+    // checks for image duplication in uploads/profilePic folder
+    for (let i = 1; i <= uploadsProfilePicFileName.length; i++) {
+        if (uploadsProfilePicFileName.includes(profilePicFileName)) {
+            profilePicFileName = `${imageFileName} (${i}).${imageFileExtension}`
+        }
+        else {
+            break
+        }
+    }
+
+    const profilePicPath = path.join(__dirname, 'public', 'uploads', 'profilePic', `${profilePicFileName}`);
+
+    // saves profilePic in uploads/profilePic folder
+    fs.writeFile(profilePicPath, binaryProfilePic.data, (error) => { 
+        if (error) { 
+            console.log("Image Creation Failed: ", error) 
+        }
+    });
+
+    const publicProfilePicPath = `/uploads/profilePic/${profilePicFileName}`;
+
+    try {
+        await pool.request()
+            .input('userID', sql.Int, userID)
+            .input('profilePic', sql.VarChar, publicProfilePicPath)
+            .query(`UPDATE userTable 
+                    SET profilePic = @profilePic
+                    WHERE userID = @userID`);
+        
+            console.log("User pfp update success.")
+            return res.status(200).json({ message : "User pfp updated."})
+    }
+    catch (e) {
+        console.log("User pfp update failed: ", e)
+        return res.status(500).json({ message : "User pfp update failed.", error : e})
+    }
+});
+
 app.put("/user-profile", async (req, res) => {
     const userID = req.session.user.id;
 
@@ -274,93 +355,28 @@ app.put("/user-profile", async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
 
-    const { base64ProfilePic, imageFileName, imageFileExtension, fullname, username, email, mobile, bio } = req.body
+    const { fullname, username, email, mobile, bio } = req.body
 
-    if (base64ProfilePic) {
-        // convert base64 string of profilePic into binary
-        function getBinaryValue(base64ProfilePic) {
-            const matches = base64ProfilePic.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
-            const response = {};
-
-            if (!matches || matches.length !== 3) {
-                console.log('Invalid input string');
-                return null;
-            }
-
-            response.type = matches[1];
-            response.data = Buffer.from(matches[2], 'base64');
-
-            return response;
-        }
-
-        const binaryProfilePic = getBinaryValue(base64ProfilePic);
-
-        if (!binaryProfilePic) {
-            return res.json({ message: 'Invalid image format.' });
-        }
+    try {
+        await pool.request()
+            .input('userID', sql.Int, userID)
+            .input('fullname', sql.VarChar, fullname)
+            .input('username', sql.VarChar, username)
+            .input('email', sql.VarChar, email)
+            .input('mobileNum', sql.VarChar, mobile)
+            .query(`UPDATE userTable 
+                    SET fullName = @fullname, 
+                        username = @username,
+                        email = @email,
+                        mobileNumber = @mobileNum
+                    WHERE userID = @userID`);
         
-        let uploadsProfilePicFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'profilePic'))
-        let profilePicFileName = `${imageFileName}.${imageFileExtension}`
-
-        // checks for image duplication in uploads/profilePic folder
-        for (let i = 1; i <= uploadsProfilePicFileName.length; i++) {
-            if (uploadsProfilePicFileName.includes(profilePicFileName)) {
-                profilePicFileName = `${imageFileName} (${i}).${imageFileExtension}`
-            }
-            else {
-                break
-            }
-        }
-
-        const profilePicPath = path.join(__dirname, 'public', 'uploads', 'profilePic', `${profilePicFileName}`);
-
-        // saves profilePic in uploads/profilePic folder
-        fs.writeFile(profilePicPath, binaryProfilePic.data, (error) => { 
-            if (error) { 
-                console.log("Image Creation Failed: ", error) 
-            }
-        });
-
-        const publicProfilePicPath = `/uploads/profilePic/${profilePicFileName}`;
-
-        try {
-            await pool.request()
-                .input('userID', sql.Int, userID)
-                .input('profilePic', sql.VarChar, publicProfilePicPath)
-                .query(`UPDATE userTable 
-                        SET profilePic = @profilePic
-                        WHERE userID = @userID`);
-            
-                console.log("User pfp update success.")
-                return res.status(200).json({ message : "User pfp updated."})
-        }
-        catch (e) {
-            console.log("User pfp update failed: ", e)
-            return res.status(500).json({ message : "User pfp update failed.", error : e})
-        }
+            console.log("User information update success.")
+            return res.status(200).json({ message : "User information updated."})
     }
-    else if (fullname || username || email || mobile || bio ) {
-        try {
-            await pool.request()
-                .input('userID', sql.Int, userID)
-                .input('fullname', sql.VarChar, fullname)
-                .input('username', sql.VarChar, username)
-                .input('email', sql.VarChar, email)
-                .input('mobileNum', sql.VarChar, mobile)
-                .query(`UPDATE userTable 
-                        SET fullName = @fullname, 
-                            username = @username,
-                            email = @email,
-                            mobileNumber = @mobileNum
-                        WHERE userID = @userID`);
-            
-                console.log("User information update success.")
-                return res.status(200).json({ message : "User information updated."})
-        }
-        catch (e) {
-            console.log("User information update failed: ", e)
-            return res.status(500).json({ message : "User information update failed.", error : e})
-        }
+    catch (e) {
+        console.log("User information update failed: ", e)
+        return res.status(500).json({ message : "User information update failed.", error : e})
     }
 });
 
