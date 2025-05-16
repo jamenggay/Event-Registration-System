@@ -380,6 +380,32 @@ app.patch("/user-info", async (req, res) => {
     }
 });
 
+app.patch("/user-password", async (req, res) => {
+    const userID = req.session.user.id;
+
+    if (!userID) {
+        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
+    }
+
+    const { password } = req.body
+    
+    try {
+        await pool.request()
+            .input('userID', sql.Int, userID)
+            .input('password', sql.VarChar, password)
+            .query(`UPDATE userTable
+                    SET password = @password
+                    WHERE userID = @userID`)
+
+        console.log("User password update success.")
+        return res.status(200).json({ message : "User password updated."})
+    }
+    catch (e) {
+        console.log("User password update failed: ", e)
+        return res.status(500).json({ message : "User password update failed.", error : e})
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
