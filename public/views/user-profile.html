@@ -118,7 +118,7 @@
     <script>
         window.userDataReady = new Promise(async (resolve, reject) => { 
             try {
-                const response = await fetch("/user-info", {
+                const response = await fetch("/basic-profile", {
                     method: "GET",
                     headers: {
                         'Accept' : 'application/json'
@@ -170,8 +170,8 @@
             event.preventDefault();
 
             try {
-                const response = await fetch("/user-profile", {
-                    method: "PUT",
+                const response = await fetch("/user-info", {
+                    method: "PATCH",
                     headers: { 'Content-Type' : 'application/json'},
                     body: JSON.stringify(window.updatedUserData)
                 })
