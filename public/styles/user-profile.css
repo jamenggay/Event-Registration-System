@@ -403,6 +403,10 @@ textarea {
   border-radius: 16px;
 }
 
+.events_created_container .no-events-message {
+  text-align: center;
+}
+
 /* Event Card Styles */
 .event_container {
   background: white;
