@@ -187,16 +187,16 @@ app.get("/user-profile", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))  
 })
 
-app.get("/user-info", (req, res, next) => {
+app.get("/basic-profile", (req, res, next) => {
     // redirect to /user-profile if endpoint directly accessed in url browser
     if (req.headers['accept'] !== 'application/json') {
-    return res.redirect('/user-info'); 
+    return res.redirect('/basic-profile'); 
   }
 
   next();
 })
 
-app.get("/user-info", async (req, res) => {
+app.get("/basic-profile", async (req, res) => {
     const userID = req.session.user.id;
 
     if (!userID) {
@@ -348,7 +348,7 @@ app.patch("/user-pfp", async (req, res) => {
     }
 });
 
-app.put("/user-profile", async (req, res) => {
+app.patch("/user-info", async (req, res) => {
     const userID = req.session.user.id;
 
     if (!userID) {
