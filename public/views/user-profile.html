@@ -107,7 +107,30 @@
                     <label for="edit-bio">Bio</label>
                     <textarea id="edit-bio" name="edit-bio" rows="4" placeholder="Tell us about yourself"></textarea>
                 </div>
-                <button type="submit" id="save-button" class="save_button" onclick="saveProfile()">Save Changes</button>
+                <button type="submit" id="save-changes-btn" class="save_button" onclick="saveProfile()">Save Changes</button>
+                <button type="button" class="change_password_button" onclick="openChangePasswordModal()">Change Password</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeChangePasswordModal()">&times;</span>
+            <h2>Change Password</h2>
+            <div class="edit-fields">
+                <div class="edit-field">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password" name="current-password" placeholder="Enter current password">
+                </div>
+                <div class="edit-field">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="new-password" placeholder="Enter new password">
+                </div>
+                <div class="edit-field">
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm new password">
+                </div>
+                <button type="submit" id="update-password-btn" class="save_button" onclick="savePasswordChange()">Update Password</button>
             </div>
         </div>
     </div>
@@ -164,7 +187,7 @@
             }
         }) 
         
-        const saveChangesButton = document.getElementById('save-button')
+        const saveChangesButton = document.getElementById('save-changes-btn')
         
         saveChangesButton.addEventListener('click', async (event) => {
             event.preventDefault();
@@ -185,6 +208,35 @@
                     const result = await response.json();
                     console.log("Server Failed: ", result)
                     alert("User profile edit failed.")
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+                alert("An error occurred while creating the event");
+            }
+        })
+
+        const updatePasswordButton = document.getElementById('update-password-btn')
+
+        updatePasswordButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            try {
+                const response = await fetch("/user-password", {
+                    method: 'PATCH',
+                    headers: { 'Content-Type' : 'application/json' },
+                    body: JSON.stringify(window.updatedUserData)
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    console.log("Server Success: ", result)
+                    alert("User password edit success.")
+                }
+                else {
+                    const result = await response.json();
+                    console.log("Server Failed: ", result)
+                    alert("User password edit failed.")
                 }
             }
             catch (e) {
