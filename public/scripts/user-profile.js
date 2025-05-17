@@ -176,6 +176,38 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 300);
     }
 
+    const saveChangesButton = document.getElementById('save-changes-btn');
+
+    const basicInfoFields = [
+        { new: document.getElementById('edit-fullname'), original: userData.fullname },
+        { new: document.getElementById('edit-username'), original: userData.username },
+        { new: document.getElementById('edit-email'), original: userData.email },
+        { new: document.getElementById('edit-mobile'), original: userData.mobileNumber },
+        { new: document.getElementById('edit-bio'), original: userData.bio || "" },
+    ];
+
+    basicInfoFields.forEach(data => {
+        data.new.addEventListener('input', () => {
+            if (basicInfoFields.some(item => item.new.value !== item.original)) {
+                saveChangesButton.disabled = false
+            }
+            else {
+                saveChangesButton.disabled = true
+            }
+        })
+    })
+
+    const updatePasswordButton = document.getElementById('update-password-btn')
+
+    document.getElementById('new-password').addEventListener('input', () => {
+        if (document.getElementById('new-password').value !== userData.password) {
+            updatePasswordButton.disabled = false
+        }
+        else {
+            updatePasswordButton.disabled = true
+        }
+    })
+
     window.saveProfile = async function() {
         const new_fullname = document.getElementById('edit-fullname').value;
         const new_username = document.getElementById('edit-username').value;
@@ -348,7 +380,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <p>${new Date(event.startDateTime).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </div>
                         <div class="event_more">
-                            <a href="#" class="events-card-button">Info</a>
+                            <a href="/event/${event.eventID}" class="events-card-button">Info</a>
                         </div>
                     </div>
                 </div>
@@ -360,4 +392,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         eventsCreatedContainer.innerHTML = `<p class = 'no-events-message'>No events created yet.</p>`
     }
+
+    
 });
