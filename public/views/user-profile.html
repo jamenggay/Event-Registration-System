@@ -107,7 +107,7 @@
                     <label for="edit-bio">Bio</label>
                     <textarea id="edit-bio" name="edit-bio" rows="4" placeholder="Tell us about yourself"></textarea>
                 </div>
-                <button type="submit" id="save-changes-btn" class="save_button" onclick="saveProfile()">Save Changes</button>
+                <button type="submit" id="save-changes-btn" class="save_button" onclick="saveProfile()" disabled>Save Changes</button>
                 <button type="button" class="change_password_button" onclick="openChangePasswordModal()">Change Password</button>
             </div>
         </div>
@@ -130,7 +130,7 @@
                     <label for="confirm-password">Confirm New Password</label>
                     <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm new password">
                 </div>
-                <button type="submit" id="update-password-btn" class="save_button" onclick="savePasswordChange()">Update Password</button>
+                <button type="submit" id="update-password-btn" class="save_button" onclick="savePasswordChange()" disabled>Update Password</button>
             </div>
         </div>
     </div>
