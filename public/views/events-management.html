@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dalo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="../styles/events-management.css">
+    <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
+    <script src="../scripts/footer.js"></script>
+    <script src="../scripts/header.js"></script>
+    <script src="../scripts/events-management.js"></script>
+</head>
+<body>
+    <header>
+        <div id="header"></div>
+    </header>
+
+    <div class="tab-wrapper">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="guest">Guest List</button>
+            <button class="tab-button" data-tab="check-in">Check In</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="overview">
+                <h1>Overview</h1>
+
+                <div class="overview-container">
+                    <div class="illustration-container">
+                        <div class="illustration">
+                            <div class="illustration_color">
+                                <img id="eventImage" src="" alt="Event Image">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-details-container">
+                        <div class="event_name-wrapper">
+                            <h2 class="event_name"></h2>
+                        </div>
+                        
+                        <div class="event_date_location_container">
+                            <div class="event_date">
+                                <div class="event_start">
+                                    <div class="date_label">
+                                        <h3>Start: </h3>
+                                        <p class="start-datetime"></p>
+                                    </div>
+                                </div>
+                                <div class="event_end">
+                                    <div class="date_label">
+                                        <h3>End: </h3>
+                                        <p class="end-datetime"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="event_location">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/location-icon.png" class="icon-flex">
+                                    <h3>Location: </h3> 
+                                    <p class="location-text"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="event_description">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/description-icon.png" class="icon-flex">
+                                <h3>Description: </h3>
+                                <p class="description-text"></p>
+                            </div>
+                        </div>
+
+                        <div class="event_category">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/category-icon.png" class="icon-flex">
+                                <h3>Category: </h3>
+                                <p class="category-text"></p>
+                            </div>
+                        </div>
+
+                        <div class="event_feedback">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/feedback-icon.png" class="icon-flex">
+                                <h3>Feedback Link: </h3>
+                                <p class="feedback-link"></p>
+                            </div>
+                        </div>
+
+                        <div class="event_options">
+                            <h3>Event Options</h3>
+                            <div class="event_approval_capacity">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/approval-icon.png" class="icon-flex">
+                                    <h3>Approval Required: </h3>
+                                    <p class="approval-status"></p>
+                                </div>
+                            </div>
+                            <div class="event_capacity">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/capacity-icon.png" class="icon-flex">
+                                    <h3>Maximum Capacity: </h3>
+                                    <p class="capacity-text"></p>
+                                    <p class="waitlist-status"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="edit-button-container">
+                    <button class="edit-button">
+                        <img src="../assets/icons/edit-icon.png" class="edit-icon" alt="Edit">
+                        Edit Event
+                    </button>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="guest">
+                <h1>Guest List</h1>
+                <div class="attendee-container">
+                    <span class="attendee-name">Jamainosaurus</span>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+
+                 <div class="attendee-container">
+                    <span class="attendee-name">Neneng B</span>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+
+                 <div class="attendee-container">
+                    <span class="attendee-name">Fe Fer Mint (Diva)</span>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+
+                <div class="attendee-container">
+                    <span class="attendee-name">Belly Button</span>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="tab-pane" id="check-in">
+                <h1>Check In</h1>
+
+                    <div class="checkin-guest">
+                        <span class="guest-name">Browny</span>
+                        <span class="status-badge approved">Dadalo</span>
+                    </div>
+
+                    <div class="checkin-guest">
+                        <span class="guest-name">Bogart</span>
+                        <span class="status-badge declined">Declined</span>
+                    </div>
+
+                    <div class="checkin-guest">
+                        <span class="guest-name">Ice Spice</span>
+                        <span class="status-badge pending">Pending</span>
+                    </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div id="footer"></div>
+    </footer>
+</body>
+</html>
+    

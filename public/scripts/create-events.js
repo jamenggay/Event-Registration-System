@@ -182,6 +182,44 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Set the hidden event name value
     hiddenInput.value = h1.textContent.trim();
+
+    // Gather all event data
+    const eventData = {
+      name: hiddenInput.value,
+      startDate: document.getElementById('start-date').value,
+      startTime: document.getElementById('start-time').value,
+      endDate: document.getElementById('end-date').value,
+      endTime: document.getElementById('end-time').value,
+      location: document.getElementById('locationText').value,
+      description: document.getElementById('descriptionText').value,
+      category: document.getElementById('event-category').value,
+      feedbackLink: document.getElementById('feedbackLinkText').value,
+      requireApproval: document.getElementById('require-approval').checked,
+      capacity: document.getElementById('capacityInput').value,
+      waitlist: document.getElementById('waitlistToggle').checked
+    };
+
+    // Get the image if one was uploaded
+    const imageFile = document.getElementById('imageUpload').files[0];
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        eventData.image = e.target.result;
+        
+        // Save event data to localStorage
+        localStorage.setItem('eventData', JSON.stringify(eventData));
+        
+        // Redirect to events management page
+        window.location.href = 'events-management.html';
+      };
+      reader.readAsDataURL(imageFile);
+    } else {
+      // Save event data to localStorage
+      localStorage.setItem('eventData', JSON.stringify(eventData));
+      
+      // Redirect to events management page
+      window.location.href = 'events-management.html';
+    }
   });
 
   // Background Image Upload
