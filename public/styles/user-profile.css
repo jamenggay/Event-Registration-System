@@ -625,6 +625,10 @@ textarea {
   box-shadow: 0 4px 12px rgba(0, 117, 187, 0.3);
 }
 
+.save_button:disabled {
+  cursor: not-allowed;
+}
+
 .change_password_button {
   margin-top: 15px;
   background-color: white;
