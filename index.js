@@ -447,6 +447,7 @@ app.get("/event-info/:eventID", async (req, res) => {
     }
 });
 
+// for events management, pls don't delete
 app.put("/edit-event", async (req, res) => {
     const { eventID, base64FeatureImage, imageFileName, imageFileExtension, eventName, 
             startDateTime, endDateTime, location, description, category, 
@@ -487,6 +488,38 @@ app.put("/edit-event", async (req, res) => {
     catch (e) {
         console.log("Event details update failed: ", e)
         res.status(500).json({ message : 'Event details update failed', error : e })
+    }
+});
+
+// for events management, pls don't delete
+app.get("/registrants/:eventID", async (req, res) => {
+    const eventID = req.params.eventID
+
+    try {
+        const result = await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, rT.status, rt.eventID 
+                    FROM registrationTable rT
+                    LEFT JOIN userTable uT ON rt.userID = uT.userID
+                    WHERE rT.eventID = @eventID`)
+
+        const registrationData = result.recordset.map(registrant => ({
+                                                registrationID : registrant.registrationID,
+                                                userID : registrant.userID,
+                                                fullname : registrant.fullName,
+                                                username : registrant.username,
+                                                email : registrant.email,
+                                                mobileNumber : registrant.mobileNumber,
+                                                status : registrant.status,
+                                                eventID : registrant.eventID
+                                            }))
+
+        console.log("Registration details extraction successful")
+        res.status(200).json(registrationData)
+    }
+    catch (e) {
+        console.log("Registration details extraction failed: ", e)
+        res.status(500).json({ message : 'Registration details extraction failed', error : e})
     }
 });
 
