@@ -221,6 +221,7 @@ app.get("/basic-profile", async (req, res) => {
             email         : result.recordset[0].email,
             mobileNumber  : result.recordset[0].mobileNumber,
             profilePic    : result.recordset[0].profilePic,
+            bio           : result.recordset[0].bio,
             password      : result.recordset[0].password
         }
 
@@ -365,12 +366,14 @@ app.patch("/user-info", async (req, res) => {
             .input('username', sql.VarChar, username)
             .input('email', sql.VarChar, email)
             .input('mobileNum', sql.VarChar, mobile)
+            .input('bio', sql.NVarChar, bio)
             .query(`UPDATE userTable 
                     SET 
                         fullName = @fullname, 
                         username = @username,
                         email = @email,
-                        mobileNumber = @mobileNum
+                        mobileNumber = @mobileNum,
+                        bio = @bio
                     WHERE userID = @userID`);
         
             console.log("User information update success.")
