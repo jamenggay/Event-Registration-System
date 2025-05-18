@@ -197,17 +197,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         })
     })
 
-    const updatePasswordButton = document.getElementById('update-password-btn')
-
-    document.getElementById('new-password').addEventListener('input', () => {
-        if (document.getElementById('new-password').value !== userData.password) {
-            updatePasswordButton.disabled = false
-        }
-        else {
-            updatePasswordButton.disabled = true
-        }
-    })
-
     window.saveProfile = async function() {
         const new_fullname = document.getElementById('edit-fullname').value;
         const new_username = document.getElementById('edit-username').value;
@@ -318,15 +307,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (hasError) return;
 
         try {
-            window.updatedUserData.password = newPassword
-            console.log("Password Details: ", window.updatedUserData.password)
+            window.updatedUserData.currentPassword = currentPassword
+            window.updatedUserData.newPassword = newPassword
 
             // If successful, close the modal
             closeChangePasswordModal();
-            alert('Password updated successfully!');
+            // alert('Password updated successfully!');
         } catch (error) {
             console.error('Error changing password:', error);
-            alert('Failed to change password. Please try again.');
+            // alert('Failed to change password. Please try again.');
         }
     }
 
@@ -392,6 +381,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         eventsCreatedContainer.innerHTML = `<p class = 'no-events-message'>No events created yet.</p>`
     }
-
-    
 });
