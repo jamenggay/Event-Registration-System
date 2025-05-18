@@ -75,3 +75,8 @@ ALTER TABLE eventsTable
 ADD
     category VARCHAR(15),
     allowWaitlist VARCHAR(3) CHECK (allowWaitlist IN ('Yes', 'No'));
+
+--userTable ALTER (based on UI)
+ALTER TABLE userTable
+ADD 
+  bio NVARCHAR(MAX) NULL;
