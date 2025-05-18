@@ -82,10 +82,12 @@ app.post("/login", async (req, res) => {
     }
 });
 
+// create events page
 app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 });
 
+// create events page
 app.post("/create-events", async (req, res) => { 
     const userID = req.session.user.id;
   
@@ -183,10 +185,12 @@ app.get("/discover", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
 });
 
+// user profile page
 app.get("/user-profile", (req, res) => { 
     res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))  
 })
 
+// user profile page
 app.get("/basic-profile", (req, res, next) => {
     // redirect to /user-profile if endpoint directly accessed in url browser
     if (req.headers['accept'] !== 'application/json') {
@@ -196,6 +200,7 @@ app.get("/basic-profile", (req, res, next) => {
   next();
 })
 
+// user profile page
 app.get("/basic-profile", async (req, res) => {
     const userID = req.session.user.id;
 
@@ -234,6 +239,7 @@ app.get("/basic-profile", async (req, res) => {
     }
 });
 
+// user profile page
 app.get("/user-events-created", async (req, res) => {
     const userID = req.session.user.id;
 
@@ -278,6 +284,7 @@ app.get("/user-events-created", async (req, res) => {
     }
 });
 
+// user profile page
 app.patch("/user-pfp", async (req, res) => {
     const userID = req.session.user.id;
 
@@ -350,6 +357,7 @@ app.patch("/user-pfp", async (req, res) => {
     }
 });
 
+// user profile page
 app.patch("/user-info", async (req, res) => {
     const userID = req.session.user.id;
 
@@ -385,6 +393,7 @@ app.patch("/user-info", async (req, res) => {
     }
 });
 
+// user profile page
 app.patch("/user-password", async (req, res) => {
     const userID = req.session.user.id;
 
@@ -411,12 +420,12 @@ app.patch("/user-password", async (req, res) => {
     }
 });
 
-// for events management, pls don't delete
+// events management page
 app.get("/event/:eventID", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "dummy-event.html"))  
 });
 
-// for events management, pls don't delete
+// events management page
 app.get("/event-info/:eventID", async (req, res) => {
     const eventID = req.params.eventID
 
@@ -450,13 +459,13 @@ app.get("/event-info/:eventID", async (req, res) => {
     }
 });
 
-// for events management, pls don't delete
+// events management page
 app.put("/edit-event", async (req, res) => {
     const { eventID, base64FeatureImage, imageFileName, imageFileExtension, eventName, 
             startDateTime, endDateTime, location, description, category, 
             feedback, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body    
     try {
-        const result = await pool.request()
+        await pool.request()
             .input('eventID', sql.Int, eventID)
             .input('eventName', sql.VarChar, eventName)
             // .input('featureImage', sql.VarChar, publicFeatureImagePath)
@@ -494,7 +503,7 @@ app.put("/edit-event", async (req, res) => {
     }
 });
 
-// for events management, pls don't delete
+// events management page
 app.get("/registrants/:eventID", async (req, res) => {
     const eventID = req.params.eventID
 
@@ -525,6 +534,32 @@ app.get("/registrants/:eventID", async (req, res) => {
         res.status(500).json({ message : 'Registration details extraction failed', error : e})
     }
 });
+
+// events management page
+app.patch("/registrants/:eventID", async (req, res) => {
+    let { userID, eventID, status } = req.body
+
+    eventID = req.params.eventID || eventID
+
+    try {
+        await pool.request()
+            .input('userID', sql.Int, userID)
+            .input('status', sql.VarChar, status)
+            .input('eventID', sql.Int, eventID)
+            .query(`UPDATE registrationTable
+                    SET status = @status
+                    WHERE eventID = @eventID AND userID = @userID`)
+
+        console.log("Registration details update successful")
+        res.status(200).json({ message : 'Registration details updated' })
+    }
+    catch (e) {
+        console.log("Registration details update failed: ", e)
+        res.status(500).json({ message : 'Registration details update failed:', error : e })
+    }
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
