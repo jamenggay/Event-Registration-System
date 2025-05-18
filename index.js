@@ -559,7 +559,37 @@ app.patch("/registrants/:eventID", async (req, res) => {
     }
 });
 
+// events management page
+app.get("/approved-registrants/:eventID", async (req, res) => {
+    const eventID = req.params.eventID
 
+    try {
+        const result = await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, rT.status, rt.eventID 
+                    FROM registrationTable rT
+                    LEFT JOIN userTable uT ON rt.userID = uT.userID
+                    WHERE rT.eventID = @eventID AND status = 'Approved'`)
+        
+        const approvedRegistrantsData = result.recordset.map(registrant => ({
+                                                        registrationID : registrant.registrationID,
+                                                        userID : registrant.userID,
+                                                        fullname : registrant.fullName,
+                                                        username : registrant.username,
+                                                        email : registrant.email,
+                                                        mobileNumber : registrant.mobileNumber,
+                                                        status : registrant.status,
+                                                        eventID : registrant.eventID
+                                                    }))
+
+        console.log("Approved registrants extraction successful")
+        res.status(200).json(approvedRegistrantsData)
+    }
+    catch (e) {
+        console.log("Approved registrants extraction failed: ", e)
+        res.status(200).json({ message : 'Approved registrants extraction failed', error : e })
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
