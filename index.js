@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
 import fs from 'fs'
 import cookieSession from 'cookie-session'
+import bcrypt from "bcrypt";
 import { error } from "console";
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -28,7 +29,10 @@ app.get("/", (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-    const { email, mobileNum, fullName, userName, password } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    
+    const { email, mobileNum, fullName, userName } = req.body;
 
     try {
         await pool.request()
@@ -36,8 +40,8 @@ app.post("/register", async (req, res) => {
             .input('mobileNum', sql.VarChar, mobileNum)
             .input('fullName', sql.VarChar, fullName)
             .input('userName', sql.VarChar, userName)
-            .input('password', sql.VarChar, password)
-            .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @password)');
+            .input('hashedPassword', sql.VarChar, hashedPassword)
+            .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @hashedPassword)');
 
         res.json({ success: true, message: 'Registration successful!' });
 
@@ -64,7 +68,9 @@ app.post("/login", async (req, res) => {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
 
-        if (user.password !== password) {
+        const comparePassword = await bcrypt.compare(password, user.password);
+        
+        if (!comparePassword) {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
 
@@ -227,7 +233,6 @@ app.get("/basic-profile", async (req, res) => {
             mobileNumber  : result.recordset[0].mobileNumber,
             profilePic    : result.recordset[0].profilePic,
             bio           : result.recordset[0].bio,
-            password      : result.recordset[0].password
         }
 
         console.log("User profile extraction success.")
@@ -401,22 +406,49 @@ app.patch("/user-password", async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
 
-    const { password } = req.body
-    
+    const { currentPassword, newPassword } = req.body
+
+    if (currentPassword === newPassword) {
+        return res.status(400).json({ message: "New password must be different from the current password." });
+    }
+
     try {
-        await pool.request()
+        const result = await pool.request()
             .input('userID', sql.Int, userID)
-            .input('password', sql.VarChar, password)
-            .query(`UPDATE userTable
-                    SET password = @password
+            .query(`SELECT password
+                    FROM userTable
                     WHERE userID = @userID`)
 
-        console.log("User password update success.")
-        return res.status(200).json({ message : "User password updated."})
+        const storedPassword = result.recordset[0].password
+
+        const isMatch = await bcrypt.compare(currentPassword, storedPassword)
+
+        if (isMatch) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            try {
+                await pool.request()
+                    .input('userID', sql.Int, userID)
+                    .input('hashedPassword', sql.VarChar, hashedPassword)
+                    .query(`UPDATE userTable
+                            SET password = @hashedPassword
+                            WHERE userID = @userID`)
+
+                console.log("User password update success.")
+                return res.status(200).json({ message : "User password updated."})
+            }
+            catch (e) {
+                console.log("User password update failed: ", e)
+                return res.status(500).json({ message : "User password update failed.", error : e})
+            }
+        } 
+        else {
+            return res.status(400).json({ message : "Incorrect current password."})
+        }
     }
     catch (e) {
-        console.log("User password update failed: ", e)
-        return res.status(500).json({ message : "User password update failed.", error : e})
+        console.log("User password extraction failed: ", e)   
     }
 });
 
