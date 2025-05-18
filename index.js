@@ -3,10 +3,12 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
-import multer from 'multer'
-import bodyParser from 'body-parser'
-import fs from 'fs'
-import cookieSession from 'cookie-session'
+import multer from 'multer';
+import bodyParser from 'body-parser';
+import fs from 'fs';
+import cookieSession from 'cookie-session';
+import bcrypt from "bcrypt";
+import { error } from "console";
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -16,13 +18,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const port = 3000;
 
 //middleware setup
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-const upload = multer({ dest : path.join(__dirname, 'public', 'uploads', 'featureImage') })
+const upload = multer({ dest: path.join(__dirname, 'public', 'uploads', 'featureImage') })
 app.use(cookieSession({
-  name: 'session',
-  keys: ['cooKey'], 
+    name: 'session',
+    keys: ['cooKey'],
 }));
 
 app.get("/", (req, res) => {
@@ -30,16 +32,20 @@ app.get("/", (req, res) => {
 })
 
 app.post("/register", async (req, res) => {
-    const { email, mobileNum, fullName, userName, password } = req.body;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const { email, mobileNum, fullName, userName } = req.body;
+    console.log("Hash Pass: ", hashedPassword);
+        
     try {
         await pool.request()
             .input('email', sql.VarChar, email)
             .input('mobileNum', sql.VarChar, mobileNum)
             .input('fullName', sql.VarChar, fullName)
             .input('userName', sql.VarChar, userName)
-            .input('password', sql.VarChar, password)
-            .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @password)');
+            .input('hashedPassword', sql.VarChar, hashedPassword)
+            .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @hashedPassword)');
 
         res.json({ success: true, message: 'Registration successful!' });
 
@@ -59,14 +65,15 @@ app.post("/login", async (req, res) => {
             .query('SELECT * FROM userTABLE WHERE username = @userName')
 
         const user = result.recordset[0]; //stores the result to user variable
-        
+
         //login validation
 
         if (!user) {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
-
-        if (user.password !== password) {
+        
+        const comparePassword = await bcrypt.compare(password, user.password);
+        if (!comparePassword) {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
 
@@ -88,16 +95,16 @@ app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 })
 
-app.post("/create-events", async (req, res) => {   
+app.post("/create-events", async (req, res) => {
     if (!req.session.user) {
-        return res.status(401).json({ message: 'Unauthorized'});
+        return res.status(401).json({ message: 'Unauthorized' });
     }
-    
+
     const creatorID = req.session.user.id;
 
-    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
-            startDateTime, endDateTime, location, description, category, 
-            feedback, requireApproval, capacity, allowWaitlist, lastUpdated} = req.body
+    const { base64FeatureImage, imageFileName, imageFileExtension, eventName,
+        startDateTime, endDateTime, location, description, category,
+        feedback, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body
 
     function getBinaryValue(base64FeatureImage) {
         const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
@@ -118,7 +125,7 @@ app.post("/create-events", async (req, res) => {
     if (!binaryFeatureImage) {
         return res.json({ message: 'Invalid image format.' });
     }
-    
+
     let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
     let featureImageFileName = `${imageFileName}.${imageFileExtension}`
 
@@ -134,9 +141,9 @@ app.post("/create-events", async (req, res) => {
 
     const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
 
-    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
-        if (error) { 
-            console.log("Image Creation Failed: ", error) 
+    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => {
+        if (error) {
+            console.log("Image Creation Failed: ", error)
         }
     });
 
@@ -146,7 +153,7 @@ app.post("/create-events", async (req, res) => {
             .input('featureImage', sql.VarChar, featureImagePath)
             .input('eventName', sql.VarChar, eventName)
             .input('startDateTime', sql.DateTime, startDateTime)
-            .input('endDateTime', sql.DateTime, endDateTime) 
+            .input('endDateTime', sql.DateTime, endDateTime)
             .input('location', sql.VarChar, location)
             .input('description', sql.VarChar, description)
             .input('category', sql.VarChar, category)

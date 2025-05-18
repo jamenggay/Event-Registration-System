@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/jamenggay/Event-Registration-System#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
     "encodeurl": "^2.0.0",
