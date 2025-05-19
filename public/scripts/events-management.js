@@ -1,4 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    window.updatedEventData = {}
+
+    let eventData = null
+
+    try {
+        eventData = await window.eventDataReady
+    }
+    catch (e) {
+        console.error("Failed to load event data:", e);
+    }
+
+    console.log("Client Selected Event Details: ", eventData)
+
     // Cache DOM elements
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -27,14 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Function to format date and time
-    const formatDateTime = (date, time) => {
+    const formatDateTime = (dateTime) => {
         try {
-            const [year, month, day] = date.split('-').map(Number);
-            const [hours, minutes] = time.split(':').map(Number);
-            
-            const dateObj = new Date(year, month - 1, day, hours, minutes);
-            
-            return dateObj.toLocaleString('en-US', {
+            const dateTimeObj = new Date(dateTime);
+
+            return dateTimeObj.toLocaleString('en-US', {
+                timeZone: 'UTC',
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -52,16 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to parse date and time from formatted string
     const parseDateTime = (formattedString) => {
         try {
-            const dateObj = new Date(formattedString);
-            if (isNaN(dateObj.getTime())) {
-                throw new Error('Invalid date string');
+            // Remove " at " and create a new string the Date constructor can understand
+            const cleanedString = formattedString.replace(' at ', ',');
+            const dateTimeObj = new Date(cleanedString);
+
+            if (isNaN(dateTimeObj.getTime())) {
+                console.warn('Invalid date string');
             }
-            
+
             return {
-                date: dateObj.toISOString().split('T')[0],
-                time: dateObj.toTimeString().slice(0, 5)
+                date: dateTimeObj.toISOString().split('T')[0],
+                time: dateTimeObj.toTimeString().slice(0, 5)
             };
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error parsing date:', error);
             return { date: '', time: '' };
         }
@@ -70,20 +85,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to display event data
     const displayEventData = (eventData) => {
         try {
-            if (eventData.image) {
-                document.getElementById('eventImage').src = eventData.image;
+            if (eventData.featureImage) {
+                document.getElementById('eventImage').src = eventData.featureImage;
                 document.getElementById('eventImage').style.display = 'block';
             }
 
-            document.querySelector('.event_name').textContent = eventData.name || '';
+            document.querySelector('.event_name').textContent = eventData.eventName || '';
 
-            if (eventData.startDate && eventData.startTime) {
+            if (eventData.startDateTime) {
                 document.querySelector('.start-datetime').textContent = 
-                    formatDateTime(eventData.startDate, eventData.startTime);
+                    formatDateTime(eventData.startDateTime);
             }
-            if (eventData.endDate && eventData.endTime) {
+
+            if (eventData.endDateTime) {
                 document.querySelector('.end-datetime').textContent = 
-                    formatDateTime(eventData.endDate, eventData.endTime);
+                    formatDateTime(eventData.endDateTime);
             }
 
             document.querySelector('.location-text').textContent = eventData.location || '';
@@ -91,12 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.category-text').textContent = eventData.category || '';
             document.querySelector('.feedback-link').textContent = eventData.feedbackLink || '';
             document.querySelector('.approval-status').textContent = 
-                eventData.requireApproval ? 'Required' : 'Not Required';
+                eventData.requireApproval === 'Yes' ? 'Required' : 'Not Required';
 
             if (eventData.capacity) {
-                document.querySelector('.capacity-text').textContent = `Maximum: ${eventData.capacity}`;
+                document.querySelector('.capacity-text').textContent = `${eventData.capacity}`;
                 document.querySelector('.waitlist-status').textContent = 
-                    `Waitlist: ${eventData.waitlist ? 'Enabled' : 'Disabled'}`;
+                    `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
             }
         } catch (error) {
             console.error('Error displaying event data:', error);
@@ -104,40 +120,35 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Function to populate modal form with current event data
-    const populateModalForm = (eventData) => {
+    const populateModalForm = (currentEventData) => {
         try {
-            document.getElementById('eventName').value = eventData.name || '';
+            document.getElementById('eventName').value = currentEventData.eventName || '';
 
             const now = new Date();
             const tomorrow = new Date(now);
             tomorrow.setDate(tomorrow.getDate() + 1);
 
             const formatDate = (date) => date.toISOString().split('T')[0];
-            const formatTime = (date) => {
-                const hours = date.getHours().toString().padStart(2, '0');
-                const minutes = date.getMinutes().toString().padStart(2, '0');
-                return `${hours}:${minutes}`;
-            };
 
-            const startDate = eventData.startDate ? new Date(eventData.startDate) : now;
+            const startDate = currentEventData.startDate ? new Date(currentEventData.startDate) : now;
             document.getElementById('startDate').value = formatDate(startDate);
-            document.getElementById('startTime').value = formatTime(startDate);
+            document.getElementById('startTime').value = currentEventData.startTime;
 
-            const endDate = eventData.endDate ? new Date(eventData.endDate) : tomorrow;
+            const endDate = currentEventData.endDate ? new Date(currentEventData.endDate) : tomorrow;
             document.getElementById('endDate').value = formatDate(endDate);
-            document.getElementById('endTime').value = formatTime(endDate);
+            document.getElementById('endTime').value = currentEventData.endTime;
 
-            document.getElementById('location').value = eventData.location || '';
-            document.getElementById('description').value = eventData.description || '';
-            document.getElementById('category').value = eventData.category || '';
-            document.getElementById('feedbackLink').value = eventData.feedbackLink || '';
-            document.getElementById('max_capacity').value = eventData.capacity || '';
+            document.getElementById('location').value = currentEventData.location || '';
+            document.getElementById('description').value = currentEventData.description || '';
+            document.getElementById('category').value = currentEventData.category || '';
+            document.getElementById('feedbackLink').value = currentEventData.feedbackLink || '';
+            document.getElementById('max_capacity').value = currentEventData.capacity || '';
             
-            document.getElementById('require_approval').checked = eventData.requireApproval || false;
-            document.getElementById('over_capacity_waitlist').checked = eventData.waitlist || false;
+            document.getElementById('require_approval').checked = currentEventData.requireApproval
+            document.getElementById('over_capacity_waitlist').checked = currentEventData.waitlist
 
-            if (eventData.image) {
-                imagePreview.src = eventData.image;
+            if (currentEventData.featureImage) {
+                imagePreview.src = currentEventData.featureImage;
             } else {
                 imagePreview.src = '../assets/images/default-event.jpg';
             }
@@ -153,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const endDateTime = parseDateTime(document.querySelector('.end-datetime').textContent);
             
             return {
-                name: document.querySelector('.event_name').textContent,
+                eventName: document.querySelector('.event_name').textContent,
                 startDate: startDateTime.date,
                 startTime: startDateTime.time,
                 endDate: endDateTime.date,
@@ -162,10 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: document.querySelector('.description-text').textContent,
                 category: document.querySelector('.category-text').textContent,
                 feedbackLink: document.querySelector('.feedback-link').textContent,
-                requireApproval: document.querySelector('.approval-status').textContent === 'Required',
-                capacity: parseInt(document.querySelector('.capacity-text').textContent.split(': ')[1]) || 0,
-                waitlist: document.querySelector('.waitlist-status').textContent.includes('Enabled'),
-                image: document.getElementById('eventImage').src
+                requireApproval: document.querySelector('.approval-status').textContent === 'Required' ? true : false,
+                capacity: document.querySelector('.capacity-text').textContent || 0,
+                waitlist: document.querySelector('.waitlist-status').textContent.includes('Enabled') ? true : false,
+                featureImage: document.getElementById('eventImage').src
             };
         } catch (error) {
             console.error('Error getting current event data:', error);
@@ -219,30 +230,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle form submission
-    editEventForm.addEventListener('submit', (e) => {
+    editEventForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        try {
-            const formData = {
-                name: document.getElementById('eventName').value,
-                startDate: document.getElementById('startDate').value,
-                startTime: document.getElementById('startTime').value,
-                endDate: document.getElementById('endDate').value,
-                endTime: document.getElementById('endTime').value,
-                location: document.getElementById('location').value,
-                description: document.getElementById('description').value,
-                category: document.getElementById('category').value,
-                feedbackLink: document.getElementById('feedbackLink').value,
-                requireApproval: document.getElementById('require_approval').checked,
-                capacity: parseInt(document.getElementById('max_capacity').value) || 0,
-                waitlist: document.getElementById('over_capacity_waitlist').checked,
-                image: imagePreview.src
-            };
 
-            displayEventData(formData);
-            closeModalHandler();
-        } catch (error) {
-            console.error('Error handling form submission:', error);
+        const startDate = document.getElementById('startDate').value
+        const startTime = document.getElementById('startTime').value
+        const endDate   = document.getElementById('endDate').value
+        const endTime   = document.getElementById('endTime').value
+
+        const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
+        const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
+        const requireApproval = document.getElementById('require_approval').checked ? 'Yes' : 'No'
+        const waitlistToggle  = document.getElementById('over_capacity_waitlist').checked ? 'Yes' : 'No'
+        const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+        
+        const updatedEventData = {
+            eventID         : eventData.eventID,
+            eventName       : document.getElementById('eventName').value,
+            startDateTime   : startDateTime,
+            endDateTime     : endDateTime,
+            location        : document.getElementById('location').value,
+            description     : document.getElementById('description').value,
+            category        : document.getElementById('category').value,
+            feedbackLink    : document.getElementById('feedbackLink').value,
+            requireApproval : requireApproval,
+            capacity        : document.getElementById('max_capacity').value || 0,
+            allowWaitlist   : waitlistToggle,
+            lastUpdated     : lastUpdated
+        }
+
+        try {
+            const response = await fetch(`/edit-event/${eventData.eventID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type' : 'application/json' },
+                body: JSON.stringify(updatedEventData)
+            })
+
+            if (response.ok) {
+                const result = await response.json()
+                console.log("Backend Success: ", result)
+                displayEventData(updatedEventData);
+                closeModalHandler();            
+            }
+            else {
+                const error = await response.json()
+                console.log("Backend Failed: ", error)
+            }                
+        } 
+        catch (error) {
+            console.log("Client Error: ", e)
         }
     });
 
@@ -260,20 +296,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // For testing/development - remove in production
-    const sampleEventData = {
-        name: "Event ni R2J",
-        startDate: "2024-03-20",
-        startTime: "14:00",
-        endDate: "2024-03-20",
-        endTime: "16:00",
-        location: "NU - Manila",
-        description: "ang tulang ito ay para sa mga batang ina.",
-        category: "Technology",
-        feedbackLink: "https://feedback.example.com",
-        requireApproval: true,
-        capacity: 100,
-        waitlist: true
-    };
-    displayEventData(sampleEventData);
+    displayEventData(eventData);
 });
