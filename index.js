@@ -3,6 +3,7 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
+<<<<<<< HEAD
 import multer from 'multer';
 import bodyParser from 'body-parser';
 import fs from 'fs';
@@ -10,6 +11,12 @@ import cookieSession from 'cookie-session';
 import bcrypt from "bcrypt";
 import { error } from "console";
 
+=======
+import multer from 'multer'
+import bodyParser from 'body-parser'
+import fs from 'fs'
+import cookieSession from 'cookie-session'
+>>>>>>> jorge-frontend
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
 //declaring app
@@ -29,7 +36,7 @@ app.use(cookieSession({
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
-})
+});
 
 app.post("/register", async (req, res) => {
 
@@ -93,7 +100,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
-})
+});
 
 app.post("/create-events", async (req, res) => {
     if (!req.session.user) {
@@ -178,11 +185,15 @@ app.post("/create-events", async (req, res) => {
         console.log("Event Creation Failed: ", e)
         return res.status(500).json({ message: "Event creation failed", error: e })
     }
-})
+});
 
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
-})
+});
+
+app.get("/discover", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

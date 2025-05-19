@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Popup Event Card</title>
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --dark-grey: #1c1c1c;
+      --purple: #7b29ff;
+      --blue: #304ffe;
+      --bw: 0.15rem;
+      --ease-out: cubic-bezier(0.165, 0.840, 0.440, 1.000);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      background: #f3f3f3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: var(--blue);
+    }
+
+    /* Overlay (dimmed background) */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    /* Popup Card */
+    .card {
+      background: var(--black);
+      color: var(--white);
+      width: 90%;
+      max-width: 700px;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .card .event-date {
+      font-size: 1rem;
+      color: #ccc;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .card .event-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--white);
+    }
+
+    .card .event-description {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .card .event-location {
+      font-size: 1rem;
+      font-style: italic;
+      color: #aaa;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      color: #fff;
+      font-size: 1.5rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Trigger Button -->
+  <button onclick="openPopup()">Show Event</button>
+
+  <!-- Popup -->
+  <div class="overlay" id="popupOverlay">
+    <div class="card">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <span class="event-date">May 11, 2025</span>
+      <div class="event-content">
+        <h2 class="event-title">PURE VENOM: The After Party</h2>
+        <p class="event-description">
+          Celebrate the grand finale of the Philippine Blockchain Week's PBWx 2024 at the PURE VENOM After Party. 
+          With DJ Xander and Bandit spinning the hottest beats, this is the perfect night to let loose. 
+          Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
+        </p>
+        <p class="event-location">Location: 512 Main Building, National University</p>
+        <button>Register</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openPopup() {
+      document.getElementById('popupOverlay').classList.add('active');
+    }
+
+    function closePopup() {
+      document.getElementById('popupOverlay').classList.remove('active');
+    }
+  </script>
+
+</body>
+</html>
