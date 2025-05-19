@@ -12,7 +12,7 @@
     <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
     <script src="../scripts/footer.js"></script>
     <script src="../scripts/header.js"></script>
-    <script src="../scripts/events-management.js"></script>
+    <script src="../scripts/events-management.js" defer></script>
 </head>
 <body>
     <header>
@@ -227,10 +227,6 @@
         </div>
     </div>
     
-    <footer>
-        <div id="footer"></div>
-    </footer>
-
     <!-- Edit Event Modal -->
     <div id="editEventModal" class="modal">
         <div class="modal-content">
@@ -305,13 +301,13 @@
                                 </div>
                                 <select id="category" name="category" required>
                                     <option value="" disabled selected>Select a category</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="education">Education</option>
-                                    <option value="health">Health</option>
-                                    <option value="business">Business</option>
-                                    <option value="arts">Arts</option>
-                                    <option value="outreach">Outreach</option>
-                                    <option value="entertainment">Entertainment</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Arts">Arts</option>
+                                    <option value="Outreach">Outreach</option>
+                                    <option value="Entertainment">Entertainment</option>
                                 </select>
                             </div>
 
@@ -375,6 +371,35 @@
             </div>
         </div>
     </div>
+
+    <footer>
+        <div id="footer"></div>
+    </footer>
+
+    <script>
+        const pathParts = window.location.pathname.split('/') // gets /event/eventID e.g. "", "event", "eventID"
+        const eventID = pathParts[pathParts.length - 1]      
+
+        window.eventDataReady = new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(`/event-info/${eventID}`, {
+                    method : 'GET'
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    console.log("Backend Failed: ", error)
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+            }
+        })
+    </script>
 </body>
 </html>
     
