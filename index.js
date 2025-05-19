@@ -3,7 +3,6 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
-<<<<<<< HEAD
 import multer from 'multer';
 import bodyParser from 'body-parser';
 import fs from 'fs';
@@ -11,12 +10,6 @@ import cookieSession from 'cookie-session';
 import bcrypt from "bcrypt";
 import { error } from "console";
 
-=======
-import multer from 'multer'
-import bodyParser from 'body-parser'
-import fs from 'fs'
-import cookieSession from 'cookie-session'
->>>>>>> jorge-frontend
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
 //declaring app
