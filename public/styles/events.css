@@ -7,28 +7,6 @@
   padding: 0;
 }
 
-
-/* body {
-  background: #0075BB1A;
-  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
-  background-size: 30px 30px;
-  font-family: 'Inter', sans-serif;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at top left,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.7) 60%,
-    rgba(255, 255, 255, 0.9) 100%
-  );
-  z-index: -1;
-} */
-
 body {
   margin: 0;
   padding: 0;
@@ -36,7 +14,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: #333;
-  background-color: #ffffff;
+  background-color: #0075BB1A;
   background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
   background-size: 30px 30px;
 }
@@ -75,8 +53,8 @@ body::before {
 
 .event-section {
   max-width: 1000px;
-  margin: 4rem auto; /* Adds space at top and bottom */
-  padding: 2rem 1rem; /* Optional: inner spacing */
+  margin: 4rem auto; 
+  padding: 2rem 1rem;
   font-family: 'DM Sans';
 }
 
@@ -89,7 +67,7 @@ body::before {
 }
 
 .weekday {
-  font-weight: normal; /* or 400, or lighter depending on your design */
+  font-weight: normal; 
 }
 
 
@@ -163,7 +141,7 @@ body::before {
 
 .event-info {
   flex: 1;
-  min-width: 0; /* Prevent long words from breaking layout */
+  min-width: 0; /* FOR WORD BREAK ITO */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -208,8 +186,8 @@ body::before {
 .event-meta svg {
   width: 16px;
   height: 16px;
-  vertical-align: middle; /* aligns with text */
-  margin-right: 4px;       /* spacing before location text */
+  vertical-align: middle; 
+  margin-right: 4px;      
   display: inline-block;
 }
 
@@ -242,13 +220,13 @@ body::before {
   max-width: fit-content;
 }
 
-/* Status-specific styles */
+
 .event-status.going {
-  background-color: #32cd32; /* Green */
+  background-color: #32cd32; /* ELPHABA */
 }
 
 .event-status.pending {
-  background-color: #ffa500; /* Orange */
+  background-color: #ffa500; /* GALINDA */
 }
 
 .event-thumbnail {
@@ -256,7 +234,7 @@ body::before {
   height: 120px;
   border-radius: 10px;
   object-fit: cover;
-  flex-shrink: 0; /* Prevent it from shrinking or wrapping */
+  flex-shrink: 0; /* FOR SHRINKING/WRAPPING */
 }
 
  button.trigger-btn {
@@ -273,7 +251,7 @@ body::before {
     background: var(--blue);
   }
 
-  /* Overlay background dim */
+
   .overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -288,12 +266,12 @@ body::before {
     display: flex;
   }
 
-  /* Card popup style */
+
   .card-popup {
     position: relative;
-    width: 62.5vw; /* 2.5/4 of viewport width */
+    width: 62.5vw; 
     max-width: 700px;
-    height: 62.5vh; /* same fraction for height */
+    height: 62.5vh; 
     background: url('../assets/images/clubbing-event.jpg') center/cover no-repeat;
     border-radius: 20px;
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.7);
@@ -311,7 +289,7 @@ body::before {
     transform: scale(1.02);
   }
 
-  /* Dark overlay on image for text readability */
+
   .card-popup::before {
     content: "";
     position: absolute;
@@ -321,7 +299,7 @@ body::before {
     z-index: 0;
   }
 
-  /* Content inside card */
+
   .card-content {
     position: relative;
     z-index: 1;
@@ -372,7 +350,7 @@ body::before {
     background: var(--blue);
   }
 
-  /* Close button */
+
   button.close-btn {
     position: absolute;
     top: 1rem;
