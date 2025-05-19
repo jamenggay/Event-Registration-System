@@ -454,7 +454,7 @@ app.patch("/user-password", async (req, res) => {
 
 // events management page
 app.get("/event/:eventID", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "views", "dummy-event.html"))  
+    res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
 });
 
 // events management page
@@ -492,10 +492,13 @@ app.get("/event-info/:eventID", async (req, res) => {
 });
 
 // events management page
-app.put("/edit-event", async (req, res) => {
-    const { eventID, base64FeatureImage, imageFileName, imageFileExtension, eventName, 
+app.put("/edit-event/:eventID", async (req, res) => {
+    const eventID = req.params.eventID
+
+    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
             startDateTime, endDateTime, location, description, category, 
-            feedback, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body    
+            feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body  
+            
     try {
         await pool.request()
             .input('eventID', sql.Int, eventID)
@@ -506,7 +509,7 @@ app.put("/edit-event", async (req, res) => {
             .input('location', sql.VarChar, location)
             .input('description', sql.VarChar, description)
             .input('category', sql.VarChar, category)
-            .input('feedbackLink', sql.VarChar, feedback)
+            .input('feedbackLink', sql.VarChar, feedbackLink)
             .input('requireApproval', sql.VarChar, requireApproval)
             .input('capacity', sql.Int, capacity)
             .input('allowWaitlist', sql.VarChar, allowWaitlist)
