@@ -1,3 +1,4 @@
+//FRONTEND SCRIPT
 const wordElement = document.getElementById("dynamic-word");
   let isExperience = true;
 

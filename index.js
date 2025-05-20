@@ -192,6 +192,21 @@ app.post("/create-events", async (req, res) => {
     }
 });
 
+//fetch discover details for discover
+app.get("/event-details", async (req, res) => {
+   try{
+    let result = await pool.request().query('SELECT * FROM eventsTable');
+
+    res.json(result.recordset);
+    console.log("data fetched successfully!")
+   } 
+   catch(err){
+    console.error("Error fetching data", err);
+   }
+});
+
+
+//-----------------------------------
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
 });
