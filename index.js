@@ -499,11 +499,56 @@ app.put("/edit-event/:eventID", async (req, res) => {
             startDateTime, endDateTime, location, description, category, 
             feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body  
             
+    // convert base64 string of featureImage into binary
+    function getBinaryValue(base64FeatureImage) {
+        const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+        const response = {};
+
+        if (matches.length !== 3) {
+            console.log('Invalid input string');
+        }
+
+        response.type = matches[1];
+        response.data = Buffer.from(matches[2], 'base64');
+
+        return response;
+    }
+
+    const binaryFeatureImage = getBinaryValue(base64FeatureImage);
+
+    if (!binaryFeatureImage) {
+        return res.json({ message: 'Invalid image format.' });
+    }
+    
+    let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
+    let featureImageFileName = `${imageFileName}.${imageFileExtension}`
+
+    // checks for image duplication in uploads/featureImage folder
+    for (let i = 1; i <= uploadsfeatureImagesFileName.length; i++) {
+        if (uploadsfeatureImagesFileName.includes(featureImageFileName)) {
+            featureImageFileName = `${imageFileName} (${i}).${imageFileExtension}`
+        }
+        else {
+            break
+        }
+    }
+
+    const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
+
+    // saves featureImage in uploads/featureImage folder
+    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
+        if (error) { 
+            console.log("Image Creation Failed: ", error) 
+        }
+    });
+
+    const publicFeatureImagePath = `/uploads/featureImage/${featureImageFileName}`;
+    
     try {
         await pool.request()
             .input('eventID', sql.Int, eventID)
             .input('eventName', sql.VarChar, eventName)
-            // .input('featureImage', sql.VarChar, publicFeatureImagePath)
+            .input('featureImage', sql.VarChar, publicFeatureImagePath)
             .input('startDateTime', sql.DateTime, startDateTime)
             .input('endDateTime', sql.DateTime, endDateTime) 
             .input('location', sql.VarChar, location)
@@ -517,6 +562,7 @@ app.put("/edit-event/:eventID", async (req, res) => {
             .query(`UPDATE eventsTable
                     SET 
                         eventName = @eventName,
+                        featureImage = @featureImage,
                         startDateTime = @startDateTime,
                         endDateTime = @endDateTime,
                         location = @location,
