@@ -173,16 +173,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
   
-  const eventForm = document.getElementById('eventForm');
-  const h1 = document.querySelector('.event_name');
-  const hiddenInput = document.getElementById('hiddenEventName');
-
-  eventForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Set the hidden event name value
-    hiddenInput.value = h1.textContent.trim();
-  });
   // Background Image Upload
   document.getElementById('imageUpload').addEventListener('change', function (event) {
     const file = event.target.files[0];

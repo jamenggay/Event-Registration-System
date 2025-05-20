@@ -245,6 +245,7 @@ label {
   font-size: 14px;
   margin-top: 4px;
   font-weight: 500;
+  font-family: 'Inter', sans-serif;
   transition: all 0.3s ease;
 }
 
@@ -285,13 +286,15 @@ textarea {
 }
 
 .modal-content {
-  background-color: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 30px;
-  border-radius: 15px;
+  border-radius: 16px;
   width: 90%;
   max-width: 500px;
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 117, 187, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transform: translateY(-20px);
   transition: all 0.3s ease;
 }
@@ -300,12 +303,32 @@ textarea {
   transform: translateY(0);
 }
 
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.1) 30%,
+    transparent 70%
+  );
+  pointer-events: none;
+  border-radius: 16px;
+}
+
 .modal-content h2 {
   margin-top: 0;
   font-family: 'Inter', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: black;
+  color: #333;
+  margin-bottom: 25px;
+  text-align: center;
+  position: relative;
 }
 
 .close {
@@ -318,10 +341,12 @@ textarea {
   cursor: pointer;
   transition: all 0.3s ease;
   line-height: 1;
+  z-index: 1;
 }
 
 .close:hover {
   color: #333;
+  transform: scale(1.1);
 }
 
 /* Section Headers */
@@ -376,6 +401,10 @@ textarea {
   );
   pointer-events: none;
   border-radius: 16px;
+}
+
+.events_created_container .no-events-message {
+  text-align: center;
 }
 
 /* Event Card Styles */
@@ -522,23 +551,39 @@ textarea {
   object-fit: contain;
 }
 
-/* Edit Profile Modal */
+/* Edit Fields Styles */
 .edit-fields {
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin: 25px 0;
+  position: relative;
 }
 
 .edit-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
 }
 
 .edit-field label {
   font-weight: 500;
   color: #333;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+
+.edit-field input,
+.edit-field textarea {
+  width: 100%;
+  border-radius: 12px;
+  font-size: 16px;
+  padding: 12px;
+  border: 1px solid #aaccee;
+  background-color: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
 }
 
 .edit-field input:focus,
@@ -546,27 +591,56 @@ textarea {
   border-color: #0075BB;
   box-shadow: 0 0 0 2px rgba(0, 117, 187, 0.1);
   outline: none;
+  transform: translateY(-1px);
 }
 
-/* Save Button */
-.save_button {
-  margin-top: 15px;
-  padding: 8px 15px;
-  background-color: white;
-  color: black;
-  border: 1px solid black;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
+/* Button Styles */
+.save_button,
+.change_password_button {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
   font-family: 'Inter', sans-serif;
-  font-weight: bold;
   width: 100%;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.save_button {
+  background-color: #0075BB;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 117, 187, 0.2);
+  margin-top: 20px;
 }
 
 .save_button:hover {
-  background-color: #f1f1f1;
-  border-color: #888;
+  background-color: #005c94;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 117, 187, 0.3);
+}
+
+.save_button:disabled {
+  cursor: not-allowed;
+}
+
+.change_password_button {
+  margin-top: 15px;
+  background-color: white;
+  color: #0075BB;
+  border: 1px solid #0075BB;
+  box-shadow: 0 2px 6px rgba(0, 117, 187, 0.1);
+}
+
+.change_password_button:hover {
+  background-color: rgba(220, 230, 250, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 117, 187, 0.2);
 }
 
 /* Preview Fields */

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dalo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="../styles/events-management.css">
+    <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
+    <script src="../scripts/footer.js"></script>
+    <script src="../scripts/header.js"></script>
+    <script src="../scripts/events-management.js" defer></script>
+</head>
+<body>
+    <header>
+        <div id="header"></div>
+    </header>
+
+    <div class="tab-wrapper">
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="guest">Guest List</button>
+            <button class="tab-button" data-tab="check-in">Check In</button>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="overview">
+                <h1>Overview</h1>
+
+                <div class="overview-container">
+                    <div class="illustration-container">
+                        <div class="illustration">
+                            <div class="illustration_color">
+                                <img id="eventImage" src="" alt="Event Image">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-details-container">
+                        <div class="event_name-wrapper">
+                            <h2 class="event_name"></h2>
+                        </div>
+                        
+                        <div class="event_date_location_container">
+                            <div class="event_date">
+                                <div class="event_start">
+                                    <div class="date_label">
+                                        <h3>Start: </h3>
+                                        <p class="start-datetime"></p>
+                                    </div>
+                                </div>
+                                <div class="event_end">
+                                    <div class="date_label">
+                                        <h3>End: </h3>
+                                        <p class="end-datetime"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="event_location">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/location-icon.png" class="icon-flex">
+                                    <h3>Location: </h3> 
+                                    <p class="location-text"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="event_description">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/description-icon.png" class="icon-flex">
+                                <h3>Description: </h3>
+                                <p class="description-text"></p>
+                            </div>
+                        </div>
+
+                        <div class="event_category">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/category-icon.png" class="icon-flex">
+                                <h3>Category: </h3>
+                                <p class="category-text"></p>
+                            </div>
+                        </div>
+
+                        <div class="event_feedback">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/feedback-icon.png" class="icon-flex">
+                                <h3>Feedback Link: </h3>
+                                <p class="feedback-link"></p>
+                            </div>
+                        </div>
+
+                        <div class="event_options">
+                            <h3>Event Options</h3>
+                            <div class="event_approval_capacity">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/approval-icon.png" class="icon-flex">
+                                    <h3>Approval Required: </h3>
+                                    <p class="approval-status"></p>
+                                </div>
+                            </div>
+                            <div class="event_approval_capacity">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/capacity-icon.png" class="icon-flex">
+                                    <h3>Maximum Capacity: </h3>
+                                    <p class="capacity-text"></p>
+                                </div>
+                                <p class="waitlist-status"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="edit-button-container">
+                    <button class="edit-button">
+                        <img src="../assets/icons/edit-icon.png" class="edit-icon" alt="Edit">
+                        Edit Event
+                    </button>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="guest">
+                <h1>Guest List</h1>
+                <div class="attendee-container">
+                    <div class="attendee-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="attendee-name">Jamainosaurus</span>
+                    </div>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+
+                 <div class="attendee-container">
+                    <div class="attendee-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="attendee-name">Neneng B</span>
+                    </div>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+
+                <div class="attendee-container">
+                    <div class="attendee-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="attendee-name">Fe Fer Mint (Diva)</span>
+                    </div>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+
+                <div class="attendee-container">
+                    <div class="attendee-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="attendee-name">Belly Button</span>
+                    </div>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="tab-pane" id="check-in">
+                <h1>Check In</h1>
+
+                <div class="checkin-guest">
+                    <div class="guest-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="guest-name">Browny</span>
+                    </div>
+                    <div class="attendance-options">
+                        <label class="attendance-option attended">
+                            <input type="radio" name="attendance1" value="attended">
+                            <span>Attended</span>
+                        </label>
+                        <label class="attendance-option not-attended">
+                            <input type="radio" name="attendance1" value="not-attended">
+                            <span>Not Attended</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="checkin-guest">
+                    <div class="guest-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="guest-name">Bogart</span>
+                    </div>
+                    <div class="attendance-options">
+                        <label class="attendance-option attended">
+                            <input type="radio" name="attendance2" value="attended">
+                            <span>Attended</span>
+                        </label>
+                        <label class="attendance-option not-attended">
+                            <input type="radio" name="attendance2" value="not-attended">
+                            <span>Not Attended</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="checkin-guest">
+                    <div class="guest-info">
+                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                        <span class="guest-name">Ice Spice</span>
+                    </div>
+                    <div class="attendance-options">
+                        <label class="attendance-option attended">
+                            <input type="radio" name="attendance3" value="attended">
+                            <span>Attended</span>
+                        </label>
+                        <label class="attendance-option not-attended">
+                            <input type="radio" name="attendance3" value="not-attended">
+                            <span>Not Attended</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Event</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="event_info">
+                    <div class="illustration_container">
+                        <div class="illustration">
+                            <div class="illustration_color">
+                                <img id="imagePreview" src="" alt="Event Image Preview">
+                            </div>
+                        </div>
+                        <div class="illustration_controls">
+                            <button type="button" class="upload_button">Upload Photo</button>
+                        </div>
+                    </div>
+                    
+                    <div class="event_details">
+                        <form id="editEventForm">
+                            <input type="file" id="latestEventImage" name="eventImage" accept="image/*" style="display: none;" />
+                            
+                            <div class="event_name-wrapper">
+                                <input type="text" id="eventName" class="event_name" placeholder="Enter event name" required>
+                            </div>
+
+                            <div class="event_date_location_container">
+                                <div class="event_date">
+                                    <div class="event_start">
+                                        <div class="date_label">
+                                            <h3>Start</h3>
+                                        </div>
+                                        <div class="date-time-input">
+                                            <input type="date" id="startDate" name="startDate" required />
+                                            <input type="time" id="startTime" name="startTime" required />
+                                        </div>
+                                    </div>
+                                    <div class="event_end">
+                                        <div class="date_label">
+                                            <h3>End</h3>
+                                        </div>
+                                        <div class="date-time-input">
+                                            <input type="date" id="endDate" name="endDate" required />
+                                            <input type="time" id="endTime" name="endTime" required />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="event_location">
+                                    <div class="icon-heading">
+                                        <img src="../assets/icons/location-icon.png" alt="Location">
+                                        <h3>Event Location</h3>
+                                    </div>
+                                    <input type="text" id="location" name="location" placeholder="Enter event location..." required>
+                                </div>
+                            </div>
+
+                            <div class="event_description">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/description-icon.png" alt="Description">
+                                    <h3>Description</h3>
+                                </div>
+                                <textarea id="description" name="description" rows="4" placeholder="Type your event description here..." required></textarea>
+                            </div>
+
+                            <div class="event_category">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/category-icon.png" alt="Category">
+                                    <h3>Event Category</h3>
+                                </div>
+                                <select id="category" name="category" required>
+                                    <option value="" disabled selected>Select a category</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Arts">Arts</option>
+                                    <option value="Outreach">Outreach</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                </select>
+                            </div>
+
+                            <div class="event_feedback">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/feedback-icon.png" alt="Feedback">
+                                    <h3>Feedback Link</h3>
+                                </div>
+                                <input type="url" id="feedbackLink" name="feedbackLink" placeholder="Enter feedback link...">
+                            </div>
+
+                            <div class="event_options">
+                                <h3>Event Options</h3>
+                                <div class="event_option">
+                                    <div class="event_approval_capacity">
+                                        <div class="icon-heading">
+                                            <img src="../assets/icons/approval-icon.png" alt="Approval">
+                                            <h3>Require Approval</h3>
+                                        </div>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="require_approval" class="toggle-input">
+                                            <label for="require_approval" class="toggle-label">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="event_option">
+                                    <div class="event_approval_capacity">
+                                        <div class="icon-heading">
+                                            <img src="../assets/icons/capacity-icon.png" alt="Capacity">
+                                            <h3>Maximum Capacity</h3>
+                                        </div>
+                                        <input type="number" id="max_capacity" min="1" placeholder="Enter capacity" style="width: 120px;">
+                                    </div>
+                                </div>
+
+                                <div class="event_option">
+                                    <div class="event_approval_capacity">
+                                        <div class="icon-heading">
+                                            <h3>Over Capacity Waitlist</h3>
+                                        </div>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="over_capacity_waitlist" class="toggle-input">
+                                            <label for="over_capacity_waitlist" class="toggle-label">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="cancel-button">Cancel</button>
+                                <button type="submit" class="save-button">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div id="footer"></div>
+    </footer>
+
+    <script>
+        const pathParts = window.location.pathname.split('/') // gets /event/eventID e.g. "", "event", "eventID"
+        const eventID = pathParts[pathParts.length - 1]      
+
+        window.eventDataReady = new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(`/event-info/${eventID}`, {
+                    method : 'GET'
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    console.log("Backend Failed: ", error)
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+            }
+        })
+    </script>
+</body>
+</html>
+    
