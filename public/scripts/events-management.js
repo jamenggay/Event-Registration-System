@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    window.updatedEventData = {}
-
     let eventData = null
 
     try {
@@ -21,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cancelButton = document.querySelector('.cancel-button');
     const editEventForm = document.getElementById('editEventForm');
     const uploadButton = document.querySelector('.upload_button');
-    const eventImage = document.getElementById('eventImage');
+    const eventImage = document.getElementById('latestEventImage');
     const imagePreview = document.getElementById('imagePreview');
 
     // Tab switching functionality
@@ -54,7 +52,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 minute: 'numeric',
                 hour12: true
             });
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error formatting date:', error);
             return 'Invalid date';
         }
@@ -85,7 +84,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Function to display event data
     const displayEventData = (eventData) => {
         try {
-            if (eventData.featureImage) {
+            if (eventData.base64FeatureImage) {
+                // Show newly uploaded image
+                document.getElementById('eventImage').src = eventData.base64FeatureImage;
+                document.getElementById('eventImage').style.display = 'block';
+            } 
+            else if (eventData.featureImage) {
                 document.getElementById('eventImage').src = eventData.featureImage;
                 document.getElementById('eventImage').style.display = 'block';
             }
@@ -114,7 +118,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.querySelector('.waitlist-status').textContent = 
                     `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error displaying event data:', error);
         }
     };
@@ -211,20 +216,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Handle image upload
-    uploadButton.addEventListener('click', () => eventImage.click());
+    let featureImage = null
+    let imageFileName = null
+    let imageFileExtension = null
 
-    eventImage.addEventListener('change', (e) => {
+    uploadButton.addEventListener('click', () => 
+        eventImage.click()
+    );
+
+    eventImage.addEventListener('change', async (e) => {
         try {
             const file = e.target.files[0];
+            
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+                const getBase64 = file => new Promise(async (resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        resolve(reader.result)
+                    };
+
+                    reader.onerror = () => {
+                        console.error('Error reading file');
+                        alert('Error reading file. Please try again.');
+                    }
+
+                    reader.readAsDataURL(file);
+                })
+
+                featureImage = await getBase64(file)
+                imageFileName = file.name.replace(/\.[^/.]+$/, '')
+                imageFileExtension = file.name.split('.').pop().toLowerCase()
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error handling image upload:', error);
         }
     });
@@ -245,7 +272,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
         
         const updatedEventData = {
-            eventID         : eventData.eventID,
+            eventID             : eventData.eventID,
+            base64FeatureImage  : featureImage,
+            imageFileName       : imageFileName,
+            imageFileExtension  : imageFileExtension,
             eventName       : document.getElementById('eventName').value,
             startDateTime   : startDateTime,
             endDateTime     : endDateTime,
