@@ -3,7 +3,6 @@ import { dirname } from "path";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, sql } from "./db-connection.js";
-
 import multer from 'multer';
 import bodyParser from 'body-parser';
 import fs from 'fs';
@@ -38,7 +37,7 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     const { email, mobileNum, fullName, userName } = req.body;
     console.log("Hash Pass: ", hashedPassword);
-        
+
     try {
         await pool.request()
             .input('email', sql.VarChar, email)
@@ -72,7 +71,7 @@ app.post("/login", async (req, res) => {
         if (!user) {
             return res.json({ success: false, message: "Incorrect username or password!" });
         }
-        
+
         const comparePassword = await bcrypt.compare(password, user.password);
         if (!comparePassword) {
             return res.json({ success: false, message: "Incorrect username or password!" });
