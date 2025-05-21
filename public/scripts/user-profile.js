@@ -306,16 +306,36 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (hasError) return;
 
+        updatedUserData.currentPassword = currentPassword
+        updatedUserData.newPassword = newPassword
+        
         try {
-            window.updatedUserData.currentPassword = currentPassword
-            window.updatedUserData.newPassword = newPassword
+            const response = await fetch("/user-password", {
+                method: 'PATCH',
+                headers: { 'Content-Type' : 'application/json' },
+                body: JSON.stringify(updatedUserData)
+            })
 
-            // If successful, close the modal
-            closeChangePasswordModal();
-            // alert('Password updated successfully!');
-        } catch (error) {
-            console.error('Error changing password:', error);
-            // alert('Failed to change password. Please try again.');
+            if (response.ok) {
+                const result = await response.json()
+                console.log("Server Success: ", result)
+                alert("User password edit success.")
+                closeChangePasswordModal();
+            }
+            else if (response.status == 401) {
+                const error = await response.json()
+                console.log("Server Failed: ", error)
+                alert("Incorrect current password.")
+            }
+            else {
+                const result = await response.json();
+                console.log("Server Failed: ", result)
+                alert("User password edit failed.")
+            }
+        }
+        catch (e) {
+            console.log("Client Error: ", e)
+            alert("An error occurred while updating the password");
         }
     }
 
@@ -354,7 +374,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const overlay = document.getElementById('popupOverlay');
 
         userEventsCreated.sort((a, b) => new Date(b.startDateTime) - new Date(a.startDateTime))
-        
+
         eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
 
             const startObj = new Date(event.startDateTime)
