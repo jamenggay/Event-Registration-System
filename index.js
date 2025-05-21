@@ -192,10 +192,10 @@ app.post("/create-events", async (req, res) => {
     }
 });
 
-//fetch discover details for discover
+//fetch event details from eventsTable
 app.get("/event-details", async (req, res) => {
    try{
-    let result = await pool.request().query('SELECT * FROM eventsTable');
+    let result = await pool.request().query('SELECT * FROM eventsTable;');
 
     res.json(result.recordset);
     console.log("data fetched successfully!")
@@ -205,8 +205,19 @@ app.get("/event-details", async (req, res) => {
    }
 });
 
+app.get("/api/formatStartDate", async (req, rs) => {
+    try{
+        let result = await pool.request().query(`SELECT FORMAT(startDateTime, 'MMMM d, h:mm tt') AS formattedDate
+FROM eventsTable;`);
+console.log(result.recordset);
+        rs.json(result.recordset);
+        console.log("start date and time converted successfully!")
+    }
+    catch(err){
+        console.error("Error formatting start Date and Time", err);
+    }
+});
 
-//-----------------------------------
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
 });
