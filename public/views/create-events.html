@@ -176,7 +176,8 @@
     <div id="footer"></div>
   </footer>
   <script>
-    const eventForm = document.getElementById('eventForm')
+    document.addEventListener('DOMContentLoaded', () => {
+      const eventForm = document.getElementById('eventForm')
 
     eventForm.addEventListener('submit', async (e) => {
       e.preventDefault()
@@ -218,17 +219,18 @@
         base64FeatureImage  : featureImage,
         imageFileName       : imageFileName,
         imageFileExtension  : imageFileExtension,
-        eventName       : eventName.value,
-        startDateTime   : startDateTime,
-        endDateTime     : endDateTime,
-        location        : document.getElementById('locationText').value,
-        description     : document.getElementById('descriptionText').value,
-        category        : document.getElementById('event-category').value,
-        feedback        : document.getElementById('feedbackLinkText').value,
-        requireApproval : requireApproval,
-        capacity        : document.getElementById('capacityInput').value,
-        allowWaitlist   : waitlistToggle, 
-        lastUpdated     : lastUpdated
+        eventName           : eventName.value,
+        startDateTime       : startDateTime,
+        endDateTime         : endDateTime,
+        location            : document.getElementById('locationText').value,
+        description         : document.getElementById('descriptionText').value,
+        category            : document.getElementById('event-category').value,
+        feedback            : document.getElementById('feedbackLinkText').value,
+        requireApproval     : requireApproval,
+        capacity            : document.getElementById('capacityInput').value,
+        allowWaitlist       : waitlistToggle, 
+        lastUpdated         : lastUpdated,
+        themeIndex          : window.eventData.themeIndex || 1
       }
 
       try { 
@@ -255,6 +257,7 @@
         console.log("Client Error: ", e)
         alert("An error occurred while creating the event");
       }
+    })
     })
   </script>
 </body>
