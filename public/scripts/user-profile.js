@@ -352,8 +352,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (userEventsCreated.length !== 0) {
         const eventsCreatedContainer = document.querySelector('.events_created_container')
         const overlay = document.getElementById('popupOverlay');
-      
+
+        userEventsCreated.sort((a, b) => new Date(b.startDateTime) - new Date(a.startDateTime))
+        
         eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
+
             const startObj = new Date(event.startDateTime)
             const endObj = new Date(event.endDateTime)
             const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
@@ -377,7 +380,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                                     <div class="event-meta">
                                         <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
                                     </div>
-                                    <div class="event-status going">Going</div>
                                 </div>
 
                                 <img class="event-thumbnail"
