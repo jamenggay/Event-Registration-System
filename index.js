@@ -103,7 +103,7 @@ app.post("/create-events", async (req, res) => {
     
     const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
             startDateTime, endDateTime, location, description, category, 
-            feedback, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body
+            feedback, requireApproval, capacity, allowWaitlist, lastUpdated, themeIndex } = req.body
 
     // convert base64 string of featureImage into binary
     function getBinaryValue(base64FeatureImage) {
@@ -165,12 +165,13 @@ app.post("/create-events", async (req, res) => {
             .input('capacity', sql.Int, capacity)
             .input('allowWaitlist', sql.VarChar, allowWaitlist)
             .input('lastUpdated', sql.DateTime, lastUpdated)
+            .input('themeIndex', sql.Int, themeIndex)
             .query(`INSERT INTO eventsTable (eventName, description, category, location, startDateTime, 
                                 endDateTime, featureImage, requireApproval, capacity, feedbackLink, 
-                                allowWaitlist, lastUpdated, creatorID) 
+                                allowWaitlist, lastUpdated, themeIndex, creatorID) 
                     SELECT @eventName, @description, @category, @location, @startDateTime, 
                             @endDateTime, @featureImage, @requireApproval, @capacity, @feedbackLink,
-                            @allowWaitlist, @lastUpdated, u.userID
+                            @allowWaitlist, @lastUpdated, @themeIndex, u.userID
                     FROM userTable u
                     WHERE userID = @creatorID`)
 
@@ -277,7 +278,8 @@ app.get("/user-events-created", async (req, res) => {
                                                 feedbackLink    : event.feedbackLink,
                                                 lastUpdated     : event.lastUpdated,
                                                 category        : event.category,
-                                                allowWaitlist   : event.allowWaitlist
+                                                allowWaitlist   : event.allowWaitlist,
+                                                themeIndex      : event.themeIndex
                                             }))
 
         console.log("User events created extraction success.")
@@ -408,10 +410,6 @@ app.patch("/user-password", async (req, res) => {
 
     const { currentPassword, newPassword } = req.body
 
-    if (currentPassword === newPassword) {
-        return res.status(400).json({ message: "New password must be different from the current password." });
-    }
-
     try {
         const result = await pool.request()
             .input('userID', sql.Int, userID)
@@ -424,6 +422,10 @@ app.patch("/user-password", async (req, res) => {
         const isMatch = await bcrypt.compare(currentPassword, storedPassword)
 
         if (isMatch) {
+            if (currentPassword === newPassword) {
+                return res.status(400).json({ message: "New password must be different from the current password." });
+            }
+
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(newPassword, salt);
 
@@ -444,7 +446,7 @@ app.patch("/user-password", async (req, res) => {
             }
         } 
         else {
-            return res.status(400).json({ message : "Incorrect current password."})
+            return res.status(401).json({ message : "Incorrect current password."})
         }
     }
     catch (e) {
