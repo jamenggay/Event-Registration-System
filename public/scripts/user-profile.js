@@ -349,32 +349,89 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     console.log("Events Data: ", userEventsCreated)
 
-    if (!userEventsCreated.length == 0) {
+    if (userEventsCreated.length !== 0) {
         const eventsCreatedContainer = document.querySelector('.events_created_container')
+        const overlay = document.getElementById('popupOverlay');
+      
+        eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
+            const startObj = new Date(event.startDateTime)
+            const endObj = new Date(event.endDateTime)
+            const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const optionsDay  = { weekday: 'long', timeZone: 'UTC' };
+            const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
+ 
+            return `  
+                    <div class="event-group">
+                        <div class="event-date">
+                            <strong>${startObj.toLocaleString('en-US', optionsDate)}</strong>
+                            <span class="weekday">${startObj.toLocaleString('en-US', optionsDay)}</span>
+                        </div>
 
-        eventsCreatedContainer.innerHTML = userEventsCreated.map(event => 
-        `
-            <div class="event_container">
-                <div class="event_bg" style="background-image: url('${event.featureImage}')"></div>
-                <div class="event_info">
-                    <div class="event_title">
-                        <h4>${event.eventName}</h4>
-                    </div>
-                    <div class="event_desc">
-                        <p>${event.description}</p>
-                    </div>
-                    <div class="event_footer">
-                        <div class="event_date">
-                            <!-- <p>${event.startDateTime}</p> -->
-                            <p>${new Date(event.startDateTime).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        <div class="event-cards theme-${event.themeIndex}" index="${index}">
+                            <div class="event-card">
+                                <div class="event-info">
+                                    <div class="event-time">${startObj.toLocaleString('en-US', optionsTime)}</div>
+                                    <div class="event-title">
+                                        ${event.eventName}
+                                    </div>
+                                    <div class="event-meta">
+                                        <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
+                                    </div>
+                                    <div class="event-status going">Going</div>
+                                </div>
+
+                                <img class="event-thumbnail"
+                                    src="${event.featureImage}"
+                                    alt="Event Thumbnail" />
+                            </div>
                         </div>
-                        <div class="event_more">
-                            <a href="/event/${event.eventID}" class="events-card-button">Info</a>
-                        </div>
                     </div>
-                </div>
-            </div>
-        `).join('')
+                `
+        }).join('')
+            
+        const eventCards = document.querySelectorAll('.event-cards');
+        
+        eventCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const index = card.getAttribute('index')
+                const event = userEventsCreated[index]
+
+                overlay.innerHTML = `
+                        <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
+                            <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+
+                            <div class="card-content">
+                                <span class="event-date">${new Date(event.startDateTime).toLocaleString('en-US', { month : 'long', day : 'numeric', year : 'numeric'})}</span>
+                                <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
+                                <p class="event-description" id="eventDesc">${event.description}</p>
+                                <p class="event-location">Location: ${event.location}</p>
+                                <button class="link-btn" onclick="window.location.href='/event/${event.eventID}'">You're managing this event!</button>
+                            </div>
+                        </article>
+                `
+                openPopup()
+            })
+        })
+        
+        function openPopup() {
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closePopup() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        overlay.addEventListener('click', e => {
+            if(e.target.id === 'closePopup' || e.target === overlay) closePopup();
+        });
+
+        document.addEventListener('keydown', e => {
+            if(e.key === "Escape" && overlay.classList.contains('active')) {
+            closePopup();
+            }
+        });
     }
     else {
         const eventsCreatedContainer = document.querySelector('.events_created_container')
