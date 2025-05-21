@@ -80,3 +80,8 @@ ADD
 ALTER TABLE userTable
 ADD 
   bio NVARCHAR(MAX) NULL;
+
+--eventsTable ALTER (based on UI)
+ALTER TABLE eventsTable
+ADD
+	themeIndex INT;
