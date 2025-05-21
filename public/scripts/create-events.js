@@ -120,11 +120,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const themeButton = document.querySelector(".switch_color_button");
   let themeIndex = 1;
   const totalThemes = 12;
+  window.eventData = {}
 
   themeButton.addEventListener("click", () => {
     document.body.classList.remove(`theme-${themeIndex}`);
     themeIndex = (themeIndex % totalThemes) + 1;
     document.body.classList.add(`theme-${themeIndex}`);
+    window.eventData.themeIndex = themeIndex
   });
 
   document.body.classList.add("theme-1");
