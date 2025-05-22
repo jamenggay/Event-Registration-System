@@ -496,55 +496,63 @@ app.get("/event-info/:eventID", async (req, res) => {
 // events management page
 app.put("/edit-event/:eventID", async (req, res) => {
     const eventID = req.params.eventID
+    return
 
-    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
-            startDateTime, endDateTime, location, description, category, 
+    const { base64FeatureImage, imageFileName, imageFileExtension, dbImagePath,
+            eventName, startDateTime, endDateTime, location, description, category, 
             feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body  
-            
-    // convert base64 string of featureImage into binary
-    function getBinaryValue(base64FeatureImage) {
-        const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
-        const response = {};
 
-        if (matches.length !== 3) {
-            console.log('Invalid input string');
-        }
+    let publicFeatureImagePath = null
 
-        response.type = matches[1];
-        response.data = Buffer.from(matches[2], 'base64');
-
-        return response;
+    if (!base64FeatureImage) {
+        publicFeatureImagePath = dbImagePath
     }
+    else {
+        // convert base64 string of featureImage into binary
+        function getBinaryValue(base64FeatureImage) {
+            const matches = base64FeatureImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+            const response = {};
 
-    const binaryFeatureImage = getBinaryValue(base64FeatureImage);
+            if (matches.length !== 3) {
+                console.log('Invalid input string');
+            }
 
-    if (!binaryFeatureImage) {
-        return res.json({ message: 'Invalid image format.' });
+            response.type = matches[1];
+            response.data = Buffer.from(matches[2], 'base64');
+
+            return response;
+        }
+
+        const binaryFeatureImage = getBinaryValue(base64FeatureImage);
+
+        if (!binaryFeatureImage) {
+            return res.json({ message: 'Invalid image format.' });
+        }
+        
+        let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
+        let featureImageFileName = `${imageFileName}.${imageFileExtension}`
+
+        // checks for image duplication in uploads/featureImage folder
+        for (let i = 1; i <= uploadsfeatureImagesFileName.length; i++) {
+            if (uploadsfeatureImagesFileName.includes(featureImageFileName)) {
+                featureImageFileName = `${imageFileName} (${i}).${imageFileExtension}`
+            }
+            else {
+                break
+            }
+        }
+
+        const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
+
+        // saves featureImage in uploads/featureImage folder
+        fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
+            if (error) { 
+                console.log("Image Creation Failed: ", error) 
+            }
+        });
+
+        publicFeatureImagePath = `/uploads/featureImage/${featureImageFileName}`;
     }
-    
-    let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
-    let featureImageFileName = `${imageFileName}.${imageFileExtension}`
-
-    // checks for image duplication in uploads/featureImage folder
-    for (let i = 1; i <= uploadsfeatureImagesFileName.length; i++) {
-        if (uploadsfeatureImagesFileName.includes(featureImageFileName)) {
-            featureImageFileName = `${imageFileName} (${i}).${imageFileExtension}`
-        }
-        else {
-            break
-        }
-    }
-
-    const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
-
-    // saves featureImage in uploads/featureImage folder
-    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
-        if (error) { 
-            console.log("Image Creation Failed: ", error) 
-        }
-    });
-
-    const publicFeatureImagePath = `/uploads/featureImage/${featureImageFileName}`;
     
     try {
         await pool.request()
