@@ -39,10 +39,27 @@ document.addEventListener("DOMContentLoaded", async () => {
           <h2 class="event-title">${event.eventName}</h2>
           <p class="event-description">${event.description}</p>
           <p class="event-location">${event.location}</p>
-            <button>Register</button>
+            <button class="register-btn" data-event-id="${event.eventID}">Register</button>
         </div>
     `;
         eventList.appendChild(li);
+        const button = li.querySelector('.register-btn');
+        button.addEventListener('click', () => {
+          fetch('/register-event', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ eventID: event.eventID })
+          })
+            .then(res => res.json())
+            .then(data => {
+              alert('Successfully registered!');
+            })
+            .catch(err => {
+              console.error('Registration error:', err);
+            });
+        });
       }
       else {
         li.innerHTML = `
@@ -51,10 +68,28 @@ document.addEventListener("DOMContentLoaded", async () => {
           <h2 class="event-title">${event.eventName}</h2>
           <p class="event-description">${event.description}</p>
           <p class="event-location">${event.location}</p>
-            <button>Register</button>
+            <button class="register-btn" data-event-id="${event.eventID}">Register</button>
         </div>
     `;
         eventList.appendChild(li);
+
+        const button = li.querySelector('.register-btn');
+        button.addEventListener('click', () => {
+          fetch('/register-event', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(data)
+          })
+            .then(res => res.json())
+            .then(data => {
+              button.textContent = 'Registered';
+              button.disable = true;
+              alert('Registered Successfully!');
+            })
+            .catch(err => {
+              console.error('Error resgitration: ', err);
+            });
+        });
       }
 
     });

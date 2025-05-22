@@ -257,10 +257,32 @@ app.get("/api/compareDate", async (req, res) => {
 
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
+    
 });
 
 app.get("/discover", (req, res) => {
+    
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
+    
+});
+
+app.post("/register-event", async (req, res) => {
+    const userID = req.session.user.id;
+    const { eventID } = req.body
+
+    try{
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .query('INSERT INTO registrationTable (eventID, userID) VALUES (@eventID, @userID)');
+        
+        res.json({success: true, message: 'User successfully registered into an event' });
+    }
+    catch(err){
+        console.error("Error registring event: ", err);
+        res.status(500).json({message: 'Registration Failed'});
+    }
+
 });
 
 // user profile page
