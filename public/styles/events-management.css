@@ -859,6 +859,10 @@ select {
     background-color: #005a8f;
 }
 
+#save-changes-btn:disabled {
+    cursor: not-allowed;
+}
+
 @keyframes modalSlideIn {
     from {
         opacity: 0;
