@@ -260,6 +260,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     editEventForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+            console.log(document.getElementById('startDate').value, new Date(eventData.startDateTime).toISOString().split('T')[0])       
+    console.log(document.getElementById('startTime').value, new Date(eventData.startDateTime).toISOString().split('T')[1])
+
         const startDate = document.getElementById('startDate').value
         const startTime = document.getElementById('startTime').value
         const endDate   = document.getElementById('endDate').value
@@ -276,6 +279,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             base64FeatureImage  : featureImage,
             imageFileName       : imageFileName,
             imageFileExtension  : imageFileExtension,
+            dbImagePath     : eventData.featureImage,
             eventName       : document.getElementById('eventName').value,
             startDateTime   : startDateTime,
             endDateTime     : endDateTime,
@@ -308,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }                
         } 
         catch (error) {
-            console.log("Client Error: ", e)
+            console.log("Client Error: ", error)
         }
     });
 
