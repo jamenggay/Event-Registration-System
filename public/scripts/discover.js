@@ -50,10 +50,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ eventID: event.eventID })
+            body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
           })
             .then(res => res.json())
             .then(data => {
+              button.textContent = 'Registered';
+              button.disable = true;
               alert('Successfully registered!');
             })
             .catch(err => {

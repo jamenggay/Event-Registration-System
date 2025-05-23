@@ -268,13 +268,16 @@ app.get("/discover", (req, res) => {
 
 app.post("/register-event", async (req, res) => {
     const userID = req.session.user.id;
-    const { eventID } = req.body
-
-    try{
+    const { eventID, requireApproval} = req.body
+    
+    if(requireApproval == 'Yes'){
+        const status = 'Pending';
+         try{
         await pool.request()
             .input('eventID', sql.Int, eventID)
             .input('userID', sql.Int, userID)
-            .query('INSERT INTO registrationTable (eventID, userID) VALUES (@eventID, @userID)');
+            .input('status', sql.VarChar, status)
+            .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
         
         res.json({success: true, message: 'User successfully registered into an event' });
     }
@@ -282,6 +285,26 @@ app.post("/register-event", async (req, res) => {
         console.error("Error registring event: ", err);
         res.status(500).json({message: 'Registration Failed'});
     }
+
+    }
+    else{
+        const status = 'Approved';
+         try{
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .input('status', sql.VarChar, status)
+            .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
+        
+        res.json({success: true, message: 'User successfully registered into an event' });
+    }
+    catch(err){
+        console.error("Error registring event: ", err);
+        res.status(500).json({message: 'Registration Failed'});
+    }
+    }
+
+   
 
 });
 
