@@ -1011,6 +1011,10 @@ h3 {
     font-weight: 500;
 }
 
+.no-guests-message {
+  text-align: center;
+}
+
 .attendee-name,
 .guest-name {
     font-size: 1rem;
