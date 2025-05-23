@@ -163,6 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const saveChangesButton = document.getElementById('save-changes-btn');
+
+
     
     const eventFormFields = [ 
         {   new : document.getElementById('eventName'),     original : eventData.eventName },
@@ -282,6 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 imageFileName = file.name.replace(/\.[^/.]+$/, '')
                 imageFileExtension = file.name.split('.').pop().toLowerCase()
             }
+            saveChangesButton.disabled = false
         } 
         catch (error) {
             console.error('Error handling image upload:', error);
