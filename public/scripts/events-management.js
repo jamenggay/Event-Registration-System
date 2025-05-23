@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Event Handling
     let eventData = null
 
     try {
@@ -163,8 +164,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const saveChangesButton = document.getElementById('save-changes-btn');
-
-
     
     const eventFormFields = [ 
         {   new : document.getElementById('eventName'),     original : eventData.eventName },
@@ -348,6 +347,128 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+
+    // Guest Handling
+    let registrationData = null
+    window.updatedRegistrationData = {};
+
+
+    try {
+        registrationData = await window.registrationDataReady
+    }
+    catch (e) {
+        console.error("Failed to load registration data:", e);
+    }
+
+    console.log("Client Registration Details: ", registrationData)
+
+    // handle require approval
+    // if (document.getElementById('require_approval').checked) {
+    //     getGuestList()
+    // }
+    // else {
+    //     getCheckInList()
+    // }
+
+    // arrange from newest to oldest registration
+    
+    const guestTab = document.getElementById('guest')
+
+    if (registrationData.length != 0) {
+
+        guestTab.innerHTML = `
+            <h1>Guest List</h1> ${registrationData.map(guest => 
+            `<div class="attendee-container">
+                <div class="attendee-info">
+                    <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                    <span class="attendee-name">${guest.fullname}</span>
+                </div>
+                <div class="attendee-actions">
+                    <button class="accept">Dalo</button>
+                    <button class="decline">Decline</button>
+                </div>
+            </div>`
+        ).join('')}`
+
+        const acceptGuestBtn = document.querySelectorAll('.accept')
+
+        acceptGuestBtn.forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const acceptedGuest = registrationData[index]
+                
+                const guestData = {
+                    eventID : acceptedGuest.eventID,
+                    userID : acceptedGuest.userID,
+                    status : 'Approved'
+                }
+                
+                try {
+                    const response = await fetch(`/registrants/${eventID}`, {
+                        method : 'PATCH',
+                        headers : { 'Content-Type' : 'application/json' },
+                        body : JSON.stringify(guestData)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log("Backend Success: ", result)
+                        alert('Guest Accepted!')
+                    }
+                    else {
+                        const error = await response.json()
+                        console.log("Backend Failed: ", error)
+                    }
+                }
+                catch (e) {
+                    console.log("Client Error: ", e)
+                }
+            })
+        })
+
+        const declineGuestBtn = document.querySelectorAll('.decline')
+
+        declineGuestBtn.forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const declinedGuest = registrationData[index]
+                
+                const guestData = {
+                    eventID : declinedGuest.eventID,
+                    userID : declinedGuest.userID,
+                    status : 'Declined'
+                }
+                
+                try {
+                    const response = await fetch(`/registrants/${eventID}`, {
+                        method : 'PATCH',
+                        headers : { 'Content-Type' : 'application/json' },
+                        body : JSON.stringify(guestData)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log("Backend Success: ", result)
+                        alert('Guest Declined!')
+                    }
+                    else {
+                        const error = await response.json()
+                        console.log("Backend Failed: ", error)
+                    }
+                }
+                catch (e) {
+                    console.log("Client Error: ", e)
+                }
+            })
+        })
+    }
+    else {
+        guestTab.innerHTML = `
+                                <h1>Guest List</h1>
+                                <p class = 'no-guests-message'>Guest list is currently empty.</p>
+                            `
+    }
+
+
+    // Check-In Handling
     // Handle radio button changes for check-in
     document.querySelectorAll('input[type="radio"][name^="attendance"]').forEach(radio => {
         radio.addEventListener('change', function() {
