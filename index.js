@@ -600,7 +600,7 @@ app.get("/registrants/:eventID", async (req, res) => {
     try {
         const result = await pool.request()
             .input('eventID', sql.Int, eventID)
-            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, rT.status, rt.eventID 
+            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, uT.profilePic, rT.status, rt.eventID 
                     FROM registrationTable rT
                     LEFT JOIN userTable uT ON rt.userID = uT.userID
                     WHERE rT.eventID = @eventID`)
@@ -612,6 +612,7 @@ app.get("/registrants/:eventID", async (req, res) => {
                                                 username : registrant.username,
                                                 email : registrant.email,
                                                 mobileNumber : registrant.mobileNumber,
+                                                profilePic : registrant.profilePic,
                                                 status : registrant.status,
                                                 eventID : registrant.eventID
                                             }))
@@ -627,7 +628,7 @@ app.get("/registrants/:eventID", async (req, res) => {
 
 // events management page
 app.patch("/registrants/:eventID", async (req, res) => {
-    let { userID, eventID, status } = req.body
+    let { eventID, userID, status } = req.body
 
     eventID = req.params.eventID || eventID
 
