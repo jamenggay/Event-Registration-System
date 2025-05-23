@@ -1,3 +1,10 @@
+window.addEventListener('pageshow', function (event) {
+    // data receive from cache, reload it automatically
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', async function() {
     window.updatedUserData = {};
 
