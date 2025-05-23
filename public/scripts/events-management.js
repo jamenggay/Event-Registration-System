@@ -162,6 +162,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
+    const saveChangesButton = document.getElementById('save-changes-btn');
+    
+    const eventFormFields = [ 
+        {   new : document.getElementById('eventName'),     original : eventData.eventName },
+        {   new : document.getElementById('startDate'),     original : new Date(eventData.startDateTime).toISOString().split('T')[0] },      
+        {   new : document.getElementById('startTime'),     original : new Date(eventData.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+        {   new : document.getElementById('endDate'),       original : new Date(eventData.endDateTime).toISOString().split('T')[0] },        
+        {   new : document.getElementById('endTime'),       original : new Date(eventData.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+        {   new : document.getElementById('location'),      original : eventData.location },
+        {   new : document.getElementById('description'),   original : eventData.description },
+        {   new : document.getElementById('category'),      original : eventData.category },
+        {   new : document.getElementById('feedbackLink'),  original : eventData.feedbackLink },
+        {   new : document.getElementById('max_capacity'),  original : eventData.capacity },
+        {   new : document.getElementById('require_approval'), original : eventData.requireApproval === 'Yes' ? true : false, isCheckbox : true },
+        {   new : document.getElementById('over_capacity_waitlist'), original : eventData.allowWaitlist === 'Yes' ? true : false, isCheckbox : true }
+    ]
+
+    eventFormFields.forEach(data => {
+        const eventType = data.isCheckbox === true ? 'change' : 'input'
+
+        data.new.addEventListener(eventType, () => {
+            // use String() to convert non-string values 
+            const hasChanges = eventFormFields.some(item => { 
+                const currentValue = item.isCheckbox === true ? item.new.checked : item.new.value
+                return String(currentValue) !== String(item.original) 
+            })
+
+            saveChangesButton.disabled = !hasChanges
+            console.log(hasChanges ? 'Save Changes: Enabled' : 'Save Changes: Disabled')
+        })
+    })
+
     // Function to get current event data from the page
     const getCurrentEventData = () => {
         try {
@@ -260,9 +292,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     editEventForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-            console.log(document.getElementById('startDate').value, new Date(eventData.startDateTime).toISOString().split('T')[0])       
-    console.log(document.getElementById('startTime').value, new Date(eventData.startDateTime).toISOString().split('T')[1])
-
         const startDate = document.getElementById('startDate').value
         const startTime = document.getElementById('startTime').value
         const endDate   = document.getElementById('endDate').value
@@ -294,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            const response = await fetch(`/edit-event/${eventData.eventID}`, {
+            const response = await fetch(`/event/${eventData.eventID}`, {
                 method: 'PUT',
                 headers: { 'Content-Type' : 'application/json' },
                 body: JSON.stringify(updatedEventData)
