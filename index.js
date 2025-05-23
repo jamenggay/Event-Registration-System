@@ -494,9 +494,8 @@ app.get("/event-info/:eventID", async (req, res) => {
 });
 
 // events management page
-app.put("/edit-event/:eventID", async (req, res) => {
+app.put("/event/:eventID", async (req, res) => {
     const eventID = req.params.eventID
-    return
 
     const { base64FeatureImage, imageFileName, imageFileExtension, dbImagePath,
             eventName, startDateTime, endDateTime, location, description, category, 
