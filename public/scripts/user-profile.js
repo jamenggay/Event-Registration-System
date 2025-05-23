@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <span class="weekday">${startObj.toLocaleString('en-US', optionsDay)}</span>
                         </div>
 
-                        <div class="event-cards" index="${index}">
+                        <div class="event-cards" data-index="${index}">
                             <div class="event-card theme-${event.themeIndex}">
                                 <div class="event-info">
                                     <div class="event-time">${startObj.toLocaleString('en-US', optionsTime)}</div>
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         eventCards.forEach(card => {
             card.addEventListener('click', () => {
-                const index = card.getAttribute('index')
+                const index = card.dataset.index
                 const event = userEventsCreated[index]
 
                 overlay.innerHTML = `
