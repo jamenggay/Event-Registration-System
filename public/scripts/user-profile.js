@@ -390,8 +390,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <span class="weekday">${startObj.toLocaleString('en-US', optionsDay)}</span>
                         </div>
 
-                        <div class="event-cards theme-${event.themeIndex}" index="${index}">
-                            <div class="event-card">
+                        <div class="event-cards" index="${index}">
+                            <div class="event-card theme-${event.themeIndex}">
                                 <div class="event-info">
                                     <div class="event-time">${startObj.toLocaleString('en-US', optionsTime)}</div>
                                     <div class="event-title">
