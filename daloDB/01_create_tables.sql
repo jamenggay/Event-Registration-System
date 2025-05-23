@@ -86,6 +86,10 @@ ALTER TABLE eventsTable
 ADD
 	themeIndex INT;
 
+
+ALTER TABLE eventsTable
+ALTER COLUMN location VARCHAR(255);
+
 --eventsTable ALTER (Accept Unicode [special fonts or emojis])
 ALTER TABLE eventsTable
 ALTER COLUMN eventName NVARCHAR(100);
