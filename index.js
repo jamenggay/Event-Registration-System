@@ -283,7 +283,7 @@ app.post("/register-event", async (req, res) => {
     }
     catch(err){
         console.error("Error registring event: ", err);
-        res.status(500).json({message: 'Registration Failed'});
+        res.status(500).json({message: 'Registration Failed'}); 
     }
 
     }

@@ -210,8 +210,8 @@
 
       const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
       const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
-      const requireApproval = document.getElementById('require-approval').value === 'on' ? 'Yes' : 'No'
-      const waitlistToggle  = document.getElementById('waitlistToggle').value === 'on' ? 'Yes' : 'No'
+      const requireApproval = document.getElementById('require-approval').checked ? 'Yes' : 'No';
+      const waitlistToggle  = document.getElementById('waitlistToggle').checked ? 'Yes' : 'No';
       const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
 
       const eventData = {
