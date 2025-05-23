@@ -85,3 +85,10 @@ ADD
 ALTER TABLE eventsTable
 ADD
 	themeIndex INT;
+
+--eventsTable ALTER (Accept Unicode [special fonts or emojis])
+ALTER TABLE eventsTable
+ALTER COLUMN eventName NVARCHAR(100);
+
+ALTER TABLE eventsTable
+ALTER COLUMN description NVARCHAR(MAX);
