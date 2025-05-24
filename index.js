@@ -627,10 +627,8 @@ app.get("/registrants/:eventID", async (req, res) => {
 });
 
 // events management page
-app.patch("/registrants/:eventID", async (req, res) => {
-    let { eventID, userID, status } = req.body
-
-    eventID = req.params.eventID || eventID
+app.patch("/registrant", async (req, res) => {
+    const { eventID, userID, status } = req.body
 
     try {
         await pool.request()
@@ -651,13 +649,13 @@ app.patch("/registrants/:eventID", async (req, res) => {
 });
 
 // events management page
-app.get("/approved-registrants/:eventID", async (req, res) => {
+app.get("/approved-guests/:eventID", async (req, res) => {
     const eventID = req.params.eventID
 
     try {
         const result = await pool.request()
             .input('eventID', sql.Int, eventID)
-            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, rT.status, rt.eventID 
+            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, uT.profilePic, rT.status, rt.eventID 
                     FROM registrationTable rT
                     LEFT JOIN userTable uT ON rt.userID = uT.userID
                     WHERE rT.eventID = @eventID AND status = 'Approved'`)
@@ -669,6 +667,7 @@ app.get("/approved-registrants/:eventID", async (req, res) => {
                                                         username : registrant.username,
                                                         email : registrant.email,
                                                         mobileNumber : registrant.mobileNumber,
+                                                        profilePic : registrant.profilePic,
                                                         status : registrant.status,
                                                         eventID : registrant.eventID
                                                     }))
@@ -679,6 +678,64 @@ app.get("/approved-registrants/:eventID", async (req, res) => {
     catch (e) {
         console.log("Approved registrants extraction failed: ", e)
         res.status(200).json({ message : 'Approved registrants extraction failed', error : e })
+    }
+});
+
+// events management page
+app.post("/checkin-attendee", async (req, res) => {
+    const { eventID, userID, checkedInAt } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .input('checkedInAt', sql.DateTime, checkedInAt)
+            .query(`INSERT INTO attendeeTable (eventID, userID, checkedInAt)
+                    VALUES (@eventID, @userID, @checkedInAt)`)
+
+        console.log("Attendee details update success")
+        res.status(201).json({ message : 'Attendee details insert success' })   
+    }
+    catch (e) {
+        console.log("Attendee details update failed: ", e)
+        res.status(500).json({ message : 'Attendee details insert failed:', error : e })   
+    }
+});
+
+app.delete("/checkin-attendee", async (req, res) => {
+    let { eventID, userID } = req.body
+
+    try {
+        const result = await pool.request()
+                .input('eventID', sql.Int, eventID)
+                .input('userID', sql.Int, userID)
+                .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+
+        const attendee = result.recordset[0]
+        
+        if (attendee) {
+            try {
+                await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .input('userID', sql.Int, userID)
+                    .query(`DELETE FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+
+                console.log('Guest attendance removal success')
+                res.status(200).json({ message: 'Guest attendance removal success'})
+            }
+            catch (e) {
+                console.log("Guest attendance removal failed: ", e)
+                res.status(500).json({ message : 'Guest attendance removal failed', error : e})
+            }
+        }
+        else {
+            console.log('Guest not found in attendeeTable')
+            res.status(404).json({ message : 'Guest not found in attendeeTable'})
+        }
+    }
+    catch (e) {
+        console.log("Attendee details extraction failed: ", e)
+        res.status(500).json({ message : 'Attendee details extraction failed', error : e})
     }
 });
 
