@@ -686,19 +686,52 @@ app.post("/checkin-attendee", async (req, res) => {
     const { eventID, userID, checkedInAt } = req.body
 
     try {
-        await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .input('userID', sql.Int, userID)
-            .input('checkedInAt', sql.DateTime, checkedInAt)
-            .query(`INSERT INTO attendeeTable (eventID, userID, checkedInAt)
-                    VALUES (@eventID, @userID, @checkedInAt)`)
+        const result = await pool.request()
+                            .input('eventID', sql.Int, eventID)
+                            .input('userID', sql.Int, userID)
+                            .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
 
-        console.log("Attendee details update success")
-        res.status(201).json({ message : 'Attendee details insert success' })   
+        const attendee = result.recordset[0]
+
+        if (attendee) {
+            try {
+                await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .input('userID', sql.Int, userID)
+                    .input('checkedInAt', sql.DateTime, checkedInAt)
+                    .query(`UPDATE attendeeTable
+                            SET checkedInAt = @checkedInAt
+                            WHERE eventID = @eventID AND userID = @userID`)
+
+                console.log("Attendee details update success")
+                res.status(201).json({ message : 'Attendee details update success' })   
+            }
+            catch (e) {
+                console.log("Attendee details update failed: ", e)
+                res.status(500).json({ message : 'Attendee details update failed:', error : e })   
+            }
+        }
+        else {
+            try {
+                await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .input('userID', sql.Int, userID)
+                    .input('checkedInAt', sql.DateTime, checkedInAt)
+                    .query(`INSERT INTO attendeeTable (eventID, userID, checkedInAt)
+                            VALUES (@eventID, @userID, @checkedInAt)`)
+
+                console.log("Attendee details update success")
+                res.status(201).json({ message : 'Attendee details insert success' })   
+            }
+            catch (e) {
+                console.log("Attendee details update failed: ", e)
+                res.status(500).json({ message : 'Attendee details insert failed:', error : e })   
+            }
+        }
     }
     catch (e) {
-        console.log("Attendee details update failed: ", e)
-        res.status(500).json({ message : 'Attendee details insert failed:', error : e })   
+        console.log("Attendee details extraction failed: ", e)
+        res.status(500).json({ message : 'Attendee details extraction failed', error : e})
     }
 });
 
