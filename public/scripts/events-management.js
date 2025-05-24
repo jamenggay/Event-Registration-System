@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                         
                         try {
-                            const response = await fetch(`/registrants/${eventID}`, {
+                            const response = await fetch(`/registrant`, {
                                 method : 'PATCH',
                                 headers : { 'Content-Type' : 'application/json' },
                                 body : JSON.stringify(guestData)
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                         
                         try {
-                            const response = await fetch(`/registrants/${eventID}`, {
+                            const response = await fetch(`/registrant`, {
                                 method : 'PATCH',
                                 headers : { 'Content-Type' : 'application/json' },
                                 body : JSON.stringify(guestData)
@@ -469,10 +469,126 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 `
         }
     }
+
     
     // Check-In Handling
+    let approvedGuestsData = null
 
+    try {
+        approvedGuestsData = await window.approvedGuestsDataReady
+    }
+    catch (e) {
+        console.error("Failed to load registration data:", e);
+    }
 
+    console.log("Client Approved Guests Details: ", approvedGuestsData)
+
+    const checkInContainer = document.getElementById('check-in')
+
+    if (approvedGuestsData.length == 0) {
+        checkInContainer.innerHTML = `
+                                    <h1>Check In</h1>
+                                    <p class = 'empty-message'>Check In is currently empty.</p>
+                                `
+    }
+    else if (approvedGuestsData.length != 0) {
+        checkInContainer.innerHTML = `
+            <h1>Check In</h1>
+            ${approvedGuestsData.map(guest => `
+                <div class="checkin-guest">
+                    <div class="guest-info">
+                        <img src="${guest.profilePic}" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                        <span class="guest-name">${guest.fullname}</span>
+                    </div>
+                    <div class="attendance-options">
+                        <label class="attendance-option attended">
+                            <input type="radio" class="attended-guest" name="attendance1" value="attended">
+                            <span>Attended</span>
+                        </label>
+                        <label class="attendance-option not-attended">
+                            <input type="radio" class="not-attended-guest" name="attendance1" value="not-attended">
+                            <span>Not Attended</span>
+                        </label>
+                    </div>
+                </div>`
+            ).join('')}
+        `
+
+        const attendedButton = document.querySelectorAll('.attended-guest')
+
+        attendedButton.forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const guest = approvedGuestsData[index]
+
+                const attendanceData = {
+                    eventID : eventData.eventID,
+                    userID : guest.userID,
+                    checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                }
+
+                console.log(attendanceData)
+
+                try {
+                    const response = await fetch("/checkin-attendee", {
+                        method : 'POST',
+                        headers : { 'Content-Type' : 'application/json' },
+                        body : JSON.stringify(attendanceData)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log("Backend Success: ", result)
+                    }
+                    else {
+                        const error = await response.json()
+                        console.log("Backend Failed: ", error)
+                    }
+                }
+                catch (e) {
+                    console.log("Client Error: ", e)
+                }
+            })
+        })
+
+        const notAttendedButton = document.querySelectorAll('.not-attended-guest')
+
+        notAttendedButton.forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const guest = approvedGuestsData[index]
+
+                const attendanceData = {
+                    eventID : eventData.eventID,
+                    userID : guest.userID,
+                }
+
+                console.log(attendanceData)
+
+                try {
+                    const response = await fetch("/checkin-attendee", {
+                        method : 'DELETE',
+                        headers : { 'Content-Type' : 'application/json' },
+                        body : JSON.stringify(attendanceData)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log("Backend Success: ", result)
+                    }
+                    else if (response.status == 404) {
+                        const result = await response.json()
+                        console.log("Backend Message: ", result)
+                    }
+                    else {
+                        const error = await response.json()
+                        console.log("Backend Failed: ", error)
+                    }
+                }
+                catch (e) {
+                    console.log("Client Error: ", e)
+                }
+            })
+        })
+    }
 
     // Handle radio button changes for check-in
     document.querySelectorAll('input[type="radio"][name^="attendance"]').forEach(radio => {
