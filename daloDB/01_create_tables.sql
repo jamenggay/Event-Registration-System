@@ -96,3 +96,9 @@ ALTER COLUMN eventName NVARCHAR(100);
 
 ALTER TABLE eventsTable
 ALTER COLUMN description NVARCHAR(MAX);
+
+
+
+--- drop constraint in status in registration table and add 'Waitlisted'
+ALTER TABLE registrationTable
+DROP CONSTRAINT CK__registrat__statu__403A8C7D;
