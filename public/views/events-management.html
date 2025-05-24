@@ -123,106 +123,11 @@
             </div>
 
             <div class="tab-pane" id="guest">
-                <h1>Guest List</h1>
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Jamainosaurus</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <button class="accept">Dalo</button>
-                        <button class="decline">Decline</button>
-                    </div>
-                </div>
-
-                 <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Neneng B</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <button class="accept">Dalo</button>
-                        <button class="decline">Decline</button>
-                    </div>
-                </div>
-
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Fe Fer Mint (Diva)</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <button class="accept">Dalo</button>
-                        <button class="decline">Decline</button>
-                    </div>
-                </div>
-
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Belly Button</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <button class="accept">Dalo</button>
-                        <button class="decline">Decline</button>
-                    </div>
-                </div>
+                <!-- Handled within events-management.js -->
             </div>
 
-
             <div class="tab-pane" id="check-in">
-                <h1>Check In</h1>
-
-                <div class="checkin-guest">
-                    <div class="guest-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="guest-name">Browny</span>
-                    </div>
-                    <div class="attendance-options">
-                        <label class="attendance-option attended">
-                            <input type="radio" name="attendance1" value="attended">
-                            <span>Attended</span>
-                        </label>
-                        <label class="attendance-option not-attended">
-                            <input type="radio" name="attendance1" value="not-attended">
-                            <span>Not Attended</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="checkin-guest">
-                    <div class="guest-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="guest-name">Bogart</span>
-                    </div>
-                    <div class="attendance-options">
-                        <label class="attendance-option attended">
-                            <input type="radio" name="attendance2" value="attended">
-                            <span>Attended</span>
-                        </label>
-                        <label class="attendance-option not-attended">
-                            <input type="radio" name="attendance2" value="not-attended">
-                            <span>Not Attended</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="checkin-guest">
-                    <div class="guest-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="guest-name">Ice Spice</span>
-                    </div>
-                    <div class="attendance-options">
-                        <label class="attendance-option attended">
-                            <input type="radio" name="attendance3" value="attended">
-                            <span>Attended</span>
-                        </label>
-                        <label class="attendance-option not-attended">
-                            <input type="radio" name="attendance3" value="not-attended">
-                            <span>Not Attended</span>
-                        </label>
-                    </div>
-                </div>
+                <!-- Handled within events-management.js -->
             </div>
         </div>
     </div>
@@ -363,7 +268,7 @@
 
                             <div class="modal-footer">
                                 <button type="button" class="cancel-button">Cancel</button>
-                                <button type="submit" class="save-button">Save Changes</button>
+                                <button type="submit" class="save-button" id="save-changes-btn" disabled>Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -393,6 +298,46 @@
                 else {
                     const error = await response.json()
                     console.log("Backend Failed: ", error)
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+            }
+        })
+
+        window.registrationDataReady = new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(`/registrants/${eventID}`, {
+                    method : 'GET'
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    console.log("Backend Failed: ", error)                 
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+            }
+        })
+
+        window.approvedGuestsDataReady = new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(`/approved-guests/${eventID}`, {
+                    method: 'GET'
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    reject("Backend Failed: ", error)                 
                 }
             }
             catch (e) {

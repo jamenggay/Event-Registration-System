@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Event Handling
     let eventData = null
 
     try {
@@ -113,6 +114,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.querySelector('.approval-status').textContent = 
                 eventData.requireApproval === 'Yes' ? 'Required' : 'Not Required';
 
+            let approvalStatus = document.querySelector('.approval-status').textContent
+            displayGuestData(approvalStatus)
+
             if (eventData.capacity) {
                 document.querySelector('.capacity-text').textContent = `${eventData.capacity}`;
                 document.querySelector('.waitlist-status').textContent = 
@@ -161,6 +165,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error populating modal form:', error);
         }
     };
+
+    const saveChangesButton = document.getElementById('save-changes-btn');
+    
+    const eventFormFields = [ 
+        {   new : document.getElementById('eventName'),     original : eventData.eventName },
+        {   new : document.getElementById('startDate'),     original : new Date(eventData.startDateTime).toISOString().split('T')[0] },      
+        {   new : document.getElementById('startTime'),     original : new Date(eventData.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+        {   new : document.getElementById('endDate'),       original : new Date(eventData.endDateTime).toISOString().split('T')[0] },        
+        {   new : document.getElementById('endTime'),       original : new Date(eventData.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+        {   new : document.getElementById('location'),      original : eventData.location },
+        {   new : document.getElementById('description'),   original : eventData.description },
+        {   new : document.getElementById('category'),      original : eventData.category },
+        {   new : document.getElementById('feedbackLink'),  original : eventData.feedbackLink },
+        {   new : document.getElementById('max_capacity'),  original : eventData.capacity },
+        {   new : document.getElementById('require_approval'), original : eventData.requireApproval === 'Yes' ? true : false, isCheckbox : true },
+        {   new : document.getElementById('over_capacity_waitlist'), original : eventData.allowWaitlist === 'Yes' ? true : false, isCheckbox : true }
+    ]
+
+    eventFormFields.forEach(data => {
+        const eventType = data.isCheckbox === true ? 'change' : 'input'
+
+        data.new.addEventListener(eventType, () => {
+            // use String() to convert non-string values 
+            const hasChanges = eventFormFields.some(item => { 
+                const currentValue = item.isCheckbox === true ? item.new.checked : item.new.value
+                return String(currentValue) !== String(item.original) 
+            })
+
+            saveChangesButton.disabled = !hasChanges
+            console.log(hasChanges ? 'Save Changes: Enabled' : 'Save Changes: Disabled')
+        })
+    })
 
     // Function to get current event data from the page
     const getCurrentEventData = () => {
@@ -250,6 +286,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 imageFileName = file.name.replace(/\.[^/.]+$/, '')
                 imageFileExtension = file.name.split('.').pop().toLowerCase()
             }
+            saveChangesButton.disabled = false
         } 
         catch (error) {
             console.error('Error handling image upload:', error);
@@ -276,6 +313,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             base64FeatureImage  : featureImage,
             imageFileName       : imageFileName,
             imageFileExtension  : imageFileExtension,
+            dbImagePath     : eventData.featureImage,
             eventName       : document.getElementById('eventName').value,
             startDateTime   : startDateTime,
             endDateTime     : endDateTime,
@@ -290,7 +328,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            const response = await fetch(`/edit-event/${eventData.eventID}`, {
+            const response = await fetch(`/event/${eventData.eventID}`, {
                 method: 'PUT',
                 headers: { 'Content-Type' : 'application/json' },
                 body: JSON.stringify(updatedEventData)
@@ -308,9 +346,249 @@ document.addEventListener('DOMContentLoaded', async () => {
             }                
         } 
         catch (error) {
-            console.log("Client Error: ", e)
+            console.log("Client Error: ", error)
         }
     });
+
+
+    // Guest Handling
+    let registrationData = null
+
+    try {
+        registrationData = await window.registrationDataReady
+    }
+    catch (e) {
+        console.error("Failed to load registration data:", e);
+    }
+
+    console.log("Client Registration Details: ", registrationData)
+
+    const guestsContainer = document.getElementById('guest')
+
+    function displayGuestData(approvalStatus) {
+        console.log(approvalStatus)
+        if (approvalStatus === 'Required') {
+            if (registrationData.length == 0) {
+                guestsContainer.innerHTML = `
+                                    <h1>Guest List</h1>
+                                    <p class = 'empty-message'>Guest list is currently empty.</p>
+                                `
+            }
+            else if (registrationData.length != 0) {
+                registrationData.sort((a, b) => b.registrationID - a.registrationID)
+
+                guestsContainer.innerHTML = `
+                    <h1>Guest List</h1> ${registrationData.map(guest => 
+                    `<div class="attendee-container">
+                        <div class="attendee-info">
+                            <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                            <span class="attendee-name">${guest.fullname}</span>
+                        </div>
+                        <div class="attendee-actions">
+                            <button class="accept">Dalo</button>
+                            <button class="decline">Decline</button>
+                        </div>
+                    </div>`
+                ).join('')}`
+
+                const acceptGuestBtn = document.querySelectorAll('.accept')
+
+                acceptGuestBtn.forEach((button, index) => {
+                    button.addEventListener('click', async () => {
+                        const acceptedGuest = registrationData[index]
+                        
+                        const guestData = {
+                            eventID : acceptedGuest.eventID,
+                            userID : acceptedGuest.userID,
+                            status : 'Approved'
+                        }
+                        
+                        try {
+                            const response = await fetch(`/registrant`, {
+                                method : 'PATCH',
+                                headers : { 'Content-Type' : 'application/json' },
+                                body : JSON.stringify(guestData)
+                            })
+
+                            if (response.ok) {
+                                const result = await response.json()
+                                console.log("Backend Success: ", result)
+                                alert('Guest Accepted!')
+                            }
+                            else {
+                                const error = await response.json()
+                                console.log("Backend Failed: ", error)
+                            }
+                        }
+                        catch (e) {
+                            console.log("Client Error: ", e)
+                        }
+                    })
+                })
+
+                const declineGuestBtn = document.querySelectorAll('.decline')
+
+                declineGuestBtn.forEach((button, index) => {
+                    button.addEventListener('click', async () => {
+                        const declinedGuest = registrationData[index]
+                        
+                        const guestData = {
+                            eventID : declinedGuest.eventID,
+                            userID : declinedGuest.userID,
+                            status : 'Declined'
+                        }
+                        
+                        try {
+                            const response = await fetch(`/registrant`, {
+                                method : 'PATCH',
+                                headers : { 'Content-Type' : 'application/json' },
+                                body : JSON.stringify(guestData)
+                            })
+
+                            if (response.ok) {
+                                const result = await response.json()
+                                console.log("Backend Success: ", result)
+                                alert('Guest Declined!')
+                            }
+                            else {
+                                const error = await response.json()
+                                console.log("Backend Failed: ", error)
+                            }
+                        }
+                        catch (e) {
+                            console.log("Client Error: ", e)
+                        }
+                    })
+                })
+            }
+        }
+        else {
+            guestsContainer.innerHTML = `
+                                    <h1>Guest List</h1>
+                                    <p class = 'empty-message'>Guest list is currently empty.</p>
+                                `
+        }
+    }
+
+    
+    // Check-In Handling
+    let approvedGuestsData = null
+
+    try {
+        approvedGuestsData = await window.approvedGuestsDataReady
+    }
+    catch (e) {
+        console.error("Failed to load registration data:", e);
+    }
+
+    console.log("Client Approved Guests Details: ", approvedGuestsData)
+
+    const checkInContainer = document.getElementById('check-in')
+
+    if (approvedGuestsData.length == 0) {
+        checkInContainer.innerHTML = `
+                                    <h1>Check In</h1>
+                                    <p class = 'empty-message'>Check In is currently empty.</p>
+                                `
+    }
+    else if (approvedGuestsData.length != 0) {
+        checkInContainer.innerHTML = `
+            <h1>Check In</h1>
+            ${approvedGuestsData.map(guest => `
+                <div class="checkin-guest">
+                    <div class="guest-info">
+                        <img src="${guest.profilePic}" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                        <span class="guest-name">${guest.fullname}</span>
+                    </div>
+                    <div class="attendance-options">
+                        <label class="attendance-option attended">
+                            <input type="radio" class="attended-guest" name="attendance1" value="attended">
+                            <span>Attended</span>
+                        </label>
+                        <label class="attendance-option not-attended">
+                            <input type="radio" class="not-attended-guest" name="attendance1" value="not-attended">
+                            <span>Not Attended</span>
+                        </label>
+                    </div>
+                </div>`
+            ).join('')}
+        `
+
+        const attendedButton = document.querySelectorAll('.attended-guest')
+
+        attendedButton.forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const guest = approvedGuestsData[index]
+
+                const attendanceData = {
+                    eventID : eventData.eventID,
+                    userID : guest.userID,
+                    checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                }
+
+                console.log(attendanceData)
+
+                try {
+                    const response = await fetch("/checkin-attendee", {
+                        method : 'POST',
+                        headers : { 'Content-Type' : 'application/json' },
+                        body : JSON.stringify(attendanceData)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log("Backend Success: ", result)
+                    }
+                    else {
+                        const error = await response.json()
+                        console.log("Backend Failed: ", error)
+                    }
+                }
+                catch (e) {
+                    console.log("Client Error: ", e)
+                }
+            })
+        })
+
+        const notAttendedButton = document.querySelectorAll('.not-attended-guest')
+
+        notAttendedButton.forEach((button, index) => {
+            button.addEventListener('click', async () => {
+                const guest = approvedGuestsData[index]
+
+                const attendanceData = {
+                    eventID : eventData.eventID,
+                    userID : guest.userID,
+                }
+
+                console.log(attendanceData)
+
+                try {
+                    const response = await fetch("/checkin-attendee", {
+                        method : 'DELETE',
+                        headers : { 'Content-Type' : 'application/json' },
+                        body : JSON.stringify(attendanceData)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json()
+                        console.log("Backend Success: ", result)
+                    }
+                    else if (response.status == 404) {
+                        const result = await response.json()
+                        console.log("Backend Message: ", result)
+                    }
+                    else {
+                        const error = await response.json()
+                        console.log("Backend Failed: ", error)
+                    }
+                }
+                catch (e) {
+                    console.log("Client Error: ", e)
+                }
+            })
+        })
+    }
 
     // Handle radio button changes for check-in
     document.querySelectorAll('input[type="radio"][name^="attendance"]').forEach(radio => {

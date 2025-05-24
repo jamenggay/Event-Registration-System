@@ -859,6 +859,10 @@ select {
     background-color: #005a8f;
 }
 
+#save-changes-btn:disabled {
+    cursor: not-allowed;
+}
+
 @keyframes modalSlideIn {
     from {
         opacity: 0;
@@ -1005,6 +1009,10 @@ h3 {
 .tab-button {
     font-size: 1rem;
     font-weight: 500;
+}
+
+.no-guests-message {
+  text-align: center;
 }
 
 .attendee-name,
