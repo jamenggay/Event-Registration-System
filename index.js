@@ -6,7 +6,9 @@ import { pool, sql } from "./db-connection.js";
 import fs from 'fs'
 import cookieSession from 'cookie-session'
 import bcrypt from "bcrypt";
-import { error } from "console";
+import { WebSocketServer } from 'ws';
+import http from 'http';
+
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
 //declaring app
@@ -18,16 +20,23 @@ const port = 3000;
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, "public")));
-
 app.use(cookieSession({
   name: 'session',
   keys: ['cooKey'], 
 }));
 
+// set http server for http requests (few GET, POST, PUT, PATCH, DELETE)
+const server = http.createServer(app)
+
+// set websocket server
+const wss = new WebSocketServer({ server })
+
+// home page
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
 });
 
+// home page
 app.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -52,6 +61,7 @@ app.post("/register", async (req, res) => {
     }
 });
 
+// home page
 app.post("/login", async (req, res) => {
     const { userName, password } = req.body;
 
@@ -459,39 +469,102 @@ app.get("/event/:eventID", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
 });
 
-// events management page
-app.get("/event-info/:eventID", async (req, res) => {
-    const eventID = req.params.eventID
+//events management page 
+wss.on('connection', async (ws, req) => {
+    console.log('Client WebSocket Connected');
+    
+    const eventID = req.url.split('/').pop()
 
-    try {
-        const result = await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`SELECT * FROM eventsTable WHERE eventID = @eventID`)
+    ws.on('message', async (message) => {
+        const requestedData = JSON.parse(message)
 
-        const eventData = {
-            eventID         : result.recordset[0].eventID,
-            eventName       : result.recordset[0].eventName,
-            description     : result.recordset[0].description,
-            location        : result.recordset[0].location,
-            startDateTime   : result.recordset[0].startDateTime,
-            endDateTime     : result.recordset[0].endDateTime, 
-            featureImage    : result.recordset[0].featureImage,
-            requireApproval : result.recordset[0].requireApproval,
-            capacity        : result.recordset[0].capacity,
-            feedbackLink    : result.recordset[0].feedbackLink,
-            lastUpdated     : result.recordset[0].lastUpdated,
-            category        : result.recordset[0].category,
-            allowWaitlist   : result.recordset[0].allowWaitlist
+        // GET event details for selected event
+        if (requestedData.type == 'getEventData') {
+            try {
+                const result = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT * FROM eventsTable WHERE eventID = @eventID`)
+
+                const eventData = {
+                    eventID         : result.recordset[0].eventID,
+                    eventName       : result.recordset[0].eventName,
+                    description     : result.recordset[0].description,
+                    location        : result.recordset[0].location,
+                    startDateTime   : result.recordset[0].startDateTime,
+                    endDateTime     : result.recordset[0].endDateTime, 
+                    featureImage    : result.recordset[0].featureImage,
+                    requireApproval : result.recordset[0].requireApproval,
+                    capacity        : result.recordset[0].capacity,
+                    feedbackLink    : result.recordset[0].feedbackLink,
+                    lastUpdated     : result.recordset[0].lastUpdated,
+                    category        : result.recordset[0].category,
+                    allowWaitlist   : result.recordset[0].allowWaitlist
+                }
+
+                console.log("Event details extraction successful")
+                ws.send(JSON.stringify({ status : 200, type : 'eventData', eventData : eventData}))
+            }
+            catch (e) {
+                console.log("Event details extraction failed: ", e)
+                ws.send(JSON.stringify({ status: 500, message : 'Event details extraction failed', error : e}))
+            }
         }
+        // GET registration details
+        else if (requestedData.type == 'getRegistrationData') {
+            try {
+                const result = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.profilePic, rT.status, rt.eventID 
+                            FROM registrationTable rT
+                            LEFT JOIN userTable uT ON rt.userID = uT.userID
+                            WHERE rT.eventID = @eventID`)
 
-        console.log("Event details extraction successful")
-        res.status(200).json(eventData)
-    }
-    catch (e) {
-        console.log("Event details extraction failed: ", e)
-        res.status(500).json({ message : 'Event details extraction failed', error : e})
-    }
-});
+                const registrationData = result.recordset.map(registrant => ({
+                                                        registrationID : registrant.registrationID,
+                                                        userID : registrant.userID,
+                                                        fullname : registrant.fullName,
+                                                        profilePic : registrant.profilePic,
+                                                        status : registrant.status,
+                                                        eventID : registrant.eventID
+                                                    }))
+
+                console.log("Registration details extraction successful")
+                ws.send(JSON.stringify({ status : 200, type : 'registrationData', registrationData : registrationData }))
+            }
+            catch (e) {
+                console.log("Registration details extraction failed: ", e)
+                ws.send(JSON.stringify({ status: 500, message : 'Registration details extraction failed', error : e}))
+            }
+        }
+        // GET approved guest details
+        else if (requestedData.type == 'getApprovedGuestsData') {
+            try {
+                const result = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.profilePic, rT.status, rt.eventID 
+                            FROM registrationTable rT
+                            LEFT JOIN userTable uT ON rt.userID = uT.userID
+                            WHERE rT.eventID = @eventID AND status = 'Approved'`)
+                
+                const approvedGuestsData = result.recordset.map(guest => ({
+                                                                registrationID : guest.registrationID,
+                                                                userID : guest.userID,
+                                                                fullname : guest.fullName,
+                                                                profilePic : guest.profilePic,
+                                                                status : guest.status,
+                                                                eventID : guest.eventID
+                                                            }))
+
+                console.log("Approved guests extraction successful")
+                ws.send(JSON.stringify({ status : 200, type : 'approvedGuestsData', approvedGuestsData : approvedGuestsData }))
+            }
+            catch (e) {
+                console.log("Approved registrants extraction failed: ", e)
+                ws.send(JSON.stringify({ status: 500, message : 'Approved guests extraction failed', error : e}))
+            }
+        }
+    })
+})
 
 // events management page
 app.put("/event/:eventID", async (req, res) => {
@@ -594,39 +667,6 @@ app.put("/event/:eventID", async (req, res) => {
 });
 
 // events management page
-app.get("/registrants/:eventID", async (req, res) => {
-    const eventID = req.params.eventID
-
-    try {
-        const result = await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, uT.profilePic, rT.status, rt.eventID 
-                    FROM registrationTable rT
-                    LEFT JOIN userTable uT ON rt.userID = uT.userID
-                    WHERE rT.eventID = @eventID`)
-
-        const registrationData = result.recordset.map(registrant => ({
-                                                registrationID : registrant.registrationID,
-                                                userID : registrant.userID,
-                                                fullname : registrant.fullName,
-                                                username : registrant.username,
-                                                email : registrant.email,
-                                                mobileNumber : registrant.mobileNumber,
-                                                profilePic : registrant.profilePic,
-                                                status : registrant.status,
-                                                eventID : registrant.eventID
-                                            }))
-
-        console.log("Registration details extraction successful")
-        res.status(200).json(registrationData)
-    }
-    catch (e) {
-        console.log("Registration details extraction failed: ", e)
-        res.status(500).json({ message : 'Registration details extraction failed', error : e})
-    }
-});
-
-// events management page
 app.patch("/registrant", async (req, res) => {
     const { eventID, userID, status } = req.body
 
@@ -645,39 +685,6 @@ app.patch("/registrant", async (req, res) => {
     catch (e) {
         console.log("Registration details update failed: ", e)
         res.status(500).json({ message : 'Registration details update failed:', error : e })
-    }
-});
-
-// events management page
-app.get("/approved-guests/:eventID", async (req, res) => {
-    const eventID = req.params.eventID
-
-    try {
-        const result = await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.username, uT.email, uT.mobileNumber, uT.profilePic, rT.status, rt.eventID 
-                    FROM registrationTable rT
-                    LEFT JOIN userTable uT ON rt.userID = uT.userID
-                    WHERE rT.eventID = @eventID AND status = 'Approved'`)
-        
-        const approvedRegistrantsData = result.recordset.map(registrant => ({
-                                                        registrationID : registrant.registrationID,
-                                                        userID : registrant.userID,
-                                                        fullname : registrant.fullName,
-                                                        username : registrant.username,
-                                                        email : registrant.email,
-                                                        mobileNumber : registrant.mobileNumber,
-                                                        profilePic : registrant.profilePic,
-                                                        status : registrant.status,
-                                                        eventID : registrant.eventID
-                                                    }))
-
-        console.log("Approved registrants extraction successful")
-        res.status(200).json(approvedRegistrantsData)
-    }
-    catch (e) {
-        console.log("Approved registrants extraction failed: ", e)
-        res.status(200).json({ message : 'Approved registrants extraction failed', error : e })
     }
 });
 
@@ -735,6 +742,7 @@ app.post("/checkin-attendee", async (req, res) => {
     }
 });
 
+// events management page
 app.delete("/checkin-attendee", async (req, res) => {
     let { eventID, userID } = req.body
 
@@ -772,6 +780,6 @@ app.delete("/checkin-attendee", async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+server.listen(port, () => {
+  console.log(`Server listening at http://localhost:${port}`);
 });
