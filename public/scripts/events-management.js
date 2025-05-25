@@ -423,10 +423,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     `
                 }
                 else if (registrationData.length != 0) {
-                    registrationData.sort((a, b) => b.registrationID - a.registrationID)
+                    let pendingGuests = registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
+                    pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
+
+                    let waitlistedGuests = registrationData.filter(guest => guest.status == 'Waitlisted')
 
                     guestsContainer.innerHTML = `
-                        <h1>Guest List</h1> ${registrationData.map(guest => 
+                        <h1>Guest List</h1> ${pendingGuests.map(guest => 
                         `<div class="attendee-container">
                             <div class="attendee-info">
                                 <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
@@ -438,12 +441,36 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
                         </div>`
                     ).join('')}`
+                
+                    if (waitlistedGuests.length != 0) {
+                        const waitlistedContainer = document.createElement('div')
+                        waitlistedContainer.id = "waitlisted-container"
+                            
+                        waitlistedContainer.innerHTML = `
+                            <h1>Waitlisted</h1> ${waitlistedGuests.map(guest => 
+                            `<div class="attendee-container">
+                                <div class="attendee-info">
+                                    <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                                    <span class="attendee-name">${guest.fullname}</span>
+                                </div>
+                                <div class="attendee-actions">
+                                    <button class="accept">Dalo</button>
+                                    <button class="decline">Decline</button>
+                                </div>
+                            </div>`
+                        ).join('')}`
+                        
+                        guestsContainer.append(waitlistedContainer)
+                    }
 
                     const acceptGuestBtn = document.querySelectorAll('.accept')
 
                     acceptGuestBtn.forEach((button, index) => {
                         button.addEventListener('click', async () => {
+                            registrationData = [...pendingGuests, ...waitlistedGuests]
+
                             const acceptedGuest = registrationData[index]
+                            console.log(acceptedGuest)
                             
                             const guestData = {
                                 eventID : acceptedGuest.eventID,
@@ -481,8 +508,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     declineGuestBtn.forEach((button, index) => {
                         button.addEventListener('click', async () => {
+                            registrationData = [...pendingGuests, ...waitlistedGuests]
+
                             const declinedGuest = registrationData[index]
-                            
+                            console.log(declinedGuest)
+
                             const guestData = {
                                 eventID : declinedGuest.eventID,
                                 userID : declinedGuest.userID,
