@@ -384,6 +384,10 @@ body::before {
     }
 }
 
+#waitlisted-container {
+    margin-top: 3rem;
+}
+
 .icon-flex {
     border-radius: 50%;
 }
