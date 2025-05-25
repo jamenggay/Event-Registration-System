@@ -384,6 +384,10 @@ body::before {
     }
 }
 
+.icon-flex {
+    border-radius: 50%;
+}
+
 .attendee-container {
     display: flex;
     justify-content: space-between;
