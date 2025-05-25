@@ -1,4 +1,4 @@
-// === CAROUSEL FUNCTIONALITY ===
+
 let nextDom = document.getElementById("next");
 let prevDom = document.getElementById("prev");
 
@@ -71,7 +71,6 @@ carouselDom.addEventListener("mouseleave", () => {
   btn.addEventListener("mouseenter", showThumbnail);
 });
 
-// === CARD HOVER EFFECT ===
 function attachCardHoverListeners() {
   document.querySelectorAll(".card-wrap").forEach((cardWrap) => {
     const card = cardWrap.querySelector(".card");
@@ -107,10 +106,8 @@ function attachCardHoverListeners() {
   });
 }
 
-// Attach hover on load
 attachCardHoverListeners();
 
-// === CATEGORY FILTER BUTTON LOGIC ===
 document.querySelectorAll(".image-card").forEach((button) => {
   button.addEventListener("click", () => {
     const selectedCategory = button.dataset.category;
@@ -118,26 +115,21 @@ document.querySelectorAll(".image-card").forEach((button) => {
     const hoverSection = document.getElementById("hover-cards-section");
     const carouselSection = document.getElementById("carousel-section");
 
-    // Show hover cards and hide carousel
     hoverSection.classList.add("active");
     carouselSection.style.display = "none";
 
-    // Filter cards by category
     const cards = hoverSection.querySelectorAll(".card-wrap");
     cards.forEach((card) => {
       const cardCategory = card.dataset.category;
       card.style.display = cardCategory === selectedCategory ? "block" : "none";
     });
 
-    // Scroll to the hover cards section
     hoverSection.scrollIntoView({ behavior: "smooth" });
 
-    // Re-attach hover effects
     attachCardHoverListeners();
   });
 });
 
-// === EXPLORE ALL EVENTS BUTTON ===
 function showCarousel() {
   const carousel = document.getElementById("carousel-section");
   const hoverCards = document.getElementById("hover-cards-section");
@@ -145,13 +137,11 @@ function showCarousel() {
   carousel.style.display = "block";
   hoverCards.classList.remove("active");
 
-  // Reset all hover cards (show them all)
   const cards = hoverCards.querySelectorAll(".card-wrap");
   cards.forEach((card) => {
     card.style.display = "block";
   });
 
-  // Scroll to the carousel section
   carousel?.scrollIntoView({ behavior: "smooth" });
 }
 

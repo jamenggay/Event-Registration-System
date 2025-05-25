@@ -367,7 +367,7 @@ footer {
 }
 
 .carousel .list .item .register-button {
-    align-self: flex-start; /* keep button aligned to left */
+    align-self: flex-start; 
 }
 
 
