@@ -210,9 +210,8 @@
     aria-describedby="eventDesc">
     <article class="card-popup">
       <button class="close-btn" aria-label="Close popup" onclick="closePopup()">&times;</button>
-
+      <span class="popup-event-date">May 11, 2025</span>
       <div class="card-content">
-        <span class="event-date">May 11, 2025</span>
         <h2 class="popup-event-title" id="eventTitle">PURE VENOM: The After Party</h2>
         <p class="event-description" id="eventDesc">
           Celebrate the grand finale of the Philippine Blockchain Week's PBWx 2024 at the PURE VENOM After Party.
@@ -220,7 +219,15 @@
           Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
         </p>
         <p class="event-location">Location: Xylo at The Palace</p>
-        <button class="register-btn">You're going!</button>
+        <p class="going-status">You're going</p>
+        <div class="feedback-box">
+          <a href="#" class="feedback-link">
+            <span>Feedback</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </a>
+        </div>
       </div>
     </article>
   </div>
