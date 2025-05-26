@@ -24,6 +24,13 @@
     const eventsContainer = document.createElement('div')
     eventsContainer.id = 'events-container'
 
+    // display message if no upcoming/ past events
+    const emptyMessage = document.createElement('p')
+    emptyMessage.textContent = 'Nothing to see here.'
+    emptyMessage.classList.add('empty-message')
+    emptyMessage.style.display = 'none'  
+    eventSection.appendChild(emptyMessage)
+
     eventsContainer.innerHTML = eventsData.map(event => {
         const statusClass = event.status === 'Approved' ? 'going' : 'pending'
         const status = event.status === 'Approved' ? 'Going' : 'Pending'
@@ -31,8 +38,8 @@
         const formattedDate = event.sameDay == 'True' ? event.formattedStartDateTime.split(',')[0] 
           : `${event.formattedStartDateTime.split(',')[0] } - ${event.formattedEndDateTime.split(',')[0] }`
 
-        const formattedDay = event.sameDay == 'True' ? new Date(event.formattedStartDateTime).toLocaleString('en-US', { weekday: 'long' })
-          : `${new Date(event.formattedStartDateTime).toLocaleString('en-US', { weekday: 'long' })} - ${new Date(event.formattedEndDateTime).toLocaleString('en-US', { weekday: 'long' }) }`
+        const formattedDay = event.sameDay == 'True' ? new Date(event.startDateTime).toLocaleString('en-US', { weekday: 'long' })
+          : `${new Date(event.startDateTime).toLocaleString('en-US', { weekday: 'long', timeZone : 'UTC' })} - ${new Date(event.endDateTime).toLocaleString('en-US', { weekday: 'long', timeZone : 'UTC' }) }`
         
         return `
                 <div class="event-group" data-date="${event.startDateTime}">
@@ -131,11 +138,19 @@
 
     function filterEvents(showUpcoming) {
       const today = new Date().setHours(0, 0, 0, 0);
+      let hasEventGroup = false
+
       groups.forEach(group => {
         const eventDate = new Date(group.dataset.date).setHours(0, 0, 0, 0);
         const shouldShow = showUpcoming ? eventDate >= today : eventDate < today;
         group.style.display = shouldShow ? "flex" : "none";
+        
+        if (shouldShow) {
+          hasEventGroup = true 
+        }
       });
+
+      emptyMessage.style.display = hasEventGroup ? 'none' : 'block';
     }
 
     buttons.forEach(button => {
