@@ -403,10 +403,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         const optionsDay  = { weekday: 'long', timeZone: 'UTC' };
         const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
         
-        const formattedDate = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDate) 
-                            : event.sameMonth == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`
-                            : event.sameYear == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`
-                            : `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`
+        let formattedDate;
+
+        if (event.sameDay == 'True') {
+            formattedDate = startObj.toLocaleString('en-US', optionsDate);
+        } 
+        else if (event.sameMonth == 'True') {
+            formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`;
+        } 
+        else if (event.sameYear == 'True') {
+            formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`;
+        } 
+        else {
+            formattedDate = `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`;
+        }
 
         const formattedDay = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDay)
                             : `${startObj.toLocaleString('en-US', optionsDay)} - ${endObj.toLocaleString('en-US', optionsDay)}`
@@ -450,10 +460,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             const optionsDay = { month : 'long', day : 'numeric'}
             const startYear = new Date(event.startDateTime).getFullYear()
 
-            const formattedDate = event.sameDay == 'True' ? new Date(event.startDateTime).toLocaleString('en-US', optionsDate)
-                                : event.sameMonth == 'True' ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsDay)} - ${new Date(event.endDateTime).toLocaleString('en-US', { day : 'numeric' })}, ${startYear}`
-                                : event.sameYear == 'True' ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsDay)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDay)}, ${startYear}` 
-                                : `${new Date(event.startDateTime).toLocaleString('en-US', optionsDate)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDate)}`
+            let formattedDate;
+
+            if (event.sameDay == 'True') {
+                formattedDate = new Date(event.startDateTime).toLocaleString('en-US', optionsDate);
+            } 
+            else if (event.sameMonth == 'True') {
+                formattedDate = `${new Date(event.startDateTime).toLocaleString('en-US', optionsDay)} - ${new Date(event.endDateTime).toLocaleString('en-US', { day: 'numeric' })}, ${startYear}`;
+            } 
+            else if (event.sameYear == 'True') {
+                formattedDate = `${new Date(event.startDateTime).toLocaleString('en-US', optionsDay)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDay)}, ${startYear}`;
+            } 
+            else {
+                formattedDate = `${new Date(event.startDateTime).toLocaleString('en-US', optionsDate)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDate)}`;
+            }
 
             overlay.innerHTML = `
                     <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
