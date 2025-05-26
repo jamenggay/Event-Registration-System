@@ -266,14 +266,12 @@ app.get("/user-events-created", async (req, res) => {
     try {
         const result = await pool.request()
                         .input('userID', sql.Int, userID)
-                        .query(`SELECT * 
+                        .query(`SELECT *,
+                                    IIF(CAST(startDateTime AS DATE) = CAST(endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                    IIF(MONTH(startDateTime) = MONTH(endDateTime) AND YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameMonth,
+                                    IIF(YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameYear 
                                 FROM eventsTable 
                                 WHERE creatorID = @userID`)
-
-        if (!result?.recordset || result.recordset.length === 0) {
-            console.log("User not found.")
-            return res.status(404).json({ message : 'User not found.'})
-        }
 
         const eventsData = result.recordset.map(event => ({
                                                 eventID         : event.eventID,
@@ -282,6 +280,9 @@ app.get("/user-events-created", async (req, res) => {
                                                 location        : event.location,
                                                 startDateTime   : event.startDateTime,
                                                 endDateTime     : event.endDateTime, 
+                                                sameDay         : event.sameDay,
+                                                sameMonth       : event.sameMonth,
+                                                sameYear        : event.sameYear,
                                                 featureImage    : event.featureImage,
                                                 requireApproval : event.requireApproval,
                                                 capacity        : event.capacity,
@@ -793,6 +794,7 @@ app.get("/events-registered", async (req, res) => {
                                                 FORMAT(eT.endDateTime, 'MMMM d, h:mm tt') AS formattedEndDateTime,
                                                 FORMAT(eT.endDateTime, 'h:mm tt') AS formattedEndTime,
                                                 IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                                IIF(MONTH(eT.startDateTime) = MONTH(eT.endDateTime) AND YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameMonth,
                                                 IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear,
                                                 uT.profilePic, uT.fullName, eT.eventName, eT.description, eT.location, 
                                                 eT.featureImage, eT.feedbackLink, eT.themeIndex, rT.status
@@ -813,6 +815,7 @@ app.get("/events-registered", async (req, res) => {
                                                     formattedEndDateTime   : event.formattedEndDateTime,
                                                     formattedEndTime       : event.formattedEndTime,
                                                     sameDay       : event.sameDay,
+                                                    sameMonth     : event.sameMonth,
                                                     sameYear      : event.sameYear,
                                                     description   : event.description,
                                                     location      : event.location,
