@@ -96,7 +96,7 @@
             <div class="card-content">
               <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
               <p class="event-description" id="eventDesc">${event.description}</p>
-              <p class="event-location">${event.location}</p>
+              <p class="event-location">Location: ${event.location}</p>
               <p class="${statusClass}-status">${status}</p>
               <div class="feedback-box">
                 <a href="${event.feedbackLink}" class="feedback-link">
