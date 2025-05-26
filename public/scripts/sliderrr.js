@@ -1,5 +1,5 @@
-
-let nextDom = document.getElementById("next");
+document.addEventListener("DOMContentLoaded", () => {
+  let nextDom = document.getElementById("next");
 let prevDom = document.getElementById("prev");
 
 let carouselDom = document.querySelector(".carousel");
@@ -166,3 +166,5 @@ const overlay = document.getElementById('popupOverlay');
       closePopup();
     }
   });
+});
+

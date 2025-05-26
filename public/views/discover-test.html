@@ -2,530 +2,563 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Discover</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <link rel="stylesheet" href="../styles/discover-test.css" />
-    <link rel="stylesheet" href="../styles/popup.css" />
-    <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon" />
-    <script src="../scripts/footer.js"></script>
-    <script src="../scripts/header.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="../styles/discover-test.css" />
+
+  <link rel="stylesheet" href="../styles/popup.css" />
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon" />
+  <script src="../scripts/footer.js"></script>
+  <script src="../scripts/header.js"></script>
 </head>
 
 <body>
-    <header>
-        <div id="header"></div>
-    </header>
 
-    <div class="discover-container">
-        <div class="parent">
-            <div class="image-card div1" data-category="Arts">
-                <img src="../assets/images/discover-arts.jpg" alt="Discover Arts" loading="lazy" />
-                <span class="card-label">Arts</span>
+  <div class="discover-container">
+    <div class="parent">
+      <div class="image-card div1" data-category="Arts">
+        <img src="../assets/images/discover-arts.jpg" alt="Discover Arts" loading="lazy" />
+        <span class="card-label">Arts</span>
+      </div>
+      <div class="image-card div2" data-category="Business">
+        <img src="../assets/images/discover-business.jpg" alt="Discover Business" />
+        <span class="card-label">Business</span>
+      </div>
+      <div class="image-card div3" data-category="Education">
+        <img src="../assets/images/discover-education.jpg" alt="Discover Education" />
+        <span class="card-label">Education</span>
+      </div>
+      <div class="image-card div4" data-category="Entertainment">
+        <img src="../assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
+        <span class="card-label">Entertainment</span>
+      </div>
+      <div class="image-card div5" data-category="Health">
+        <img src="../assets/images/discover-health.jpg" alt="Discover Health" />
+        <span class="card-label">Health</span>
+      </div>
+      <div class="image-card div6" data-category="Outreach">
+        <img src="../assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
+        <span class="card-label">Outreach</span>
+      </div>
+      <div class="image-card div7" data-category="Technology">
+        <img src="../assets/images/discover-technology.avif" alt="Discover Technology" />
+        <span class="card-label">Technology</span>
+      </div>
+      <div class="div8">
+        <button class="explore-btn" onclick="showCarousel()">Explore All Events →</button>
+      </div>
+      <div class="div9">
+        <h1>
+          <span class="gradient-text">Discover, Register, and <br> Be Part of the</span>
+          <span id="dynamic-word" class="experience"> Experience</span>!
+        </h1>
+      </div>
+    </div>
+  </div>
+  <section class="carousel-wrapper" id="carousel-section">
+    <div class="carousel">
+
+      <div class="list">
+        <div class="item">
+          <img src="../assets/images/clubbing-event.jpg">
+          <div class="event-content">
+            <div class="event-date">May 11, 2025</div>
+            <div class="event-title">PURE VENOM: The After Party</div>
+            <div class="event-category">Entertainment</div>
+            <div class="event-description">Celebrate the grand finale of the Philippine Blockchain Week's
+              PBWx 2024 at the
+              PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the
+              perfect night to
+              let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
             </div>
-            <div class="image-card div2" data-category="Business">
-                <img src="../assets/images/discover-business.jpg" alt="Discover Business" />
-                <span class="card-label">Business</span>
-            </div>
-            <div class="image-card div3" data-category="Education">
-                <img src="../assets/images/discover-education.jpg" alt="Discover Education" />
-                <span class="card-label">Education</span>
-            </div>
-            <div class="image-card div4" data-category="Entertainment">
-                <img src="../assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
-                <span class="card-label">Entertainment</span>
-            </div>
-            <div class="image-card div5" data-category="Health">
-                <img src="../assets/images/discover-health.jpg" alt="Discover Health" />
-                <span class="card-label">Health</span>
-            </div>
-            <div class="image-card div6" data-category="Outreach">
-                <img src="../assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
-                <span class="card-label">Outreach</span>
-            </div>
-            <div class="image-card div7" data-category="Technology">
-                <img src="../assets/images/discover-technology.avif" alt="Discover Technology" />
-                <span class="card-label">Technology</span>
-            </div>
-            <div class="div8">
-                <button class="explore-btn" onclick="showCarousel()">Explore All Events →</button>
-            </div>
-            <div class="div9">
-                <h1>
-                    <span class="gradient-text">Discover, Register, and <br> Be Part of the</span>
-                    <span id="dynamic-word" class="experience"> Experience</span>!
-                </h1>
-            </div>
+            <div class="event-location">Location: <i>Xylo at the Palace</i></div>
+            <button class="register-button">Register</button>
+          </div>
         </div>
-    </div>
-    <section class="carousel-wrapper" id="carousel-section">
-        <div class="carousel">
-
-            <div class="list">
-                <div class="item">
-                    <img src="../assets/images/clubbing-event.jpg">
-                    <div class="event-content">
-                        <div class="event-date">May 11, 2025</div>
-                        <div class="event-title">PURE VENOM: The After Party</div>
-                        <div class="event-category">Entertainment</div>
-                        <div class="event-description">Celebrate the grand finale of the Philippine Blockchain Week's
-                            PBWx 2024 at the
-                            PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the
-                            perfect night to
-                            let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
-                        </div>
-                        <div class="event-location">Location: <i>Xylo at the Palace</i></div>
-                        <button class="register-button">Register</button>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="../assets/images/art-event.jpg">
-                    <div class="event-content">
-                        <div class="event-date">May 12, 2025</div>
-                        <div class="event-title">Estrange Bond</div>
-                        <div class="event-category">Arts</div>
-                        <div class="event-description">
-                            A captivating art exhibition that delves into the complexities of human
-                            connections and isolation, showcasing thought-provoking pieces by emerging artists.
-                        </div>
-                        <div class="event-location">Location: <i>Resorts World Manila</i></div>
-                        <button class="register-button">Register</button>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="../assets/images/business-event.jpg">
-                    <div class="event-content">
-                        <div class="event-date">May 13, 2025</div>
-                        <div class="event-title">Last Trace of Us</div>
-                        <div class="event-category">Outreach</div>
-                        <div class="event-description">
-                            A community outreach initiative aimed at environmental preservation. Participate
-                            in hands-on activities to learn how we can reduce our environmental impact and protect our
-                            planet.</div>
-                        <div class="event-location">Location: <i>Resorts World Manila</i></div>
-                        <button class="register-button">Register</button>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="../assets/images/tech-event.avif">
-                    <div class="event-content">
-                        <div class="event-date">May 15, 2025</div>
-                        <div class="event-title">Urban Decay</div>
-                        <div class="event-category">Technology</div>
-                        <div class="event-description">
-                            Join us for an insightful discussion on the challenges of urban development,
-                            smart cities, and the impact of technology on sustainable living in urban areas.
-                        </div>
-                        <div class="event-location">Location: <i>Solaire, North Edsa</i></div>
-                        <button class="register-button">Register</button>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="../assets/images/entertainment-event.jpg">
-                    <div class="event-content">
-                        <div class="event-date">May 16, 2025</div>
-                        <div class="event-title">The Migration</div>
-                        <div class="event-category">Technology</div>
-                        <div class="event-description">
-                            An immersive theater experience highlighting the struggles and stories of people
-                            displaced by conflict and climate change, offering a glimpse into the global migration
-                            crisis.
-                        </div>
-                        <div class="event-location">Location: <i>512 Main Building, National University</i></div>
-                        <button class="register-button">Register</button>
-                    </div>
-                </div>
+        <div class="item">
+          <img src="../assets/images/art-event.jpg">
+          <div class="event-content">
+            <div class="event-date">May 12, 2025</div>
+            <div class="event-title">Estrange Bond</div>
+            <div class="event-category">Arts</div>
+            <div class="event-description">
+              A captivating art exhibition that delves into the complexities of human
+              connections and isolation, showcasing thought-provoking pieces by emerging artists.
             </div>
-
-            <div class="thumbnail">
-                <div class="item">
-                    <img src="../assets/images/clubbing-event.jpg">
-                </div>
-                <div class="item">
-                    <img src="../assets/images/art-event.jpg">
-                </div>
-                <div class="item">
-                    <img src="../assets/images/business-event.jpg">
-                </div>
-                <div class="item">
-                    <img src="../assets/images/tech-event.avif">
-                </div>
-                <div class="item">
-                    <img src="../assets/images/entertainment-event.jpg">
-                </div>
-            </div>
-
-            <div class="nav-buttons">
-                <button class="button" id="prev"><img src="../assets/icons/previous-icon.svg" alt="Previous"></button>
-                <button class="button" id="next"><img src="../assets/icons/next-icon.svg" alt="Next"></button>
-            </div>
-
+            <div class="event-location">Location: <i>Resorts World Manila</i></div>
+            <button class="register-button">Register</button>
+          </div>
         </div>
-    </section>
-    <section class="hover-cards-wrapper" id="hover-cards-section">
-<div id="app" class="container">
-
-  <div class="card-wrap" onclick="openPopup()" data-category="Technology" data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+        <div class="item">
+          <img src="../assets/images/business-event.jpg">
+          <div class="event-content">
+            <div class="event-date">May 13, 2025</div>
+            <div class="event-title">Last Trace of Us</div>
+            <div class="event-category">Outreach</div>
+            <div class="event-description">
+              A community outreach initiative aimed at environmental preservation. Participate
+              in hands-on activities to learn how we can reduce our environmental impact and protect our
+              planet.</div>
+            <div class="event-location">Location: <i>Resorts World Manila</i></div>
+            <button class="register-button">Register</button>
+          </div>
+        </div>
+        <div class="item">
+          <img src="../assets/images/tech-event.avif">
+          <div class="event-content">
+            <div class="event-date">May 15, 2025</div>
+            <div class="event-title">Urban Decay</div>
+            <div class="event-category">Technology</div>
+            <div class="event-description">
+              Join us for an insightful discussion on the challenges of urban development,
+              smart cities, and the impact of technology on sustainable living in urban areas.
+            </div>
+            <div class="event-location">Location: <i>Solaire, North Edsa</i></div>
+            <button class="register-button">Register</button>
+          </div>
+        </div>
+        <div class="item">
+          <img src="../assets/images/entertainment-event.jpg">
+          <div class="event-content">
+            <div class="event-date">May 16, 2025</div>
+            <div class="event-title">The Migration</div>
+            <div class="event-category">Technology</div>
+            <div class="event-description">
+              An immersive theater experience highlighting the struggles and stories of people
+              displaced by conflict and climate change, offering a glimpse into the global migration
+              crisis.
+            </div>
+            <div class="event-location">Location: <i>512 Main Building, National University</i></div>
+            <button class="register-button">Register</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Entertainment" data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="thumbnail">
+        <div class="item">
+          <img src="../assets/images/clubbing-event.jpg">
+        </div>
+        <div class="item">
+          <img src="../assets/images/art-event.jpg">
+        </div>
+        <div class="item">
+          <img src="../assets/images/business-event.jpg">
+        </div>
+        <div class="item">
+          <img src="../assets/images/tech-event.avif">
+        </div>
+        <div class="item">
+          <img src="../assets/images/entertainment-event.jpg">
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Business" data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Build with AI</h1>
+      <div class="nav-buttons">
+        <button class="button" id="prev"><img src="../assets/icons/previous-icon.svg" alt="Previous"></button>
+        <button class="button" id="next"><img src="../assets/icons/next-icon.svg" alt="Next"></button>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Health" data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Million Dollar Pu$$y</h1>
+    </div>
+  </section>
+  <section class="hover-cards-wrapper" id="hover-cards-section">
+    <div id="app" class="container">
+
+      <div class="card-wrap" onclick="openPopup()" data-category="Technology"
+        data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    <div class="card-wrap" data-category="Outreach" data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+
+      <div class="card-wrap" data-category="Entertainment"
+        data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Education" data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Business"
+        data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Build with AI</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Arts" data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Health"
+        data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Million Dollar Pu$$y</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="card-wrap" data-category="Technology" data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+      <div class="card-wrap" data-category="Outreach"
+        data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Entertainment" data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Education"
+        data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Business" data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Build with AI</h1>
+
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Arts"
+        data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Health" data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Million Dollar Pu$$y</h1>
+      <div class="card-wrap" data-category="Technology"
+        data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    <div class="card-wrap" data-category="Outreach" data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+
+      <div class="card-wrap" data-category="Entertainment"
+        data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Education" data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Business"
+        data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Build with AI</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Arts" data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Health"
+        data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Million Dollar Pu$$y</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="card-wrap" data-category="Technology" data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+      <div class="card-wrap" data-category="Outreach"
+        data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Entertainment" data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Education"
+        data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Business" data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Build with AI</h1>
+
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Arts"
+        data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Health" data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Million Dollar Pu$$y</h1>
+      <div class="card-wrap" data-category="Technology"
+        data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    <div class="card-wrap" data-category="Outreach" data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+
+      <div class="card-wrap" data-category="Entertainment"
+        data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Education" data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Business"
+        data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Build with AI</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Arts" data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Health"
+        data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Million Dollar Pu$$y</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="card-wrap" data-category="Technology" data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+      <div class="card-wrap" data-category="Outreach"
+        data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Entertainment" data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Education"
+        data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Business" data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Build with AI</h1>
+
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Arts"
+        data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Health" data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Million Dollar Pu$$y</h1>
+      <div class="card-wrap" data-category="Technology"
+        data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    <div class="card-wrap" data-category="Outreach" data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+
+      <div class="card-wrap" data-category="Entertainment"
+        data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Education" data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Business"
+        data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Build with AI</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Arts" data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Health"
+        data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Million Dollar Pu$$y</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="card-wrap" data-category="Technology" data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+      <div class="card-wrap" data-category="Outreach"
+        data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Entertainment" data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Education"
+        data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Business" data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Build with AI</h1>
+
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Arts"
+        data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="card-wrap" data-category="Health" data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Million Dollar Pu$$y</h1>
+      <div class="card-wrap" data-category="Technology"
+        data-image="https://thinkmarketingmagazine.com/wp-content/uploads/2024/06/Main-Highlights-from-the-2024-Apple-Worldwide-Developers-Conference-WWDC24-420x280.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    <div class="card-wrap" data-category="Outreach" data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>PURE Venom: The After Party</h1>
+
+      <div class="card-wrap" data-category="Entertainment"
+        data-image="https://cdn.kobo.com/book-images/85907506-e152-445e-b9ef-01c1b2a30a29/1200/1200/False/dune-13.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Education" data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Business"
+        data-image="https://www.wtcmanila.com.ph/wp-content/uploads/2020/06/Business-Events-For-Post-COVID-Economic-Recovery.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Build with AI</h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-
-  <!-- Add more cards by copying and changing the content/image -->
-  <div class="card-wrap" data-category="Arts" data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
-    <div class="card">
-      <div class="card-bg"></div>
-      <div class="card-info">
-        <h1>Apple Worldwide Conference 2025</h1>
+      <div class="card-wrap" data-category="Health"
+        data-image="https://img.freepik.com/premium-psd/psd-world-mental-health-day-banner-with-mental-health-awareness-month-vector-green-ribbon_90688-5521.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Million Dollar Pu$$y</h1>
+          </div>
+        </div>
       </div>
+      <div class="card-wrap" data-category="Outreach"
+        data-image="https://i.pinimg.com/736x/1a/88/2a/1a882a981075776e2f19db8c6bb6bf55.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>PURE Venom: The After Party</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Education"
+        data-image="https://img.freepik.com/premium-vector/back-school-admission-social-media-post-higher-education-square-instagram-web-banner-template_263626-1973.jpg">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Add more cards by copying and changing the content/image -->
+      <div class="card-wrap" data-category="Arts"
+        data-image="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/yc/0ef8ad4a-f5a1-4c34-86a4-c00accce5c41.png">
+        <div class="card">
+          <div class="card-bg"></div>
+          <div class="card-info">
+            <h1>Apple Worldwide Conference 2025</h1>
+          </div>
+        </div>
+      </div>
+
+
     </div>
-  </div>
+  </section>
 
-
-</div>
-</section>
-
-<div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
+  <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
     aria-describedby="eventDesc">
     <article class="card-popup">
-        <button class="close-btn" onclick="closePopup()">&times;</button>
-        <div class="popup-event-content">
-            <div class="popup-event-date">May 11, 2025</div>
-            <div class="popup-event-title">PURE VENOM: The After Party</div>
-            <div class="popup-event-category">Entertainment</div>
-            <div class="popup-event-description">Celebrate the grand finale of the Philippine Blockchain Week's
-                PBWx 2024 at the
-                PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the
-                perfect night to
-                let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
-            </div>
-            <div class="popup-event-location">Location: <i>Xylo at the Palace</i></div>
-            <button class="popup-register-button">Register</button>
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <div class="popup-event-content">
+        <div class="popup-event-date">May 11, 2025</div>
+        <div class="popup-event-title">PURE VENOM: The After Party</div>
+        <div class="popup-event-category">Entertainment</div>
+        <div class="popup-event-description">Celebrate the grand finale of the Philippine Blockchain Week's
+          PBWx 2024 at the
+          PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the
+          perfect night to
+          let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
         </div>
+        <div class="popup-event-location">Location: <i>Xylo at the Palace</i></div>
+        <button class="popup-register-button">Register</button>
+      </div>
     </article>
-</div>
+  </div>
 
-    <footer>
-        <div id="footer"></div>
-    </footer>
+  <footer>
+    <div id="footer"></div>
+  </footer>
 
-    <script src="../scripts/sliderrr.js"></script>
-    <script>
-        function scrollToEvents() {
-            const eventsSection = document.getElementById('carousel-section');
-            eventsSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+  <script src="../scripts/sliderrr.js"></script>
+  <script>
+    function scrollToEvents() {
+      const eventsSection = document.getElementById('carousel-section');
+      eventsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
 </body>
 
 </html>

@@ -9,10 +9,12 @@ setInterval(() => {
   wordElement.id = "dynamic-word";
 }, 2000);
 
+
 //BACKEND SCRIPT
 
 document.addEventListener("DOMContentLoaded", async () => {
   const eventList = document.getElementById("events-list");
+  const  thumbnail = document.getElementById("next-event")
 
 
   try {
@@ -31,9 +33,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const registeredEventIDs = registeredEvent.registeredEventIDs;
 
     events.forEach((event, index) => {
-  const li = document.createElement('li');
-  li.className = 'item';
-  li.style.backgroundImage = `url('${event.featureImage}')`;
+  const li1 = document.createElement('li');
+  const li2 = document.createElement('li');
+  li1.className = "item";
+  li2.className = "item"
 
   const isSameDay = sameDate[index].SameDay === 'True';
   const isRegistered = registeredEventIDs.includes(event.eventID); 
@@ -42,19 +45,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     ? `<span class="event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</span>`
     : `<span class="event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</span>`;
 
-  li.innerHTML = `
-    ${eventDateHTML}
+  li1.innerHTML = `
+    
+    <img src="${event.featureImage}">
     <div class="event-content">
+    ${eventDateHTML}
       <h2 class="event-title">${event.eventName}</h2>
       <p class="event-description">${event.description}</p>
       <p class="event-location">${event.location}</p>
-      <button class="register-btn" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
+      <button class="register-button" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
     </div>
   `;
 
-  eventList.appendChild(li);
+  eventList.appendChild(li1);
 
-  const button = li.querySelector('.register-btn');
+  const button = li1.querySelector('.register-button');
   button.disabled = isRegistered;
 
   if (!isRegistered) {
@@ -83,6 +88,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     });
   }
+
+li2.innerHTML = 
+`<img src="${event.featureImage}">`;
+
+thumbnail.appendChild(li2);
+
 });
 
   }
