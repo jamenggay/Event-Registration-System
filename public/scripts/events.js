@@ -33,15 +33,13 @@
 
     eventsContainer.innerHTML = eventsData.map(event => {
         const statusClass = event.status === 'Approved' ? 'going' : 'pending'
-        const status = event.status === 'Approved' ? 'Going' : 'Pending'
+        const status = 
+              event.status === 'Approved' ? 'Going' 
+            : event.status === 'Pending' ? 'Pending'
+            : 'Waitlisted'
 
-        // const currentYear = new Date().getFullYear();
-        // const endYear = new Date(event.startDateTime).getFullYear()
-        // const optionsFullDate = { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
-        // const yearPassed = endYear < currentYear;
+        const endYear = new Date(event.startDateTime).getFullYear()
 
-        // yearPassed ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsFullDate)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsFullDate)}`
-        
         const formattedDate = 
           event.sameDay == 'True' ? event.formattedStartDateTime.split(',')[0] 
           : event.sameMonth == 'True' ? `${event.formattedStartDateTime.split(',')[0]} - ${event.formattedStartDateTime.split(',')[0].split(' ')[1]}`
@@ -90,7 +88,10 @@
       card.addEventListener('click', () => {
         const event = eventsData[index]
         const statusClass = event.status == 'Approved' ? 'going' : 'pending'
-        const status = event.status == 'Approved' ? 'You\'re going' : 'Pending'
+        const status = 
+            event.status == 'Approved' ? 'You\'re going' 
+          : event.status == 'Pending' ? 'Pending'
+          : 'Waitlisted'
 
         const optionsDate = { month : 'long', day : 'numeric', year : 'numeric'}
         const startYear = new Date(event.startDateTime).getFullYear()
