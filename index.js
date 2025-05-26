@@ -787,7 +787,7 @@ app.get("/events-registered", async (req, res) => {
     try {
         const result = await pool.request()
                                 .input('userID', sql.Int, userID)
-                                .query(`SELECT eT.eventID, eT.startDateTime,
+                                .query(`SELECT eT.eventID, eT.startDateTime, eT.endDateTime,
                                                 FORMAT(eT.startDateTime, 'MMMM d, h:mm tt') AS formattedStartDateTime,
                                                 FORMAT(eT.startDateTime, 'h:mm tt') AS formattedStartTime,
                                                 FORMAT(eT.endDateTime, 'MMMM d, h:mm tt') AS formattedEndDateTime,
@@ -807,6 +807,7 @@ app.get("/events-registered", async (req, res) => {
                                                     fullName      : event.fullName,
                                                     eventName     : event.eventName,
                                                     startDateTime : event.startDateTime,
+                                                    endDateTime   : event.endDateTime,
                                                     formattedStartDateTime : event.formattedStartDateTime,
                                                     formattedStartTime     : event.formattedStartTime,
                                                     formattedEndDateTime   : event.formattedEndDateTime,
