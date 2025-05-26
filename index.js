@@ -787,11 +787,13 @@ app.get("/events-registered", async (req, res) => {
     try {
         const result = await pool.request()
                                 .input('userID', sql.Int, userID)
-                                .query(`SELECT eT.eventID, 
+                                .query(`SELECT eT.eventID, eT.startDateTime,
                                                 FORMAT(eT.startDateTime, 'MMMM d, h:mm tt') AS formattedStartDateTime,
+                                                FORMAT(eT.startDateTime, 'h:mm tt') AS formattedStartTime,
                                                 FORMAT(eT.endDateTime, 'MMMM d, h:mm tt') AS formattedEndDateTime,
-                                                FORMAT(endDateTime, 'h:mm tt') AS formattedEndTime,
+                                                FORMAT(eT.endDateTime, 'h:mm tt') AS formattedEndTime,
                                                 IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                                IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear,
                                                 uT.profilePic, uT.fullName, eT.eventName, eT.description, eT.location, 
                                                 eT.featureImage, eT.feedbackLink, eT.themeIndex, rT.status
                                         FROM ((eventsTable eT
@@ -804,10 +806,13 @@ app.get("/events-registered", async (req, res) => {
                                                     profilePic    : event.profilePic,
                                                     fullName      : event.fullName,
                                                     eventName     : event.eventName,
+                                                    startDateTime : event.startDateTime,
                                                     formattedStartDateTime : event.formattedStartDateTime,
+                                                    formattedStartTime       : event.formattedStartTime,
                                                     formattedEndDateTime   : event.formattedEndDateTime,
                                                     formattedEndTime       : event.formattedEndTime,
                                                     sameDay       : event.sameDay,
+                                                    sameYear      : event.sameYear,
                                                     description   : event.description,
                                                     location      : event.location,
                                                     featureImage  : event.featureImage,
