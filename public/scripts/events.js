@@ -1,27 +1,131 @@
+  document.addEventListener('DOMContentLoaded', async () => {
+    let eventsData = null 
+    
+    try {
+      const response = await fetch("/events-registered", {
+        method : 'GET'
+      })
 
-  const overlay = document.getElementById('popupOverlay');
-
-  function openPopup() {
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden'; 
-  }
-
-  function closePopup() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  overlay.addEventListener('click', e => {
-    if(e.target === overlay) closePopup();
-  });
-
-  document.addEventListener('keydown', e => {
-    if(e.key === "Escape" && overlay.classList.contains('active')) {
-      closePopup();
+      if (response.ok) {
+        const result = await response.json()
+        console.log("Events Registered: ", result)
+        eventsData = result
+      }
+      else {
+        const error = await response.json()
+        console.log("Backend Failed: ", error)   
+      }
     }
-  });
+    catch (e) {
+        console.log("Client Error: ", e)
+    }
 
-  document.addEventListener("DOMContentLoaded", () => {
+    const eventSection = document.querySelector('.event-section')
+    const eventsContainer = document.createElement('div')
+    eventsContainer.id = 'events-container'
+
+    eventsContainer.innerHTML = eventsData.map(event => {
+        const statusClass = event.status === 'Approved' ? 'going' : 'pending'
+        const status = event.status === 'Approved' ? 'Going' : 'Pending'
+
+        const formattedDate = event.sameDay == 'True' ? event.formattedStartDateTime.split(',')[0] 
+          : `${event.formattedStartDateTime.split(',')[0] } - ${event.formattedEndDateTime.split(',')[0] }`
+
+        const formattedDay = event.sameDay == 'True' ? new Date(event.formattedStartDateTime).toLocaleString('en-US', { weekday: 'long' })
+          : `${new Date(event.formattedStartDateTime).toLocaleString('en-US', { weekday: 'long' })} - ${new Date(event.formattedEndDateTime).toLocaleString('en-US', { weekday: 'long' }) }`
+        
+        return `
+                <div class="event-group" data-date="${event.startDateTime}">
+                  <div class="event-date">
+                    <strong>${formattedDate}</strong>
+                    <span class="weekday">${formattedDay}</span>
+                  </div>
+
+                  <div class="event-cards">
+                    <div class="event-card theme-${event.themeIndex}">
+                      <div class="event-info">
+                        <div class="event-time">${event.formattedStartTime} - ${event.formattedEndTime}</div>
+                        <div class="event-title">
+                          ${event.eventName}
+                        </div>
+                        <div class="event-meta">
+                          <span><img src="${event.profilePic}" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">${event.fullName}<br><br></span>
+                          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
+                        </div>
+                        <div class="event-status ${statusClass}">${status}</div>
+                      </div>
+                      <img class="event-thumbnail"
+                        src="${event.featureImage}"
+                        alt="Event Thumbnail" />
+                    </div>
+                  </div>
+                </div> 
+              `
+      }
+    ).join('')
+
+    eventSection.append(eventsContainer)
+
+    const eventCards = document.querySelectorAll('.event-cards')
+    const overlay = document.getElementById('popupOverlay') 
+
+    eventCards.forEach((card, index) => {
+      card.addEventListener('click', () => {
+        const event = eventsData[index]
+        const statusClass = event.status == 'Approved' ? 'going' : 'pending'
+        const status = event.status == 'Approved' ? 'You\'re going' : 'Pending'
+
+        const year = new Date(event.startDateTime).getFullYear()
+        const formattedDate =
+            event.sameDay == 'True' ? `${event.formattedStartDateTime.split(',')[0]}, ${year}` 
+          : event.sameYear == 'True' ? `${event.formattedStartDateTime.split(',')[0] } - ${event.formattedEndDateTime.split(',')[0].split(' ')[1] }, ${year}`
+          : `${event.formattedStartDateTime.split(',')[0]}, ${year} - ${event.formattedEndDateTime.split(',')[0].split(' ')[1]}, ${year}`
+
+        overlay.innerHTML = `
+          <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
+            <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+            <span class="popup-event-date">${formattedDate}</span>
+
+            <div class="card-content">
+              <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
+              <p class="event-description" id="eventDesc">${event.description}</p>
+              <p class="event-location">${event.location}</p>
+              <p class="${statusClass}-status">${status}</p>
+              <div class="feedback-box">
+                <a href="${event.feedbackLink}" class="feedback-link">
+                  <span>Feedback</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        `
+        openPopup()
+      })
+    })
+
+    function openPopup() {
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden'; 
+    }
+
+    function closePopup() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    overlay.addEventListener('click', e => {
+      if(e.target.id === 'closePopup' || e.target === overlay) closePopup();
+    });
+
+    document.addEventListener('keydown', e => {
+      if(e.key === "Escape" && overlay.classList.contains('active')) {
+        closePopup();
+      }
+    });
+
     const buttons = document.querySelectorAll(".toggle-buttons button");
     const groups = document.querySelectorAll(".event-group");
 
@@ -43,6 +147,6 @@
         filterEvents(isUpcoming);
       });
     });
-
-    filterEvents(true);
-  });
+    
+    filterEvents(true)
+  })
