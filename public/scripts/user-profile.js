@@ -396,6 +396,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const startObj = new Date(event.startDateTime)
         const endObj = new Date(event.endDateTime)
+        const startYear = new Date(event.startDateTime).getFullYear()
         const endYear = new Date(event.endDateTime).getFullYear()
 
         const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
@@ -405,7 +406,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const formattedDate = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDate) 
                             : event.sameMonth == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`
                             : event.sameYear == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`
-                            : `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`
+                            : `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`
 
         const formattedDay = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDay)
                             : `${startObj.toLocaleString('en-US', optionsDay)} - ${endObj.toLocaleString('en-US', optionsDay)}`
