@@ -440,14 +440,14 @@ body::before {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(76, 175, 80, 0.15);
+    background: rgba(210, 196, 0, 0.15);
     color: #ffa500;
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 500;
     margin-top: 1.5rem;
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    border: 1px solid rgba(210, 196, 0, 0.15);
   }
 
   .pending-status::before {
