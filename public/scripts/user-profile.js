@@ -394,21 +394,15 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
 
-        // const currentYear = new Date().getFullYear();
         const startObj = new Date(event.startDateTime)
         const endObj = new Date(event.endDateTime)
         const endYear = new Date(event.endDateTime).getFullYear()
 
-        // const optionsFullDate = { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
         const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
         const optionsDay  = { weekday: 'long', timeZone: 'UTC' };
         const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
         
-        // const yearPassed = endYear < currentYear;
-
-        // yearPassed ? `${startObj.toLocaleString('en-US', optionsFullDate)} - ${endObj.toLocaleString('en-US', optionsFullDate)}`
-        const formattedDate = 
-                            event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDate) 
+        const formattedDate = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDate) 
                             : event.sameMonth == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`
                             : event.sameYear == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`
                             : `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`
