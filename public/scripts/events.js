@@ -35,8 +35,18 @@
         const statusClass = event.status === 'Approved' ? 'going' : 'pending'
         const status = event.status === 'Approved' ? 'Going' : 'Pending'
 
-        const formattedDate = event.sameDay == 'True' ? event.formattedStartDateTime.split(',')[0] 
-          : `${event.formattedStartDateTime.split(',')[0] } - ${event.formattedEndDateTime.split(',')[0] }`
+        // const currentYear = new Date().getFullYear();
+        // const endYear = new Date(event.startDateTime).getFullYear()
+        // const optionsFullDate = { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
+        // const yearPassed = endYear < currentYear;
+
+        // yearPassed ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsFullDate)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsFullDate)}`
+        
+        const formattedDate = 
+          event.sameDay == 'True' ? event.formattedStartDateTime.split(',')[0] 
+          : event.sameMonth == 'True' ? `${event.formattedStartDateTime.split(',')[0]} - ${event.formattedStartDateTime.split(',')[0].split(' ')[1]}`
+          : event.sameYear == 'True' ? `${event.formattedStartDateTime.split(',')[0]} - ${event.formattedEndDateTime.split(',')[0]}`
+          : `${event.formattedStartDateTime.split(',')[0] } - ${event.formattedEndDateTime.split(',')[0]}, ${endYear}`
 
         const formattedDay = event.sameDay == 'True' ? new Date(event.startDateTime).toLocaleString('en-US', { weekday: 'long' })
           : `${new Date(event.startDateTime).toLocaleString('en-US', { weekday: 'long', timeZone : 'UTC' })} - ${new Date(event.endDateTime).toLocaleString('en-US', { weekday: 'long', timeZone : 'UTC' }) }`
@@ -82,11 +92,14 @@
         const statusClass = event.status == 'Approved' ? 'going' : 'pending'
         const status = event.status == 'Approved' ? 'You\'re going' : 'Pending'
 
-        const year = new Date(event.startDateTime).getFullYear()
+        const optionsDate = { month : 'long', day : 'numeric', year : 'numeric'}
+        const startYear = new Date(event.startDateTime).getFullYear()
+
         const formattedDate =
-            event.sameDay == 'True' ? `${event.formattedStartDateTime.split(',')[0]}, ${year}` 
-          : event.sameYear == 'True' ? `${event.formattedStartDateTime.split(',')[0] } - ${event.formattedEndDateTime.split(',')[0].split(' ')[1] }, ${year}`
-          : `${event.formattedStartDateTime.split(',')[0]}, ${year} - ${event.formattedEndDateTime.split(',')[0].split(' ')[1]}, ${year}`
+            event.sameDay == 'True' ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsDate)}` 
+          : event.sameMonth == 'True' ? `${event.formattedStartDateTime.split(',')[0]} - ${event.formattedEndDateTime.split(',')[0].split(' ')[1] }, ${startYear}`
+          : event.sameYear == 'True' ? `${event.formattedStartDateTime.split(',')[0]}  - ${event.formattedEndDateTime.split(',')[0]}, ${startYear}`
+          : `${new Date(event.startDateTime).toLocaleString('en-US', optionsDate)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDate)}`
 
         overlay.innerHTML = `
           <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
