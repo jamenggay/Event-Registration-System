@@ -582,6 +582,36 @@ textarea {
   display: block;
 }
 
+.divider {
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 117, 187, 0.5),
+    transparent
+  );
+  margin: 0 auto;
+  width: 80%;
+  position: relative;
+}
+
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 117, 187, 0.8),
+    transparent
+  );
+  filter: blur(1px);
+}
+
 .weekday {
   font-weight: normal; 
 }
