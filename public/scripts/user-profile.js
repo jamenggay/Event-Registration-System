@@ -376,95 +376,156 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     console.log("Events Data: ", userEventsCreated)
 
-    if (userEventsCreated.length !== 0) {
-        const eventsCreatedContainer = document.querySelector('.events_created_container')
-        const overlay = document.getElementById('popupOverlay');
+    const eventSection = document.querySelector('.event-section')
+    const eventsContainer = document.createElement('div')
+    eventsContainer.id = 'events-container'
 
-        userEventsCreated.sort((a, b) => new Date(b.startDateTime) - new Date(a.startDateTime))
+    // display message if no upcoming/ past events
+    const emptyMessage = document.createElement('p')
+    emptyMessage.textContent = 'Nothing to see here.'
+    emptyMessage.classList.add('empty-message')
+    emptyMessage.style.display = 'none'  
+    eventSection.appendChild(emptyMessage)
 
-        eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
+    const eventsCreatedContainer = document.querySelector('.events_created_container')
+    const overlay = document.getElementById('popupOverlay');
 
-            const startObj = new Date(event.startDateTime)
-            const endObj = new Date(event.endDateTime)
-            const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const optionsDay  = { weekday: 'long', timeZone: 'UTC' };
-            const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
- 
-            return `  
-                    <div class="event-group">
-                        <div class="event-date">
-                            <strong>${startObj.toLocaleString('en-US', optionsDate)}</strong>
-                            <span class="weekday">${startObj.toLocaleString('en-US', optionsDay)}</span>
-                        </div>
+    userEventsCreated.sort((a, b) => new Date(b.startDateTime) - new Date(a.startDateTime))
 
-                        <div class="event-cards" data-index="${index}">
-                            <div class="event-card theme-${event.themeIndex}">
-                                <div class="event-info">
-                                    <div class="event-time">${startObj.toLocaleString('en-US', optionsTime)}</div>
-                                    <div class="event-title">
-                                        ${event.eventName}
-                                    </div>
-                                    <div class="event-meta">
-                                        <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
-                                    </div>
+    eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
+
+        // const currentYear = new Date().getFullYear();
+        const startObj = new Date(event.startDateTime)
+        const endObj = new Date(event.endDateTime)
+        const endYear = new Date(event.endDateTime).getFullYear()
+
+        // const optionsFullDate = { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
+        const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
+        const optionsDay  = { weekday: 'long', timeZone: 'UTC' };
+        const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
+        
+        // const yearPassed = endYear < currentYear;
+
+        // yearPassed ? `${startObj.toLocaleString('en-US', optionsFullDate)} - ${endObj.toLocaleString('en-US', optionsFullDate)}`
+        const formattedDate = 
+                            event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDate) 
+                            : event.sameMonth == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`
+                            : event.sameYear == 'True' ? `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`
+                            : `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`
+
+        const formattedDay = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDay)
+                            : `${startObj.toLocaleString('en-US', optionsDay)} - ${endObj.toLocaleString('en-US', optionsDay)}`
+
+        return `  
+                <div class="event-group" data-date="${event.startDateTime}">
+                    <div class="event-date">
+                        <strong>${formattedDate}</strong>
+                        <span class="weekday">${formattedDay}</span>
+                    </div>
+
+                    <div class="event-cards" data-index="${index}">
+                        <div class="event-card theme-${event.themeIndex}">
+                            <div class="event-info">
+                                <div class="event-time">${startObj.toLocaleString('en-US', optionsTime)} - ${endObj.toLocaleString('en-US', optionsTime)}</div>
+                                <div class="event-title">
+                                    ${event.eventName}
                                 </div>
-
-                                <img class="event-thumbnail"
-                                    src="${event.featureImage}"
-                                    alt="Event Thumbnail" />
+                                <div class="event-meta">
+                                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
+                                </div>
                             </div>
+
+                            <img class="event-thumbnail"
+                                src="${event.featureImage}"
+                                alt="Event Thumbnail" />
                         </div>
                     </div>
-                `
-        }).join('')
-            
-        const eventCards = document.querySelectorAll('.event-cards');
+                </div>
+            `
+    }).join('')
         
-        eventCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const index = card.dataset.index
-                const event = userEventsCreated[index]
+    const eventCards = document.querySelectorAll('.event-cards');
+    
+    eventCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const index = card.dataset.index
+            const event = userEventsCreated[index]
 
-                overlay.innerHTML = `
-                        <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
-                            <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+            const optionsDate = { month : 'long', day : 'numeric', year : 'numeric'}
+            const optionsDay = { month : 'long', day : 'numeric'}
+            const startYear = new Date(event.startDateTime).getFullYear()
 
-                            <div class="card-content">
-                                <span class="event-date">${new Date(event.startDateTime).toLocaleString('en-US', { month : 'long', day : 'numeric', year : 'numeric'})}</span>
-                                <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
-                                <p class="event-description" id="eventDesc">${event.description}</p>
-                                <p class="event-location">Location: ${event.location}</p>
-                                <button class="link-btn" onclick="window.location.href='/event/${event.eventID}'">You're managing this event!</button>
-                            </div>
-                        </article>
-                `
-                openPopup()
-            })
+            const formattedDate = event.sameDay == 'True' ? new Date(event.startDateTime).toLocaleString('en-US', optionsDate)
+                                : event.sameMonth == 'True' ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsDay)} - ${new Date(event.endDateTime).toLocaleString('en-US', { day : 'numeric' })}, ${startYear}`
+                                : event.sameYear == 'True' ? `${new Date(event.startDateTime).toLocaleString('en-US', optionsDay)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDay)}, ${startYear}` 
+                                : `${new Date(event.startDateTime).toLocaleString('en-US', optionsDate)} - ${new Date(event.endDateTime).toLocaleString('en-US', optionsDate)}`
+
+            overlay.innerHTML = `
+                    <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
+                        <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+                        <span class="popup-event-date">${formattedDate}</span>
+
+                        <div class="card-content">
+                            <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
+                            <p class="event-description" id="eventDesc">${event.description}</p>
+                            <p class="event-location">Location: ${event.location}</p>
+                            <button class="link-btn" onclick="window.location.href='/event/${event.eventID}'">You're managing this event!</button>
+                        </div>
+                    </article>
+            `
+            openPopup()
         })
-        
-        function openPopup() {
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; 
+    })
+    
+    function openPopup() {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; 
+    }
+
+    function closePopup() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    overlay.addEventListener('click', e => {
+        if(e.target.id === 'closePopup' || e.target === overlay) closePopup();
+    });
+
+    document.addEventListener('keydown', e => {
+        if(e.key === "Escape" && overlay.classList.contains('active')) {
+        closePopup();
         }
+    });
 
-        function closePopup() {
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+    const buttons = document.querySelectorAll(".toggle-buttons button");
+    const groups = document.querySelectorAll(".event-group");
 
-        overlay.addEventListener('click', e => {
-            if(e.target.id === 'closePopup' || e.target === overlay) closePopup();
-        });
+    function filterEvents(showUpcoming) {
+        const today = new Date().setHours(0, 0, 0, 0);
+        let hasEventGroup = false
 
-        document.addEventListener('keydown', e => {
-            if(e.key === "Escape" && overlay.classList.contains('active')) {
-            closePopup();
+        groups.forEach(group => {
+            const eventDate = new Date(group.dataset.date).setHours(0, 0, 0, 0);
+            const shouldShow = showUpcoming ? eventDate >= today : eventDate < today;
+            group.style.display = shouldShow ? "flex" : "none";
+            
+            if (shouldShow) {
+                hasEventGroup = true 
             }
         });
-    }
-    else {
-        const eventsCreatedContainer = document.querySelector('.events_created_container')
 
-        eventsCreatedContainer.innerHTML = `<p class = 'no-events-message'>No events created yet.</p>`
+        emptyMessage.style.display = hasEventGroup ? 'none' : 'block';
     }
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            buttons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            const isUpcoming = button.textContent.trim().toLowerCase() === "upcoming";
+            filterEvents(isUpcoming);
+        });
+    });
+    
+    filterEvents(true)
 });
