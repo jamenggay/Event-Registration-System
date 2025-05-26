@@ -808,7 +808,7 @@ app.get("/events-registered", async (req, res) => {
                                                     eventName     : event.eventName,
                                                     startDateTime : event.startDateTime,
                                                     formattedStartDateTime : event.formattedStartDateTime,
-                                                    formattedStartTime       : event.formattedStartTime,
+                                                    formattedStartTime     : event.formattedStartTime,
                                                     formattedEndDateTime   : event.formattedEndDateTime,
                                                     formattedEndTime       : event.formattedEndTime,
                                                     sameDay       : event.sameDay,

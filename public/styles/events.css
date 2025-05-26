@@ -238,6 +238,12 @@ body::before {
   flex-shrink: 0; /* FOR SHRINKING/WRAPPING */
 }
 
+.empty-message {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 20px;
+}
+
  button.trigger-btn {
     background: var(--purple);
     color: var(--white);
