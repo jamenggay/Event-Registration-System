@@ -464,12 +464,12 @@ app.patch("/user-password", async (req, res) => {
     }
 });
 
-// events management page
+// event management page
 app.get("/event/:eventID", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
 });
 
-//events management page 
+//event management page 
 wss.on('connection', async (ws, req) => {
     console.log('Client WebSocket Connected');
     
@@ -566,7 +566,7 @@ wss.on('connection', async (ws, req) => {
     })
 })
 
-// events management page
+// event management page
 app.put("/event/:eventID", async (req, res) => {
     const eventID = req.params.eventID
 
@@ -666,7 +666,7 @@ app.put("/event/:eventID", async (req, res) => {
     }
 });
 
-// events management page
+// event management page
 app.patch("/registrant", async (req, res) => {
     const { eventID, userID, status } = req.body
 
@@ -688,7 +688,7 @@ app.patch("/registrant", async (req, res) => {
     }
 });
 
-// events management page
+// event management page
 app.post("/checkin-attendee", async (req, res) => {
     const { eventID, userID, checkedInAt } = req.body
 
@@ -742,7 +742,7 @@ app.post("/checkin-attendee", async (req, res) => {
     }
 });
 
-// events management page
+// event management page
 app.delete("/checkin-attendee", async (req, res) => {
     let { eventID, userID } = req.body
 
@@ -777,6 +777,51 @@ app.delete("/checkin-attendee", async (req, res) => {
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
         res.status(500).json({ message : 'Attendee details extraction failed', error : e})
+    }
+});
+
+// events page
+app.get("/events-registered", async (req, res) => {
+    const userID = req.session.user.id;
+
+    try {
+        const result = await pool.request()
+                                .input('userID', sql.Int, userID)
+                                .query(`SELECT eT.eventID, 
+                                                FORMAT(eT.startDateTime, 'MMMM d, h:mm tt') AS formattedStartDateTime,
+                                                FORMAT(eT.endDateTime, 'MMMM d, h:mm tt') AS formattedEndDateTime,
+                                                FORMAT(endDateTime, 'h:mm tt') AS formattedEndTime,
+                                                IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                                uT.profilePic, uT.fullName, eT.eventName, eT.description, eT.location, 
+                                                eT.featureImage, eT.feedbackLink, eT.themeIndex, rT.status
+                                        FROM ((eventsTable eT
+                                        INNER JOIN registrationTable rT ON eT.eventID = rt.eventID)
+                                        INNER JOIN userTable uT ON eT.creatorID = uT.userID)
+                                        WHERE rT.userID = @userID`)
+        
+        const eventsData = result.recordset.map(event => ({ 
+                                                    eventID       : event.eventID,
+                                                    profilePic    : event.profilePic,
+                                                    fullName      : event.fullName,
+                                                    eventName     : event.eventName,
+                                                    formattedStartDateTime : event.formattedStartDateTime,
+                                                    formattedEndDateTime   : event.formattedEndDateTime,
+                                                    formattedEndTime       : event.formattedEndTime,
+                                                    sameDay       : event.sameDay,
+                                                    description   : event.description,
+                                                    location      : event.location,
+                                                    featureImage  : event.featureImage,
+                                                    feedbackLink  : event.feedbackLink,
+                                                    themeIndex    : event.themeIndex,
+                                                    status        : event.status
+                                                }))
+        
+        console.log("Events registered extraction success.")
+        return res.status(200).json(eventsData)
+    }
+    catch (e) {
+        console.log("Events registered extraction failed: ", e)
+        return res.status(500).json({ message: 'Events registered extration failed', error : e})
     }
 });
 
