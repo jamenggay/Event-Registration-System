@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Vibur&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dekko&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Mansalva&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Vibur&display=swap');
 
 * {
   box-sizing: border-box;
@@ -369,6 +370,48 @@ textarea {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.event-section {
+  max-width: 1000px;
+  margin: 4rem auto; 
+  padding: 2rem 1rem;
+  font-family: 'DM Sans';
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
+.weekday {
+  font-weight: normal; 
+}
+
+
+.toggle-buttons {
+  background: #f1f1f5;
+  border-radius: 9999px;
+  display: flex;
+  padding: 3px;
+}
+
+.toggle-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.toggle-buttons button.active {
+  background: white;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
 /* Events Created Container */
 .events_created_container {
   position: relative;
@@ -393,11 +436,11 @@ textarea {
   border-radius: 16px;
 }
 
-.events_created_container .no-events-message {
+.empty-message {
+  margin-top: 2rem;
   text-align: center;
+  font-size: 20px;
 }
-
-/* Event Card Styles */
 
 /* Event Feedback Links */
 .event_feedback p a {
@@ -817,6 +860,17 @@ textarea {
   margin-bottom: 0.7rem;
 }
 
+.popup-event-date {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  opacity: 0.9;
+  z-index: 2;
+}
+
 .poupup-event-title {
   font-size: 2rem;
   font-weight: 700;
@@ -839,7 +893,7 @@ textarea {
 
 button.link-btn {
   background: var(--purple);
-  border: none;
+  border: 1px solid white;
   color: var(--white);
   padding: 0.75rem 1.5rem;
   font-weight: 700;
