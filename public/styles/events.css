@@ -121,7 +121,8 @@ body::before {
   flex-direction: column;
   gap: 1rem;
   margin-left: 10rem;
-    transition: 0.3s;
+  transition: 0.3s;
+  border-radius: 1rem;
 }
 
 .event-card {
@@ -448,3 +449,17 @@ body::before {
     font-size: 1rem;
     font-weight: bold;
   }
+
+/* Theme backgrounds */
+.theme-1  { background-color: #a3c8e1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-2  { background-color: #f4b0b0; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-3  { background-color: #a1e1a1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-4  { background-color: #a1e0d1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-5  { background-color: #e4a1b3; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-6  { background-color: #c49bdf; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-7  { background-color: #a7a7e1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-8  { background-color: #a1e1a1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-9  { background-color: #e4d0a7; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-10 { background-color: #a3d6e6; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-11 { background-color: #e4a1a1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+.theme-12 { background-color: #b3e0a3; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
