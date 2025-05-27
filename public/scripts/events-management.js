@@ -428,19 +428,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     let waitlistedGuests = registrationData.filter(guest => guest.status == 'Waitlisted')
 
-                    guestsContainer.innerHTML = `
-                        <h1>Guest List</h1> ${pendingGuests.map(guest => 
-                        `<div class="attendee-container">
-                            <div class="attendee-info">
-                                <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
-                                <span class="attendee-name">${guest.fullname}</span>
-                            </div>
-                            <div class="attendee-actions">
-                                <button class="accept">Dalo</button>
-                                <button class="decline">Decline</button>
-                            </div>
-                        </div>`
-                    ).join('')}`
+                    if (pendingGuests.length == 0) {
+                        guestsContainer.innerHTML = `
+                                            <h1>Guest List</h1>
+                                            <p class = 'empty-message'>Guest list is currently empty.</p>
+                                        `
+                    }
+
+                    if (pendingGuests.length != 0) {
+                        guestsContainer.innerHTML = `
+                            <h1>Guest List</h1> ${pendingGuests.map(guest => 
+                            `<div class="attendee-container">
+                                <div class="attendee-info">
+                                    <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                                    <span class="attendee-name">${guest.fullname}</span>
+                                </div>
+                                <div class="attendee-actions">
+                                    <button class="accept">Dalo</button>
+                                    <button class="decline">Decline</button>
+                                </div>
+                            </div>`
+                        ).join('')}`
+                    }
                 
                     if (waitlistedGuests.length != 0) {
                         const waitlistedContainer = document.createElement('div')
