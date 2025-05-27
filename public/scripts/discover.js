@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const eventList = document.getElementById("events-list");
   const thumbnail = document.getElementById("next-event")
   const app = document.getElementById("app");
+  const overlay = document.getElementById("popupOverlay");
 
 
   try {
@@ -20,14 +21,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     const endTime = await res5.json();
     const registeredEvent = await res6.json();
     const registeredEventIDs = registeredEvent.registeredEventIDs;
+    const article = document.createElement('article');
+    article.className = "card-popup";
+  
+      
 
-    events.forEach((event, index) => {
+        events.forEach((event, index) => {
+      
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');
       const div3 = document.createElement('div');
+    
+      console.log (currentEvent);
+        
       div1.className = "item";
       div2.className = "item";
       div3.className = "popupContainer";
+      
+      
 
       const isSameDay = sameDate[index].SameDay === 'True';
       const isRegistered = registeredEventIDs.includes(event.eventID);
@@ -38,15 +49,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       div1.innerHTML = `
     
-    <img src="${event.featureImage}">
-    <div class="event-content">
-    ${eventDateHTML}
-      <h2 class="event-title">${event.eventName}</h2>
-      <p class="event-description">${event.description}</p>
-      <p class="event-location">${event.location}</p>
-      <button class="register-button" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
-    </div>
-  `;
+        <img src="${event.featureImage}">
+        <div class="event-content">
+        ${eventDateHTML}
+          <h2 class="event-title">${event.eventName}</h2>
+          <p class="event-description">${event.description}</p>
+          <p class="event-location">${event.location}</p>
+          <button class="register-button" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
+        </div>`;
 
       eventList.appendChild(div1);
 
@@ -85,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       thumbnail.appendChild(div2);
 
-        div3.innerHTML = `
+      div3.innerHTML = `
       <div class="card-wrap" onclick="openPopup()" data-category="${event.category}"
         data-image="${event.featureImage}">
         <div class="card">
@@ -98,27 +108,44 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       app.appendChild(div3);
 
+    const isSameDayPopup   = sameDate[index].SameDay === 'True';
+    const eventDatePopup = isSameDayPopup
+      ? `<div class="popup-event-date"">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
+        : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
+      article.innerHTML = `
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <div class="popup-event-content">
+        ${eventDatePopup}
+        <div class="popup-event-title">${events[index].eventName}</div>
+        <div class="popup-event-category">${events[index].category}</div>
+        <div class="popup-event-description">${events[index].description}</div>
+        <div class="popup-event-location">Location: <i>${events[index].location}</i></div>
+        <button class="popup-register-button" data-event-id="${events[index].eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
+      </div>`;
+      overlay.appendChild(article);
+
+
     });
 
-
-  }
+      }
+    
   catch (error) {
     console.error('Error fetching data ', error);
   }
 
 
-//FRONTEND SCRIPT
-const wordElement = document.getElementById("dynamic-word");
-let isExperience = true;
+  //FRONTEND SCRIPT
+  const wordElement = document.getElementById("dynamic-word");
+  let isExperience = true;
 
-setInterval(() => {
-  isExperience = !isExperience;
-  wordElement.textContent = isExperience ? " Experience" : " Event";
-  wordElement.className = isExperience ? "experience" : "event";
-  wordElement.id = "dynamic-word";
-}, 2000);
+  setInterval(() => {
+    isExperience = !isExperience;
+    wordElement.textContent = isExperience ? " Experience" : " Event";
+    wordElement.className = isExperience ? "experience" : "event";
+    wordElement.id = "dynamic-word";
+  }, 2000);
 
-//--------------------------
+  //--------------------------
   let nextDom = document.getElementById("next");
   let prevDom = document.getElementById("prev");
 
@@ -253,39 +280,39 @@ setInterval(() => {
 });
 
 function showCarousel() {
-    const carousel = document.getElementById("carousel-section");
-    const hoverCards = document.getElementById("hover-cards-section");
+  const carousel = document.getElementById("carousel-section");
+  const hoverCards = document.getElementById("hover-cards-section");
 
-    carousel.style.display = "block";
-    hoverCards.classList.remove("active");
+  carousel.style.display = "block";
+  hoverCards.classList.remove("active");
 
-    const cards = hoverCards.querySelectorAll(".card-wrap");
-    cards.forEach((card) => {
-      card.style.display = "block";
-    });
-
-    carousel?.scrollIntoView({ behavior: "smooth" });
-  }
-
-  const overlay = document.getElementById('popupOverlay');
-
-  function openPopup() {
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePopup() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) closePopup();
+  const cards = hoverCards.querySelectorAll(".card-wrap");
+  cards.forEach((card) => {
+    card.style.display = "block";
   });
 
-  document.addEventListener('keydown', e => {
-    if (e.key === "Escape" && overlay.classList.contains('active')) {
-      closePopup();
-    }
-  });
+  carousel?.scrollIntoView({ behavior: "smooth" });
+}
+
+const overlay = document.getElementById('popupOverlay');
+
+function openPopup() {
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePopup() {
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closePopup();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape" && overlay.classList.contains('active')) {
+    closePopup();
+  }
+});
 
