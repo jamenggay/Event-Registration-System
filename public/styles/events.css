@@ -70,7 +70,6 @@ body::before {
   font-weight: normal; 
 }
 
-
 .toggle-buttons {
   background: #f1f1f5;
   border-radius: 9999px;
@@ -168,7 +167,6 @@ body::before {
   overflow-wrap: break-word;
 }
 
-
 .event-title {
   font-weight: bold;
   font-size: 16px;
@@ -192,9 +190,7 @@ body::before {
   display: inline-block;
 }
 
-
-
-  .event-meta img {
+.event-meta img {
   width: 16px;
   height: 16px;
   vertical-align: middle;
@@ -221,13 +217,20 @@ body::before {
   max-width: fit-content;
 }
 
-
 .event-status.going {
   background-color: #32cd32; /* ELPHABA */
 }
 
+.event-status.declined {
+  background-color: #bd0000;
+}
+
 .event-status.pending {
   background-color: #ffa500; /* GALINDA */
+}
+
+.event-status.waitlisted {
+  background-color: #666;
 }
 
 .event-thumbnail {
@@ -436,6 +439,26 @@ body::before {
     font-weight: bold;
   }
 
+  .declined-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 0, 0, 0.15);
+    color: #ff8585;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+  }
+
+  .declined-status::before {
+    content: '✗';
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
   .pending-status {
     display: inline-flex;
     align-items: center;
@@ -452,6 +475,26 @@ body::before {
 
   .pending-status::before {
     content: '⏳';
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .waitlisted-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .waitlisted-status::before {
+    content: '⏱';
     font-size: 1rem;
     font-weight: bold;
   }
