@@ -456,28 +456,45 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>`
                         ).join('')}`
                     }
-                
-                    if (waitlistedGuests.length != 0) {
+                    
+                    const waitlistStatus = document.querySelector('.waitlist-status');
+                    
+                    if (waitlistStatus) {
+                        waitlistStatus.textContent = `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
+                        
                         const waitlistedContainer = document.createElement('div')
                         waitlistedContainer.id = "waitlisted-container"
-                            
-                        waitlistedContainer.innerHTML = `
-                            <h1>Waitlisted</h1> ${waitlistedGuests.map(guest => 
-                            `<div class="attendee-container">
-                                <div class="attendee-info">
-                                    <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
-                                    <span class="attendee-name">${guest.fullname}</span>
-                                </div>
-                                <div class="attendee-actions">
-                                    <button class="accept">Dalo</button>
-                                    <button class="decline">Decline</button>
-                                </div>
-                            </div>`
-                        ).join('')}`
-                        
-                        guestsContainer.append(waitlistedContainer)
-                    }
 
+                        if (waitlistStatus.textContent.includes('Enabled')) {
+
+                            if (waitlistedGuests.length != 0) {                             
+                                waitlistedContainer.innerHTML = `
+                                    <h1>Waitlisted</h1> ${waitlistedGuests.map(guest => 
+                                    `<div class="attendee-container">
+                                        <div class="attendee-info">
+                                            <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
+                                            <span class="attendee-name">${guest.fullname}</span>
+                                        </div>
+                                        <div class="attendee-actions">
+                                            <button class="accept">Dalo</button>
+                                            <button class="decline">Decline</button>
+                                        </div>
+                                    </div>`
+                                ).join('')}`
+                                
+                                guestsContainer.append(waitlistedContainer)
+                            }
+                            else if (waitlistedGuests.length == 0) {
+                                waitlistedContainer.innerHTML = `
+                                                <h1>Waitlisted </h1>
+                                                <p class = 'empty-message'>Waitlisted is currently empty.</p>
+                                `
+
+                                guestsContainer.append(waitlistedContainer)
+                            }
+                        }
+                    }
+                    
                     const acceptGuestBtn = document.querySelectorAll('.accept')
 
                     acceptGuestBtn.forEach((button, index) => {
