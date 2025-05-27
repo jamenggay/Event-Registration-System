@@ -175,11 +175,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let approvalStatus = document.querySelector('.approval-status').textContent
                 displayGuestData(approvalStatus)
 
-                if (eventData.capacity) {
+                if (eventData.capacity == 0) {
+                    document.querySelector('.capacity-text').textContent = `0`;
+                    document.querySelector('.waitlist-status').textContent = 
+                        `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
+                }
+                else if (eventData.capacity) {
                     document.querySelector('.capacity-text').textContent = `${eventData.capacity}`;
                     document.querySelector('.waitlist-status').textContent = 
                         `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
                 }
+
             } 
             catch (error) {
                 console.error('Error displaying event data:', error);
