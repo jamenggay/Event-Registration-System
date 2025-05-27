@@ -1,5 +1,5 @@
 <head>
-  <link rel="stylesheet" href="/styles/header.css" />
+  <link rel="stylesheet" href="../styles/header.css" />
 </head>
 <header>
     <nav class="navbar">
@@ -31,19 +31,43 @@
         </a>
       </div>
   
-      <div class="nav-right">
-        <a href="/create-events" class="nav-item">
-          <div class="nav-item-group">
-            <span class="nav-text">Create Event</span>
-          </div>
-        </a>
+      <div class="profile-container">
+        <div class="profile-icon" onclick="toggleDropdown()">
+          <img src="../assets/icons/profile-icon.jpeg" alt="Profile">
+        </div>
 
-        <a href="#" class="nav-item">
-            <div class="profile-icon">
-              <img src="/assets/icons/profile-icon.jpeg">
-            </div>
-          </a>
+        <div class="dropdown-menu" id="dropdown">
+          <div class="dropdown-pointer"></div>
+          <div class="dropdown-content">
+            <a href="/user-profile">View Profile</a>
+            <a href="#" onclick="logout()">Sign Out</a>
+          </div>
+        </div>
       </div>
     </nav>
-  </header>
+
+<script>
+  function toggleDropdown() {
+    const dropdown = document.getElementById("dropdown");
+    const isOpen = dropdown.style.display === "block";
+    closeAllDropdowns(); // Always close first
+    if (!isOpen) {
+      dropdown.style.display = "block";
+    }
+  }
+
+  function closeAllDropdowns() {
+    const dropdown = document.getElementById("dropdown");
+    if (dropdown) dropdown.style.display = "none";
+  }
+
+  document.addEventListener("click", function (event) {
+    const profileContainer = document.querySelector(".profile-container");
+    if (!profileContainer.contains(event.target)) {
+      closeAllDropdowns();
+    }
+  });
+</script>
+
+</header>
   
