@@ -47,9 +47,32 @@
         const startYear = new Date(event.startDateTime).getFullYear()
         const endYear = new Date(event.endDateTime).getFullYear()
 
+        const currentYear = new Date().getFullYear();
+        const yearPassed = endYear < currentYear;
+
         let formattedDate
 
-        if (event.sameDay == 'True') {
+        if (yearPassed) {
+          if (event.sameDay == 'True') {
+            formattedDate = `${event.formattedStartDateTime.split(',')[0]}, ${endYear}`
+          } 
+          else if (event.sameMonth == 'True') {
+            const startDay = event.formattedStartDateTime.split(',')[0]
+            const endDay = event.formattedEndDateTime.split(',')[0].split(' ')[1]
+            formattedDate = `${startDay} - ${endDay}, ${endYear}`
+          } 
+          else if (event.sameYear == 'True') {
+            const start = event.formattedStartDateTime.split(',')[0]
+            const end = event.formattedEndDateTime.split(',')[0]
+            formattedDate = `${start} - ${end}, ${endYear}`
+          } 
+          else {
+            const start = event.formattedStartDateTime.split(',')[0]
+            const end = event.formattedEndDateTime.split(',')[0]
+            formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`
+          }
+        }
+        else if (event.sameDay == 'True') {
           formattedDate = event.formattedStartDateTime.split(',')[0]
         } 
         else if (event.sameMonth == 'True') {
