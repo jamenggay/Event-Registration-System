@@ -32,12 +32,17 @@
     eventSection.appendChild(emptyMessage)
 
     eventsContainer.innerHTML = eventsData.map(event => {
-        const statusClass = event.status === 'Approved' ? 'going' : 'pending'
+        const statusClass = 
+            event.status === 'Approved' ? 'going' 
+          : event.status === 'Declined' ? 'declined'
+          : event.status === 'Pending' ? 'pending'
+          : 'waitlisted'
+        
         const status = 
-              event.status === 'Approved' ? 'Going' 
-            : event.status === 'Pending' ? 'Pending'
-            : event.status === 'Declined' ? 'Declined'
-            : 'Waitlisted'
+            event.status === 'Approved' ? 'Going' 
+          : event.status === 'Declined' ? 'Declined'
+          : event.status === 'Pending' ? 'Pending'
+          : 'Waitlisted'
 
         const startYear = new Date(event.startDateTime).getFullYear()
         const endYear = new Date(event.endDateTime).getFullYear()
@@ -112,11 +117,16 @@
     eventCards.forEach((card, index) => {
       card.addEventListener('click', () => {
         const event = eventsData[index]
-        const statusClass = event.status == 'Approved' ? 'going' : 'pending'
+        const statusClass = 
+            event.status == 'Approved' ? 'going' 
+          : event.status === 'Declined' ? 'declined'
+          : event.status === 'Pending' ? 'pending'
+          : 'waitlisted'
+        
         const status = 
             event.status == 'Approved' ? 'You\'re going' 
-          : event.status == 'Pending' ? 'Pending'
           : event.status === 'Declined' ? 'Declined'
+          : event.status === 'Pending' ? 'Pending'
           : 'Waitlisted'
 
         const optionsDate = { month : 'long', day : 'numeric', year : 'numeric'}
