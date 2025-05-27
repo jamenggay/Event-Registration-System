@@ -29,6 +29,11 @@
     margin-left: 5%;
     margin-left: 5%;
   }
+      .nav-right {
+      gap: 2rem;
+      margin-right: 5%;
+      white-space: nowrap;
+    }
     .profile-container {
       position: relative;
       display: inline-block;

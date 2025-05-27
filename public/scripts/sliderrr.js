@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let nextDom = document.getElementById("next");
+let nextDom = document.getElementById("next");
 let prevDom = document.getElementById("prev");
 
 let carouselDom = document.querySelector(".carousel");
 let SliderDom = carouselDom.querySelector(".carousel .list");
 let thumbnailBorderDom = document.querySelector(".carousel .thumbnail");
-let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll(".item");
+let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll(".carousel .thumbnail .item");
 
 thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
 
