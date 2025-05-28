@@ -266,159 +266,154 @@ app.get("/api/compareDate", async (req, res) => {
     }
 })
 
+// events page
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
     
 });
 
+// discover page
 app.get("/discover", (req, res) => {
     
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
     
 });
 
+// register button
 app.post("/register-event", async (req, res) => {
     const userID = req.session.user.id;
     const { eventID, requireApproval} = req.body
     
-    if(requireApproval == 'Yes'){
-         try{
-
-        const result1 = await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`SELECT COUNT (*) AS registrationCount 
-                FROM registrationTable WHERE eventID = @eventID`);
-
-        const numOfRegistration = result1.recordset[0].registrationCount;
-
-        const result2 = await pool.request()
+    if(requireApproval == 'Yes') {
+        try {
+            const result1 = await pool.request()
                 .input('eventID', sql.Int, eventID)
-                .query(`SELECT capacity FROM eventsTable
-                        WHERE eventID = @eventID;`)
-        const eventCapacity = result2.recordset[0].capacity;
+                .query(`SELECT COUNT (*) AS registrationCount 
+                    FROM registrationTable WHERE eventID = @eventID`);
 
-        const result3 = await pool.request()
-                .input('eventID', sql.Int, eventID)
-                .query(`SELECT allowWaitlist FROM eventsTable
-                    WHERE eventID = @eventID`)
-        const allowWaitlist = result3.recordset[0].allowWaitlist;
-        
-        console.log("number of registration: ", numOfRegistration);
-        console.log("capacity: ", eventCapacity);
-        console.log("allow waitlist: ", allowWaitlist);
+            const numOfRegistration = result1.recordset[0].registrationCount;
 
-        if(numOfRegistration >= eventCapacity && allowWaitlist == 'No'){
-           return res.status(400).json({ success: false, message: 'Maximum capacity has been reached. Registration closed.' });
-        }
-        else if(numOfRegistration >= eventCapacity && allowWaitlist == 'Yes'){
-            const status = 'Waitlisted';
-            await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .input('userID', sql.Int, userID)
-            .input('status', sql.VarChar, status)
-            .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
-        
+            const result2 = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT capacity FROM eventsTable
+                            WHERE eventID = @eventID;`)
+            const eventCapacity = result2.recordset[0].capacity;
+
+            const result3 = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT allowWaitlist FROM eventsTable
+                        WHERE eventID = @eventID`)
+            const allowWaitlist = result3.recordset[0].allowWaitlist;
             
-            res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.' });
+            console.log("number of registration: ", numOfRegistration);
+            console.log("capacity: ", eventCapacity);
+            console.log("allow waitlist: ", allowWaitlist);
+
+            if(numOfRegistration >= eventCapacity && allowWaitlist == 'No'){
+            return res.status(400).json({ success: false, message: 'Maximum capacity has been reached. Registration closed.' });
+            }
+            else if(numOfRegistration >= eventCapacity && allowWaitlist == 'Yes'){
+                const status = 'Waitlisted';
+                await pool.request()
+                .input('eventID', sql.Int, eventID)
+                .input('userID', sql.Int, userID)
+                .input('status', sql.VarChar, status)
+                .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
+            
+                
+                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.' });
+            }
+            else{
+                const status = 'Pending';
+                await pool.request()
+                .input('eventID', sql.Int, eventID)
+                .input('userID', sql.Int, userID)
+                .input('status', sql.VarChar, status)
+                .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
+                
+                res.json({success: true, message: 'User successfully registered into an event' });
+            } 
         }
-        else{
-            const status = 'Pending';
+        catch(err) {
+            console.error("Error registring event: ", err);
+            res.status(500).json({message: 'Registration Failed'}); 
+        }
+    }
+    else {
+        try {
+            const result1 = await pool.request()
+                .input('eventID', sql.Int, eventID)
+                .query(`SELECT COUNT (*) AS registrationCount 
+                    FROM registrationTable WHERE eventID = @eventID`);
+
+            const numOfRegistration = result1.recordset[0].registrationCount;
+
+            const result2 = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT capacity FROM eventsTable
+                            WHERE eventID = @eventID;`)
+            const eventCapacity = result2.recordset[0].capacity;
+
+            const result3 = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT allowWaitlist FROM eventsTable
+                        WHERE eventID = @eventID`)
+            const allowWaitlist = result3.recordset[0].allowWaitlist;
+            
+            console.log("number of registration: ", numOfRegistration);
+            console.log("capacity: ", eventCapacity);
+            console.log("allow waitlist: ", allowWaitlist);
+
+            if(numOfRegistration >= eventCapacity && allowWaitlist == 'No'){
+                return res.status(400).json({ success: false, message: 'Maximum capacity has been reached. Registration closed.' });
+            }
+            else if(numOfRegistration >= eventCapacity && allowWaitlist == 'Yes'){
+                const status = 'Waitlisted';
+                await pool.request()
+                .input('eventID', sql.Int, eventID)
+                .input('userID', sql.Int, userID)
+                .input('status', sql.VarChar, status)
+                .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
+            
+                
+                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.' });
+            }
+            else{
+                const status = 'Approved';
             await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .input('userID', sql.Int, userID)
-            .input('status', sql.VarChar, status)
-            .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
-        
+                .input('eventID', sql.Int, eventID)
+                .input('userID', sql.Int, userID)
+                .input('status', sql.VarChar, status)
+                .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
             
             res.json({success: true, message: 'User successfully registered into an event' });
 
-        }
-        
-    }
-    catch(err){
-        console.error("Error registring event: ", err);
-        res.status(500).json({message: 'Registration Failed'}); 
-    }
-
-    }
-    else{
-        try{
-
-        const result1 = await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`SELECT COUNT (*) AS registrationCount 
-                FROM registrationTable WHERE eventID = @eventID`);
-
-        const numOfRegistration = result1.recordset[0].registrationCount;
-
-        const result2 = await pool.request()
-                .input('eventID', sql.Int, eventID)
-                .query(`SELECT capacity FROM eventsTable
-                        WHERE eventID = @eventID;`)
-        const eventCapacity = result2.recordset[0].capacity;
-
-        const result3 = await pool.request()
-                .input('eventID', sql.Int, eventID)
-                .query(`SELECT allowWaitlist FROM eventsTable
-                    WHERE eventID = @eventID`)
-        const allowWaitlist = result3.recordset[0].allowWaitlist;
-        
-        console.log("number of registration: ", numOfRegistration);
-        console.log("capacity: ", eventCapacity);
-        console.log("allow waitlist: ", allowWaitlist);
-
-        if(numOfRegistration >= eventCapacity && allowWaitlist == 'No'){
-           return res.status(400).json({ success: false, message: 'Maximum capacity has been reached. Registration closed.' });
-        }
-        else if(numOfRegistration >= eventCapacity && allowWaitlist == 'Yes'){
-            const status = 'Waitlisted';
-            await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .input('userID', sql.Int, userID)
-            .input('status', sql.VarChar, status)
-            .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
-        
+            }
             
-            res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.' });
         }
-        else{
-             const status = 'Approved';
-        await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .input('userID', sql.Int, userID)
-            .input('status', sql.VarChar, status)
-            .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
-        
-        res.json({success: true, message: 'User successfully registered into an event' });
-
-        }
-        
+        catch(err){
+            console.error("Error registring event: ", err);
+            res.status(500).json({message: 'Registration Failed'}); 
+        }    
     }
-    catch(err){
-        console.error("Error registring event: ", err);
-        res.status(500).json({message: 'Registration Failed'}); 
-    }    
-    }
-
-   
-
 });
 
 app.get("/api/user-registrations", async (req, res) => {
     const userID = req.session.user.id;
+    
     try {
-    const result = await pool.request()
-      .input('userID', sql.Int, userID)
-      .query('SELECT eventID FROM registrationTable WHERE userID = @userID');
+        const result = await pool.request()
+        .input('userID', sql.Int, userID)
+        .query('SELECT eventID FROM registrationTable WHERE userID = @userID');
 
-    const registeredEventIDs = result.recordset.map(row => row.eventID);
-    res.json({ registeredEventIDs });
-  } catch (err) {
-    console.error('Error fetching registrations:', err);
-    res.status(500).json({ message: 'Server error' });
-  }
-
-})
+        const registeredEventIDs = result.recordset.map(row => row.eventID);
+        res.json({ registeredEventIDs });
+    } 
+    catch (err) {
+        console.error('Error fetching registrations:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 // user profile page
 app.get("/user-profile", (req, res) => {
@@ -483,23 +478,24 @@ app.get("/user-events-created", async (req, res) => {
 
     try {
         const result = await pool.request()
-            .input('userID', sql.Int, userID)
-            .query(`SELECT * 
+                        .input('userID', sql.Int, userID)
+                        .query(`SELECT *,
+                                    IIF(CAST(startDateTime AS DATE) = CAST(endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                    IIF(MONTH(startDateTime) = MONTH(endDateTime) AND YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameMonth,
+                                    IIF(YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameYear 
                                 FROM eventsTable 
                                 WHERE creatorID = @userID`)
 
-        if (!result?.recordset || result.recordset.length === 0) {
-            console.log("User not found.")
-            return res.status(404).json({ message: 'User not found.' })
-        }
-
-        const eventsData = result.recordset.map(event => ({
+        const eventsData = result.recordset.map(event => ({ 
                                                 eventID         : event.eventID,
                                                 eventName       : event.eventName,
                                                 description     : event.description,
                                                 location        : event.location,
                                                 startDateTime   : event.startDateTime,
                                                 endDateTime     : event.endDateTime, 
+                                                sameDay         : event.sameDay,
+                                                sameMonth       : event.sameMonth,
+                                                sameYear        : event.sameYear,
                                                 featureImage    : event.featureImage,
                                                 requireApproval : event.requireApproval,
                                                 capacity        : event.capacity,
@@ -1005,11 +1001,14 @@ app.get("/events-registered", async (req, res) => {
     try {
         const result = await pool.request()
                                 .input('userID', sql.Int, userID)
-                                .query(`SELECT eT.eventID, 
+                                .query(`SELECT eT.eventID, eT.startDateTime, eT.endDateTime,
                                                 FORMAT(eT.startDateTime, 'MMMM d, h:mm tt') AS formattedStartDateTime,
+                                                FORMAT(eT.startDateTime, 'h:mm tt') AS formattedStartTime,
                                                 FORMAT(eT.endDateTime, 'MMMM d, h:mm tt') AS formattedEndDateTime,
-                                                FORMAT(endDateTime, 'h:mm tt') AS formattedEndTime,
+                                                FORMAT(eT.endDateTime, 'h:mm tt') AS formattedEndTime,
                                                 IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                                IIF(MONTH(eT.startDateTime) = MONTH(eT.endDateTime) AND YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameMonth,
+                                                IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear,
                                                 uT.profilePic, uT.fullName, eT.eventName, eT.description, eT.location, 
                                                 eT.featureImage, eT.feedbackLink, eT.themeIndex, rT.status
                                         FROM ((eventsTable eT
@@ -1022,10 +1021,15 @@ app.get("/events-registered", async (req, res) => {
                                                     profilePic    : event.profilePic,
                                                     fullName      : event.fullName,
                                                     eventName     : event.eventName,
+                                                    startDateTime : event.startDateTime,
+                                                    endDateTime   : event.endDateTime,
                                                     formattedStartDateTime : event.formattedStartDateTime,
+                                                    formattedStartTime     : event.formattedStartTime,
                                                     formattedEndDateTime   : event.formattedEndDateTime,
                                                     formattedEndTime       : event.formattedEndTime,
                                                     sameDay       : event.sameDay,
+                                                    sameMonth     : event.sameMonth,
+                                                    sameYear      : event.sameYear,
                                                     description   : event.description,
                                                     location      : event.location,
                                                     featureImage  : event.featureImage,

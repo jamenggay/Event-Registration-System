@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Vibur&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dekko&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Mansalva&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Vibur&display=swap');
 
 * {
   box-sizing: border-box;
@@ -369,6 +370,25 @@ textarea {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.event-section {
+  max-width: 1000px;
+  margin: 4rem auto; 
+  padding: 2rem 1rem;
+  font-family: 'DM Sans';
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
+.weekday {
+  font-weight: normal; 
+}
+
 /* Events Created Container */
 .events_created_container {
   position: relative;
@@ -393,11 +413,11 @@ textarea {
   border-radius: 16px;
 }
 
-.events_created_container .no-events-message {
+.empty-message {
+  margin-top: 2rem;
   text-align: center;
+  font-size: 20px;
 }
-
-/* Event Card Styles */
 
 /* Event Feedback Links */
 .event_feedback p a {
@@ -817,6 +837,17 @@ textarea {
   margin-bottom: 0.7rem;
 }
 
+.popup-event-date {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  opacity: 0.9;
+  z-index: 2;
+}
+
 .poupup-event-title {
   font-size: 2rem;
   font-weight: 700;
@@ -839,7 +870,7 @@ textarea {
 
 button.link-btn {
   background: var(--purple);
-  border: none;
+  border: 1px solid white;
   color: var(--white);
   padding: 0.75rem 1.5rem;
   font-weight: 700;
@@ -902,3 +933,222 @@ button.close-btn:hover {
 .theme-10 { background-color: #a3d6e6; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
 .theme-11 { background-color: #e4a1a1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
 .theme-12 { background-color: #b3e0a3; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 1); background-size: 30px 30px; }
+
+.no-events-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.no-events-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 100%;
+}
+
+.no-events-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  max-width: 600px;
+  padding: 2rem;
+}
+
+.no-events-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  background: linear-gradient(120deg, #333 0%, #666 50%, #333 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+.no-events-text p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #666;
+  margin: 0;
+  max-width: 500px;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+:root {
+  --glow-hue: 222deg;
+  --shadow-hue: 180deg;
+  --spring-easing: linear(0, 0.002, 0.01 0.9%, 0.038 1.8%, 0.156, 0.312 5.8%, 0.789 11.1%, 1.015 14.2%,
+      1.096, 1.157, 1.199, 1.224 20.3%, 1.231, 1.231, 1.226, 1.214 24.6%,
+      1.176 26.9%, 1.057 32.6%, 1.007 35.5%, 0.984, 0.968, 0.956, 0.949 42%,
+      0.946 44.1%, 0.95 46.5%, 0.998 57.2%, 1.007, 1.011 63.3%, 1.012 68.3%,
+      0.998 84%, 1);
+  --spring-duration: 1.33s;
+}
+
+@property --shimmer {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 33deg;
+}
+
+@keyframes shimmer {
+  0% {
+    --shimmer: 0deg;
+  }
+
+  100% {
+    --shimmer: 360deg;
+  }
+}
+
+@keyframes shine {
+  0% {
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes text {
+  0% {
+    background-position: 100% center;
+  }
+
+  100% {
+    background-position: -100% center;
+  }
+}
+
+.create-events-button {
+  color: currentColor;
+  font-weight: 600;
+  background-image: linear-gradient(315deg,
+      #ffc4ec -10%,
+      #efdbfd 50%,
+      #ffedd6 110%);
+  padding: 1em 2em;
+  font-size: 1.2rem;
+  position: relative;
+  isolation: isolate;
+  border-radius: 0.66em;
+  scale: 1;
+  transition: all var(--spring-duration) var(--spring-easing);
+  border: none;
+  cursor: pointer;
+  width: fit-content;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.create-events-button .nav-icon {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.shimmer-events {
+  position: absolute;
+  inset: -40px;
+  border-radius: inherit;
+  mask-image: conic-gradient(from var(--shimmer, 0deg),
+      transparent 0%,
+      transparent 10%,
+      black 36%,
+      black 45%,
+      transparent 50%,
+      transparent 60%,
+      black 85%,
+      black 95%,
+      transparent 100%);
+  mask-size: cover;
+  mix-blend-mode: plus-lighter;
+  animation: shimmer 1s linear infinite both;
+}
+
+.create-events-button .shimmer-events::before,
+.create-events-button .shimmer-events::after {
+  opacity: 1;
+  animation: shine 1.2s ease-in 1 forwards infinite;
+}
+
+.shimmer-events::before,
+.shimmer-events::after {
+  transition: all 0.5s ease;
+  opacity: 0;
+  content: "";
+  border-radius: inherit;
+  position: absolute;
+  mix-blend-mode: color;
+  inset: 40px;
+  pointer-events: none;
+}
+
+.shimmer-events::before {
+  box-shadow: 0 0 3px 2px hsl(var(--glow-hue) 20% 95%),
+    0 0 7px 4px hsl(var(--glow-hue) 20% 80%),
+    0 0 13px 4px hsl(var(--glow-hue) 50% 70%),
+    0 0 25px 5px hsl(var(--glow-hue) 100% 70%);
+  z-index: -1;
+}
+
+.shimmer-events::after {
+  box-shadow: inset 0 0 0 1px hsl(var(--glow-hue) 70% 95%),
+    inset 0 0 2px 1px hsl(var(--glow-hue) 100% 80%),
+    inset 0 0 5px 2px hsl(var(--glow-hue) 100% 70%);
+  z-index: 2;
+}
+
+.shimmer-button-text {
+  position: relative;
+  color: currentColor;
+}
+
+.shimmer-button-text::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(120deg, transparent, hsla(var(--glow-hue), 100%, 80%, 0.66) 40%, hsla(var(--glow-hue), 100%, 90%, .9) 50%, transparent 52%);
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  background-position: center 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.create-events-button .shimmer-button-text::before {
+  opacity: 1;
+  animation: text 1.5s linear infinite;
+}
