@@ -26,8 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!eventsData || eventsData.length === 0) {
     noEventsPlaceholder.style.display = "flex";
     eventsContainer.style.display = "none";
-  } 
-  else {
+  } else {
     noEventsPlaceholder.style.display = "none";
     eventsContainer.style.display = "block";
   }
@@ -63,38 +62,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (yearPassed) {
         if (event.sameDay == "True") {
           formattedDate = `${
-            event.formattedStartDateTime.split(",")[0]}, ${endYear}`;
-        } 
-        else if (event.sameMonth == "True") {
+            event.formattedStartDateTime.split(",")[0]
+          }, ${endYear}`;
+        } else if (event.sameMonth == "True") {
           const startDay = event.formattedStartDateTime.split(",")[0];
           const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
           formattedDate = `${startDay} - ${endDay}, ${endYear}`;
-        } 
-        else if (event.sameYear == "True") {
+        } else if (event.sameYear == "True") {
           const start = event.formattedStartDateTime.split(",")[0];
           const end = event.formattedEndDateTime.split(",")[0];
           formattedDate = `${start} - ${end}, ${endYear}`;
-        } 
-        else {
+        } else {
           const start = event.formattedStartDateTime.split(",")[0];
           const end = event.formattedEndDateTime.split(",")[0];
           formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
         }
-      } 
-      else if (event.sameDay == "True") {
+      } else if (event.sameDay == "True") {
         formattedDate = event.formattedStartDateTime.split(",")[0];
-      } 
-      else if (event.sameMonth == "True") {
+      } else if (event.sameMonth == "True") {
         const startDay = event.formattedStartDateTime.split(",")[0];
         const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
         formattedDate = `${startDay} - ${endDay}`;
-      } 
-      else if (event.sameYear == "True") {
+      } else if (event.sameYear == "True") {
         const start = event.formattedStartDateTime.split(",")[0];
         const end = event.formattedEndDateTime.split(",")[0];
         formattedDate = `${start} - ${end}`;
-      } 
-      else {
+      } else {
         const start = event.formattedStartDateTime.split(",")[0];
         const end = event.formattedEndDateTime.split(",")[0];
         formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
@@ -106,8 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         formattedDay = new Date(event.startDateTime).toLocaleString("en-US", {
           weekday: "long",
         });
-      } 
-      else {
+      } else {
         const startDay = new Date(event.startDateTime).toLocaleString("en-US", {
           weekday: "long",
           timeZone: "UTC",
@@ -185,18 +177,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           "en-US",
           optionsDate
         );
-      } 
-      else if (event.sameMonth == "True") {
+      } else if (event.sameMonth == "True") {
         const startDay = event.formattedStartDateTime.split(",")[0];
         const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
         formattedDate = `${startDay} - ${endDay}, ${startYear}`;
-      } 
-      else if (event.sameYear == "True") {
+      } else if (event.sameYear == "True") {
         const start = event.formattedStartDateTime.split(",")[0];
         const end = event.formattedEndDateTime.split(",")[0];
         formattedDate = `${start} - ${end}, ${startYear}`;
-      } 
-      else {
+      } else {
         const start = new Date(event.startDateTime).toLocaleString(
           "en-US",
           optionsDate
@@ -209,26 +198,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       overlay.innerHTML = `
-          <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
-            <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-            <span class="popup-event-date">${formattedDate}</span>
+        <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
+          <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+          <span class="popup-event-date">${formattedDate}</span>
 
-            <div class="card-content">
-              <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
-              <p class="event-description" id="eventDesc">${event.description}</p>
-              <p class="event-location">Location: ${event.location}</p>
-              <p class="${statusClass}-status">${status}</p>
-              <div class="feedback-box">
-                <a href="${event.feedbackLink}" class="feedback-link">
-                  <span>Feedback</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="card-content">
+            <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
+            <p class="event-description" id="eventDesc">${event.description}</p>
+            <p class="event-location">Location: ${event.location}</p>
+            <p class="${statusClass}-status">${status}</p>
+      
+            <div class="feedback-box">
+              <a href="${event.feedbackLink}" class="feedback-link">
+                <span>Feedback</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                </a>
-              </div>
+                </svg>
+              </a>
+              <button class="cancel-box" title="Cancel Event">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
+                </svg>
+              </button>
             </div>
-          </article>
-        `;
+          </div>
+
+          <div class="cancel-popup-overlay hidden"></div>
+          <div class="cancel-popup hidden">
+            <h3>Cancel Event</h3>
+            <p>We understand that sometimes the stars don't quite align, and you may need to step away from an event. Would you like to cancel your spot? If you change your mind later, no worries—you'll just need to register again to rejoin the fun!</p>
+            <div class="cancel-popup-buttons">
+            <button class="cancel-btn">Cancel</button>
+            <button class="confirm-btn">Confirm</button>
+            </div>
+          </div>
+        </article>
+      `;
       openPopup();
     });
   });
@@ -253,6 +258,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+
+overlay.querySelector(".cancel-box").addEventListener("click", () => {
+  overlay.querySelector(".cancel-popup").classList.remove("hidden");
+  overlay.querySelector(".cancel-popup-overlay").classList.remove("hidden");
+});
+
+
+overlay.querySelector(".cancel-btn").addEventListener("click", () => {
+  overlay.querySelector(".cancel-popup").classList.add("hidden");
+  overlay.querySelector(".cancel-popup-overlay").classList.add("hidden");
+});
+
+
+overlay.querySelector(".confirm-btn").addEventListener("click", () => {
+  alert("Event cancelled!");
+  closePopup();
+});
+
+
   const buttons = document.querySelectorAll(".toggle-buttons button");
   const groups = document.querySelectorAll(".event-group");
 
@@ -273,8 +297,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!hasEventGroup) {
       noEventsPlaceholder.style.display = "flex";
       eventsContainer.style.display = "none";
-    } 
-    else {
+    } else {
       noEventsPlaceholder.style.display = "none";
       eventsContainer.style.display = "block";
     }

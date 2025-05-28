@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 displayGuestData(approvalStatus)
 
                 if (eventData.capacity == 0) {
-                    document.querySelector('.capacity-text').textContent = `0`;
+                    document.querySelector('.capacity-text').textContent = ``;
                     document.querySelector('.waitlist-status').textContent = 
                         `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
                 }
@@ -708,6 +708,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         });
+
+        // replace with real button (make sure type=button)
+        // const deleteEventButton = document.getElementById('delete-button')
+        
+        // deleteEventButton.addEventListener('click', async () => {
+        //     try {
+        //         const response = await fetch('/delete-event', {
+        //             method : 'DELETE',
+        //             headers : { 'Content-Type' : 'application/json' },
+        //             body : JSON.stringify({ eventID : eventData.eventID })
+        //         })
+
+        //         if (response.ok) {
+        //             const result = await response.json()
+        //             console.log("Backend Sucess: ", result)
+        //         }
+        //         else {
+        //             const error = await response.json()
+        //             console.log("Backend Sucess: ", error)
+        //         }
+
+        //     }
+        //     catch (e) {
+        //         console.log("Client Error: ", e)
+        //     }
+        // })
 
         displayEventData(eventData);
     }
