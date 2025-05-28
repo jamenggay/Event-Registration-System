@@ -984,6 +984,24 @@ app.delete("/checkin-attendee", async (req, res) => {
     }
 });
 
+// event management page
+app.delete("/delete-event", async (req, res) => {
+    const { eventID } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
+
+        console.log("Event deletion success")
+        res.status(200).json({ message : 'Event deletion success' })
+    }
+    catch (e) {
+        console.log("Event deletion failed: ", e)
+        res.status(500).json({ message : 'Event deletion failed', error : e})
+    }
+});
+
 // events page
 app.get("/events-registered", async (req, res) => {
     const userID = req.session.user.id;
@@ -1036,6 +1054,11 @@ app.get("/events-registered", async (req, res) => {
         return res.status(500).json({ message: 'Events registered extration failed', error : e})
     }
 });
+
+// // custom page for not found
+// app.use((req, res) => {
+//     res.status(404).sendFile(path.join(__dirname, "public", "views", "test.html"))  
+// });
 
 server.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
