@@ -13,32 +13,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res3 = await fetch('/api/formatEndDate');
     const res4 = await fetch('/api/compareDate');
     const res5 = await fetch('/api/endTime');
-    const res6 = await fetch('api/user-registrations');
+    const res6 = await fetch('/api/user-registrations');
     const events = await res1.json();
     const startDateTime = await res2.json();
     const endDateTime = await res3.json();
     const sameDate = await res4.json();
     const endTime = await res5.json();
-    const registeredEvent = await res6.json();
-    const registeredEventIDs = registeredEvent.registeredEventIDs;
     const article = document.createElement('article');
     article.className = "card-popup";
     overlay.appendChild(article);
-  
-      
+    const registeredData = await res6.json();
 
-        events.forEach((event, index) => {
+    const eventStatusMap = {};
+    registeredData.registrations.forEach(reg => {
+      eventStatusMap[reg.eventID] = reg.status;
+    });
+
+
+
+
+    events.forEach((event, index) => {
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');
-      const div3 = document.createElement('div');    
+      const div3 = document.createElement('div');
       div1.className = "item";
       div2.className = "item";
       div3.className = "popupContainer";
-      
-      
+
+
 
       const isSameDay = sameDate[index].SameDay === 'True';
-      const isRegistered = registeredEventIDs.includes(event.eventID);
+      const registrationStatus = eventStatusMap[event.eventID];
+
+
+      let buttonText = 'Register';
+      if (registrationStatus === 'Waitlisted') {
+        buttonText = 'Waitlisted';
+      } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved') {
+        buttonText = 'Registered';
+      }
+
 
       const eventDateHTML = isSameDay
         ? `<span class="event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</span>`
@@ -52,15 +66,20 @@ document.addEventListener("DOMContentLoaded", async () => {
           <h2 class="event-title">${event.eventName}</h2>
           <p class="event-description">${event.description}</p>
           <p class="event-location">${event.location}</p>
-          <button class="register-button" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
+          <button class="register-button" data-event-id="${event.eventID}">
+      ${buttonText}
+    </button>
+
         </div>`;
 
       eventList.appendChild(div1);
 
       const button = div1.querySelector('.register-button');
-      button.disabled = isRegistered;
+      button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
 
-      if (!isRegistered) {
+
+
+      if (!registrationStatus) {
         button.addEventListener('click', () => {
           const confirmed = confirm("Are you sure you want to register for this event?");
           if (!confirmed) return;
@@ -76,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 alert(data.message); // Show backend error message
                 return;
               }
-              button.textContent = 'Registered';
+              button.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
               button.disabled = true;
               alert(data.message);
             })
@@ -86,6 +105,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         });
       }
+
+
 
       div2.innerHTML =
         `<img src="${event.featureImage}">`;
@@ -105,16 +126,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       app.appendChild(div3);
 
-   div3.querySelector('.card-wrap').addEventListener('click', () => {
-  article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
-  const isSameDayPopup = sameDate[index].SameDay === 'True';
-  const isRegisteredPopup = registeredEventIDs.includes(event.eventID);
+      div3.querySelector('.card-wrap').addEventListener('click', () => {
+        article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
+        const isSameDayPopup = sameDate[index].SameDay === 'True';
+        const registrationStatusPopup = eventStatusMap[event.eventID];
 
-  const eventDatePopup = isSameDayPopup
-    ? `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
-    : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
+        let buttonTextPopup = 'Register';
+      if (registrationStatus === 'Waitlisted') {
+        buttonTextPopup = 'Waitlisted';
+      } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved') {
+        buttonTextPopup = 'Registered';
+      }
 
-  article.innerHTML = `
+
+        const eventDatePopup = isSameDayPopup
+          ? `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
+          : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
+
+        article.innerHTML = `
     <button class="close-btn" onclick="closePopup()">&times;</button>
     <div class="popup-event-content">
       ${eventDatePopup}
@@ -122,48 +151,50 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="popup-event-category">${event.category}</div>
       <div class="popup-event-description">${event.description}</div>
       <div class="popup-event-location">Location: <i>${event.location}</i></div>
-      <button class="popup-register-button" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
+      <button class="popup-register-button" data-event-id="${event.eventID}">
+      ${buttonTextPopup}
+    </button>
     </div>
   `;
-  
-    const popupRegBtn = article.querySelector('.popup-register-button');
-    popupRegBtn.disabled = isRegisteredPopup;
 
-    if (!isRegisteredPopup) {
-        popupRegBtn.addEventListener('click', () => {
-          const confirmed = confirm("Are you sure you want to register for this event?");
-          if (!confirmed) return;
+        const popupRegBtn = article.querySelector('.popup-register-button');
+        popupRegBtn.disabled = registrationStatusPopup === 'Registered' || registrationStatusPopup === 'Waitlisted';
 
-          fetch('/register-event', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (!data.success) {
-                alert(data.message); // Show backend error message
-                return;
-              }
-              popupRegBtn.textContent = 'Registered';
-              popupRegBtn.disabled = true;
-              alert(data.message);
+        if (!registrationStatusPopup) {
+          popupRegBtn.addEventListener('click', () => {
+            const confirmed = confirm("Are you sure you want to register for this event?");
+            if (!confirmed) return;
+
+            fetch('/register-event', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
             })
-            .catch(err => {
-              console.error('Registration error:', err);
-            });
+              .then(res => res.json())
+              .then(data => {
+                if (!data.success) {
+                  alert(data.message); // Show backend error message
+                  return;
+                }
+                popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
+                popupRegBtn.disabled = true;
+                alert(data.message);
+              })
+              .catch(err => {
+                console.error('Registration error:', err);
+              });
 
-        });
-      }
+          });
+        }
 
-  openPopup();
-});
+        openPopup();
+      });
 
 
     });
 
-      }
-    
+  }
+
   catch (error) {
     console.error('Error fetching data ', error);
   }
@@ -256,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function attachCardHoverListeners() {
     document.querySelectorAll(".card-wrap").forEach((cardWrap) => {
       const card = cardWrap.querySelector(".card");
-      const cardBg = card.querySelector(".card-bg"); 
+      const cardBg = card.querySelector(".card-bg");
 
       cardBg.style.backgroundImage = `url("${cardWrap.dataset.image}")`;
 

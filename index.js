@@ -120,10 +120,10 @@ app.post("/create-events", async (req, res) => {
     if (!userID) {
         return res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
-    
-    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
-            startDateTime, endDateTime, location, description, category, 
-            feedback, requireApproval, capacity, allowWaitlist, lastUpdated, themeIndex } = req.body
+
+    const { base64FeatureImage, imageFileName, imageFileExtension, eventName,
+        startDateTime, endDateTime, location, description, category,
+        feedback, requireApproval, capacity, allowWaitlist, lastUpdated, themeIndex } = req.body
 
     // convert base64 string of featureImage into binary
     function getBinaryValue(base64FeatureImage) {
@@ -269,14 +269,14 @@ app.get("/api/compareDate", async (req, res) => {
 // events page
 app.get("/events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
-    
+
 });
 
 // discover page
 app.get("/discover", (req, res) => {
-    
+
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
-    
+
 });
 
 // register button
@@ -288,9 +288,9 @@ app.post("/register-event", async (req, res) => {
         try {
             const result1 = await pool.request()
                 .input('eventID', sql.Int, eventID)
-                .query(`SELECT COUNT(*) AS total_registrations 
+                .query(`SELECT COUNT(*) registrationCount 
                     FROM registrationTable 
-                    WHERE status != 'declined' AND eventID = @eventID`);
+                    WHERE status != 'Declined' AND eventID = @eventID`);
 
             const numOfRegistration = result1.recordset[0].registrationCount;
 
@@ -322,7 +322,7 @@ app.post("/register-event", async (req, res) => {
                 .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
             
                 
-                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.' });
+                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.', status: "Waitlisted" });
             }
             else{
                 const status = 'Pending';
@@ -332,7 +332,7 @@ app.post("/register-event", async (req, res) => {
                 .input('status', sql.VarChar, status)
                 .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
                 
-                res.json({success: true, message: 'User successfully registered into an event' });
+                res.json({success: true, message: 'User successfully registered into an event', status: "Registered" });
             } 
         }
         catch(err) {
@@ -344,8 +344,9 @@ app.post("/register-event", async (req, res) => {
         try {
             const result1 = await pool.request()
                 .input('eventID', sql.Int, eventID)
-                .query(`SELECT COUNT (*) AS registrationCount 
-                    FROM registrationTable WHERE eventID = @eventID`);
+                .query(`SELECT COUNT(*) registrationCount 
+                    FROM registrationTable 
+                    WHERE status != 'Declined' AND eventID = @eventID`);
 
             const numOfRegistration = result1.recordset[0].registrationCount;
 
@@ -377,7 +378,7 @@ app.post("/register-event", async (req, res) => {
                 .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
             
                 
-                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.' });
+                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.', status: "Waitlisted" });
             }
             else{
                 const status = 'Approved';
@@ -387,7 +388,7 @@ app.post("/register-event", async (req, res) => {
                 .input('status', sql.VarChar, status)
                 .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
             
-            res.json({success: true, message: 'User successfully registered into an event' });
+            res.json({success: true, message: 'User successfully registered into an event', status: "Rgistered" });
 
             }
             
@@ -398,23 +399,23 @@ app.post("/register-event", async (req, res) => {
         }    
     }
 });
-
 app.get("/api/user-registrations", async (req, res) => {
     const userID = req.session.user.id;
-    
+
     try {
         const result = await pool.request()
-        .input('userID', sql.Int, userID)
-        .query('SELECT eventID FROM registrationTable WHERE userID = @userID');
+            .input('userID', sql.Int, userID)
+            .query('SELECT eventID, status  FROM registrationTable WHERE userID = @userID');
 
-        const registeredEventIDs = result.recordset.map(row => row.eventID);
-        res.json({ registeredEventIDs });
-    } 
-    catch (err) {
-        console.error('Error fetching registrations:', err);
-        res.status(500).json({ message: 'Server error' });
-    }
+      res.json({ registrations: result.recordset });
+  } catch (err) {
+    console.error('Error fetching registrations:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+
 });
+
+
 
 // user profile page
 app.get("/user-profile", (req, res) => {
@@ -479,33 +480,33 @@ app.get("/user-events-created", async (req, res) => {
 
     try {
         const result = await pool.request()
-                        .input('userID', sql.Int, userID)
-                        .query(`SELECT *,
+            .input('userID', sql.Int, userID)
+            .query(`SELECT *,
                                     IIF(CAST(startDateTime AS DATE) = CAST(endDateTime AS DATE), 'True', 'False') AS sameDay,
                                     IIF(MONTH(startDateTime) = MONTH(endDateTime) AND YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameMonth,
                                     IIF(YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameYear 
                                 FROM eventsTable 
                                 WHERE creatorID = @userID`)
 
-        const eventsData = result.recordset.map(event => ({ 
-                                                eventID         : event.eventID,
-                                                eventName       : event.eventName,
-                                                description     : event.description,
-                                                location        : event.location,
-                                                startDateTime   : event.startDateTime,
-                                                endDateTime     : event.endDateTime, 
-                                                sameDay         : event.sameDay,
-                                                sameMonth       : event.sameMonth,
-                                                sameYear        : event.sameYear,
-                                                featureImage    : event.featureImage,
-                                                requireApproval : event.requireApproval,
-                                                capacity        : event.capacity,
-                                                feedbackLink    : event.feedbackLink,
-                                                lastUpdated     : event.lastUpdated,
-                                                category        : event.category,
-                                                allowWaitlist   : event.allowWaitlist,
-                                                themeIndex      : event.themeIndex
-                                            }))
+        const eventsData = result.recordset.map(event => ({
+            eventID: event.eventID,
+            eventName: event.eventName,
+            description: event.description,
+            location: event.location,
+            startDateTime: event.startDateTime,
+            endDateTime: event.endDateTime,
+            sameDay: event.sameDay,
+            sameMonth: event.sameMonth,
+            sameYear: event.sameYear,
+            featureImage: event.featureImage,
+            requireApproval: event.requireApproval,
+            capacity: event.capacity,
+            feedbackLink: event.feedbackLink,
+            lastUpdated: event.lastUpdated,
+            category: event.category,
+            allowWaitlist: event.allowWaitlist,
+            themeIndex: event.themeIndex
+        }))
 
         console.log("User events created extraction success.")
         return res.status(200).json(eventsData)
@@ -671,7 +672,7 @@ app.patch("/user-password", async (req, res) => {
             }
         }
         else {
-            return res.status(401).json({ message : "Incorrect current password."})
+            return res.status(401).json({ message: "Incorrect current password." })
         }
     }
     catch (e) {
@@ -687,7 +688,7 @@ app.get("/event/:eventID", (req, res) => {
 //event management page 
 wss.on('connection', async (ws, req) => {
     console.log('Client WebSocket Connected');
-    
+
     const eventID = req.url.split('/').pop()
 
     ws.on('message', async (message) => {
@@ -701,27 +702,27 @@ wss.on('connection', async (ws, req) => {
                     .query(`SELECT * FROM eventsTable WHERE eventID = @eventID`)
 
                 const eventData = {
-                    eventID         : result.recordset[0].eventID,
-                    eventName       : result.recordset[0].eventName,
-                    description     : result.recordset[0].description,
-                    location        : result.recordset[0].location,
-                    startDateTime   : result.recordset[0].startDateTime,
-                    endDateTime     : result.recordset[0].endDateTime, 
-                    featureImage    : result.recordset[0].featureImage,
-                    requireApproval : result.recordset[0].requireApproval,
-                    capacity        : result.recordset[0].capacity,
-                    feedbackLink    : result.recordset[0].feedbackLink,
-                    lastUpdated     : result.recordset[0].lastUpdated,
-                    category        : result.recordset[0].category,
-                    allowWaitlist   : result.recordset[0].allowWaitlist
+                    eventID: result.recordset[0].eventID,
+                    eventName: result.recordset[0].eventName,
+                    description: result.recordset[0].description,
+                    location: result.recordset[0].location,
+                    startDateTime: result.recordset[0].startDateTime,
+                    endDateTime: result.recordset[0].endDateTime,
+                    featureImage: result.recordset[0].featureImage,
+                    requireApproval: result.recordset[0].requireApproval,
+                    capacity: result.recordset[0].capacity,
+                    feedbackLink: result.recordset[0].feedbackLink,
+                    lastUpdated: result.recordset[0].lastUpdated,
+                    category: result.recordset[0].category,
+                    allowWaitlist: result.recordset[0].allowWaitlist
                 }
 
                 console.log("Event details extraction successful")
-                ws.send(JSON.stringify({ status : 200, type : 'eventData', eventData : eventData}))
+                ws.send(JSON.stringify({ status: 200, type: 'eventData', eventData: eventData }))
             }
             catch (e) {
                 console.log("Event details extraction failed: ", e)
-                ws.send(JSON.stringify({ status: 500, message : 'Event details extraction failed', error : e}))
+                ws.send(JSON.stringify({ status: 500, message: 'Event details extraction failed', error: e }))
             }
         }
         // GET registration details
@@ -735,20 +736,20 @@ wss.on('connection', async (ws, req) => {
                             WHERE rT.eventID = @eventID`)
 
                 const registrationData = result.recordset.map(registrant => ({
-                                                        registrationID : registrant.registrationID,
-                                                        userID : registrant.userID,
-                                                        fullname : registrant.fullName,
-                                                        profilePic : registrant.profilePic,
-                                                        status : registrant.status,
-                                                        eventID : registrant.eventID
-                                                    }))
+                    registrationID: registrant.registrationID,
+                    userID: registrant.userID,
+                    fullname: registrant.fullName,
+                    profilePic: registrant.profilePic,
+                    status: registrant.status,
+                    eventID: registrant.eventID
+                }))
 
                 console.log("Registration details extraction successful")
-                ws.send(JSON.stringify({ status : 200, type : 'registrationData', registrationData : registrationData }))
+                ws.send(JSON.stringify({ status: 200, type: 'registrationData', registrationData: registrationData }))
             }
             catch (e) {
                 console.log("Registration details extraction failed: ", e)
-                ws.send(JSON.stringify({ status: 500, message : 'Registration details extraction failed', error : e}))
+                ws.send(JSON.stringify({ status: 500, message: 'Registration details extraction failed', error: e }))
             }
         }
         // GET approved guest details
@@ -760,22 +761,22 @@ wss.on('connection', async (ws, req) => {
                             FROM registrationTable rT
                             LEFT JOIN userTable uT ON rt.userID = uT.userID
                             WHERE rT.eventID = @eventID AND status = 'Approved'`)
-                
+
                 const approvedGuestsData = result.recordset.map(guest => ({
-                                                                registrationID : guest.registrationID,
-                                                                userID : guest.userID,
-                                                                fullname : guest.fullName,
-                                                                profilePic : guest.profilePic,
-                                                                status : guest.status,
-                                                                eventID : guest.eventID
-                                                            }))
+                    registrationID: guest.registrationID,
+                    userID: guest.userID,
+                    fullname: guest.fullName,
+                    profilePic: guest.profilePic,
+                    status: guest.status,
+                    eventID: guest.eventID
+                }))
 
                 console.log("Approved guests extraction successful")
-                ws.send(JSON.stringify({ status : 200, type : 'approvedGuestsData', approvedGuestsData : approvedGuestsData }))
+                ws.send(JSON.stringify({ status: 200, type: 'approvedGuestsData', approvedGuestsData: approvedGuestsData }))
             }
             catch (e) {
                 console.log("Approved registrants extraction failed: ", e)
-                ws.send(JSON.stringify({ status: 500, message : 'Approved guests extraction failed', error : e}))
+                ws.send(JSON.stringify({ status: 500, message: 'Approved guests extraction failed', error: e }))
             }
         }
     })
@@ -786,8 +787,8 @@ app.put("/event/:eventID", async (req, res) => {
     const eventID = req.params.eventID
 
     const { base64FeatureImage, imageFileName, imageFileExtension, dbImagePath,
-            eventName, startDateTime, endDateTime, location, description, category, 
-            feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body  
+        eventName, startDateTime, endDateTime, location, description, category,
+        feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body
 
     let publicFeatureImagePath = null
 
@@ -815,7 +816,7 @@ app.put("/event/:eventID", async (req, res) => {
         if (!binaryFeatureImage) {
             return res.json({ message: 'Invalid image format.' });
         }
-        
+
         let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
         let featureImageFileName = `${imageFileName}.${imageFileExtension}`
 
@@ -832,22 +833,22 @@ app.put("/event/:eventID", async (req, res) => {
         const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
 
         // saves featureImage in uploads/featureImage folder
-        fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
-            if (error) { 
-                console.log("Image Creation Failed: ", error) 
+        fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => {
+            if (error) {
+                console.log("Image Creation Failed: ", error)
             }
         });
 
         publicFeatureImagePath = `/uploads/featureImage/${featureImageFileName}`;
     }
-    
+
     try {
         await pool.request()
             .input('eventID', sql.Int, eventID)
             .input('eventName', sql.NVarChar, eventName)
             .input('featureImage', sql.VarChar, publicFeatureImagePath)
             .input('startDateTime', sql.DateTime, startDateTime)
-            .input('endDateTime', sql.DateTime, endDateTime) 
+            .input('endDateTime', sql.DateTime, endDateTime)
             .input('location', sql.VarChar, location)
             .input('description', sql.NVarChar, description)
             .input('category', sql.VarChar, category)
@@ -873,11 +874,11 @@ app.put("/event/:eventID", async (req, res) => {
                     WHERE eventID = @eventID`)
 
         console.log("Event details update successful")
-        res.status(200).json({ message : 'Event details updated' })
+        res.status(200).json({ message: 'Event details updated' })
     }
     catch (e) {
         console.log("Event details update failed: ", e)
-        res.status(500).json({ message : 'Event details update failed', error : e })
+        res.status(500).json({ message: 'Event details update failed', error: e })
     }
 });
 
@@ -909,9 +910,9 @@ app.post("/checkin-attendee", async (req, res) => {
 
     try {
         const result = await pool.request()
-                            .input('eventID', sql.Int, eventID)
-                            .input('userID', sql.Int, userID)
-                            .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
 
         const attendee = result.recordset[0]
 
@@ -926,11 +927,11 @@ app.post("/checkin-attendee", async (req, res) => {
                             WHERE eventID = @eventID AND userID = @userID`)
 
                 console.log("Attendee details update success")
-                res.status(201).json({ message : 'Attendee details update success' })   
+                res.status(201).json({ message: 'Attendee details update success' })
             }
             catch (e) {
                 console.log("Attendee details update failed: ", e)
-                res.status(500).json({ message : 'Attendee details update failed:', error : e })   
+                res.status(500).json({ message: 'Attendee details update failed:', error: e })
             }
         }
         else {
@@ -943,17 +944,17 @@ app.post("/checkin-attendee", async (req, res) => {
                             VALUES (@eventID, @userID, @checkedInAt)`)
 
                 console.log("Attendee details update success")
-                res.status(201).json({ message : 'Attendee details insert success' })   
+                res.status(201).json({ message: 'Attendee details insert success' })
             }
             catch (e) {
                 console.log("Attendee details update failed: ", e)
-                res.status(500).json({ message : 'Attendee details insert failed:', error : e })   
+                res.status(500).json({ message: 'Attendee details insert failed:', error: e })
             }
         }
     }
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
-        res.status(500).json({ message : 'Attendee details extraction failed', error : e})
+        res.status(500).json({ message: 'Attendee details extraction failed', error: e })
     }
 });
 
@@ -963,12 +964,12 @@ app.delete("/checkin-attendee", async (req, res) => {
 
     try {
         const result = await pool.request()
-                .input('eventID', sql.Int, eventID)
-                .input('userID', sql.Int, userID)
-                .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
 
         const attendee = result.recordset[0]
-        
+
         if (attendee) {
             try {
                 await pool.request()
@@ -977,21 +978,21 @@ app.delete("/checkin-attendee", async (req, res) => {
                     .query(`DELETE FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
 
                 console.log('Guest attendance removal success')
-                res.status(200).json({ message: 'Guest attendance removal success'})
+                res.status(200).json({ message: 'Guest attendance removal success' })
             }
             catch (e) {
                 console.log("Guest attendance removal failed: ", e)
-                res.status(500).json({ message : 'Guest attendance removal failed', error : e})
+                res.status(500).json({ message: 'Guest attendance removal failed', error: e })
             }
         }
         else {
             console.log('Guest not found in attendeeTable')
-            res.status(404).json({ message : 'Guest not found in attendeeTable'})
+            res.status(404).json({ message: 'Guest not found in attendeeTable' })
         }
     }
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
-        res.status(500).json({ message : 'Attendee details extraction failed', error : e})
+        res.status(500).json({ message: 'Attendee details extraction failed', error: e })
     }
 });
 
@@ -1001,8 +1002,8 @@ app.get("/events-registered", async (req, res) => {
 
     try {
         const result = await pool.request()
-                                .input('userID', sql.Int, userID)
-                                .query(`SELECT eT.eventID, eT.startDateTime, eT.endDateTime,
+            .input('userID', sql.Int, userID)
+            .query(`SELECT eT.eventID, eT.startDateTime, eT.endDateTime,
                                                 FORMAT(eT.startDateTime, 'MMMM d, h:mm tt') AS formattedStartDateTime,
                                                 FORMAT(eT.startDateTime, 'h:mm tt') AS formattedStartTime,
                                                 FORMAT(eT.endDateTime, 'MMMM d, h:mm tt') AS formattedEndDateTime,
@@ -1016,38 +1017,38 @@ app.get("/events-registered", async (req, res) => {
                                         INNER JOIN registrationTable rT ON eT.eventID = rt.eventID)
                                         INNER JOIN userTable uT ON eT.creatorID = uT.userID)
                                         WHERE rT.userID = @userID`)
-        
-        const eventsData = result.recordset.map(event => ({ 
-                                                    eventID       : event.eventID,
-                                                    profilePic    : event.profilePic,
-                                                    fullName      : event.fullName,
-                                                    eventName     : event.eventName,
-                                                    startDateTime : event.startDateTime,
-                                                    endDateTime   : event.endDateTime,
-                                                    formattedStartDateTime : event.formattedStartDateTime,
-                                                    formattedStartTime     : event.formattedStartTime,
-                                                    formattedEndDateTime   : event.formattedEndDateTime,
-                                                    formattedEndTime       : event.formattedEndTime,
-                                                    sameDay       : event.sameDay,
-                                                    sameMonth     : event.sameMonth,
-                                                    sameYear      : event.sameYear,
-                                                    description   : event.description,
-                                                    location      : event.location,
-                                                    featureImage  : event.featureImage,
-                                                    feedbackLink  : event.feedbackLink,
-                                                    themeIndex    : event.themeIndex,
-                                                    status        : event.status
-                                                }))
-        
+
+        const eventsData = result.recordset.map(event => ({
+            eventID: event.eventID,
+            profilePic: event.profilePic,
+            fullName: event.fullName,
+            eventName: event.eventName,
+            startDateTime: event.startDateTime,
+            endDateTime: event.endDateTime,
+            formattedStartDateTime: event.formattedStartDateTime,
+            formattedStartTime: event.formattedStartTime,
+            formattedEndDateTime: event.formattedEndDateTime,
+            formattedEndTime: event.formattedEndTime,
+            sameDay: event.sameDay,
+            sameMonth: event.sameMonth,
+            sameYear: event.sameYear,
+            description: event.description,
+            location: event.location,
+            featureImage: event.featureImage,
+            feedbackLink: event.feedbackLink,
+            themeIndex: event.themeIndex,
+            status: event.status
+        }))
+
         console.log("Events registered extraction success.")
         return res.status(200).json(eventsData)
     }
     catch (e) {
         console.log("Events registered extraction failed: ", e)
-        return res.status(500).json({ message: 'Events registered extration failed', error : e})
+        return res.status(500).json({ message: 'Events registered extration failed', error: e })
     }
 });
 
 server.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+    console.log(`Server listening at http://localhost:${port}`);
 });
