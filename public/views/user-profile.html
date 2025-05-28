@@ -75,14 +75,25 @@
         <div class="event-section">
             <div class="event-header">
                 <h1>Events Created</h1>
-                <div class="toggle-buttons">
-                    <button class="active">Upcoming</button>
-                    <button>Past</button>
-                </div>
             </div>
 
             <div class="events_created_container">
                 <!-- Handled within user-profile.js -->
+            </div>
+
+            <!-- No events created -->
+            <div class="no-events-wrapper" style="display: none;">
+                <div class="no-events-content">
+                    <div class="no-events-text">
+                    <h2>No Events Created Yet.</h2>
+                    <p>It seems like you haven’t created any events yet. When you’re ready, 
+                        hit “Create” and start bringing your ideas to life in the Dalo community!</p>
+                    <button class="create-events-button" onclick="window.location.href='/create-events';">
+                        <span class="shimmer-button-text" data-text="Create Events">Create Events</span>
+                        <span class="shimmer-events"></span>
+                    </button>
+                    </div>
+                </div>
             </div>
         </div>        
 
