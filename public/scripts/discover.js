@@ -23,17 +23,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const registeredEventIDs = registeredEvent.registeredEventIDs;
     const article = document.createElement('article');
     article.className = "card-popup";
+    overlay.appendChild(article);
   
       
 
         events.forEach((event, index) => {
-      
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');
-      const div3 = document.createElement('div');
-    
-      console.log (currentEvent);
-        
+      const div3 = document.createElement('div');    
       div1.className = "item";
       div2.className = "item";
       div3.className = "popupContainer";
@@ -96,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       thumbnail.appendChild(div2);
 
       div3.innerHTML = `
-      <div class="card-wrap" onclick="openPopup()" data-category="${event.category}"
+      <div class="card-wrap" data-event-index="${index}" data-category="${event.category}"
         data-image="${event.featureImage}">
         <div class="card">
           <div class="card-bg"></div>
@@ -108,21 +105,59 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       app.appendChild(div3);
 
-    const isSameDayPopup   = sameDate[index].SameDay === 'True';
-    const eventDatePopup = isSameDayPopup
-      ? `<div class="popup-event-date"">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
-        : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
-      article.innerHTML = `
-      <button class="close-btn" onclick="closePopup()">&times;</button>
-      <div class="popup-event-content">
-        ${eventDatePopup}
-        <div class="popup-event-title">${events[index].eventName}</div>
-        <div class="popup-event-category">${events[index].category}</div>
-        <div class="popup-event-description">${events[index].description}</div>
-        <div class="popup-event-location">Location: <i>${events[index].location}</i></div>
-        <button class="popup-register-button" data-event-id="${events[index].eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
-      </div>`;
-      overlay.appendChild(article);
+   div3.querySelector('.card-wrap').addEventListener('click', () => {
+  article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
+  const isSameDayPopup = sameDate[index].SameDay === 'True';
+  const isRegisteredPopup = registeredEventIDs.includes(event.eventID);
+
+  const eventDatePopup = isSameDayPopup
+    ? `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
+    : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
+
+  article.innerHTML = `
+    <button class="close-btn" onclick="closePopup()">&times;</button>
+    <div class="popup-event-content">
+      ${eventDatePopup}
+      <div class="popup-event-title">${event.eventName}</div>
+      <div class="popup-event-category">${event.category}</div>
+      <div class="popup-event-description">${event.description}</div>
+      <div class="popup-event-location">Location: <i>${event.location}</i></div>
+      <button class="popup-register-button" data-event-id="${event.eventID}">${isRegistered ? 'Registered' : 'Register'}</button>
+    </div>
+  `;
+  
+    const popupRegBtn = article.querySelector('.popup-register-button');
+    popupRegBtn.disabled = isRegisteredPopup;
+
+    if (!isRegisteredPopup) {
+        popupRegBtn.addEventListener('click', () => {
+          const confirmed = confirm("Are you sure you want to register for this event?");
+          if (!confirmed) return;
+
+          fetch('/register-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (!data.success) {
+                alert(data.message); // Show backend error message
+                return;
+              }
+              popupRegBtn.textContent = 'Registered';
+              popupRegBtn.disabled = true;
+              alert(data.message);
+            })
+            .catch(err => {
+              console.error('Registration error:', err);
+            });
+
+        });
+      }
+
+  openPopup();
+});
 
 
     });
@@ -221,8 +256,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function attachCardHoverListeners() {
     document.querySelectorAll(".card-wrap").forEach((cardWrap) => {
       const card = cardWrap.querySelector(".card");
-      const cardBg = card.querySelector(".card-bg");
-      // const imageUrl = 
+      const cardBg = card.querySelector(".card-bg"); 
 
       cardBg.style.backgroundImage = `url("${cardWrap.dataset.image}")`;
 
@@ -315,4 +349,3 @@ document.addEventListener('keydown', e => {
     closePopup();
   }
 });
-
