@@ -6,10 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Discover</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <link rel="stylesheet" href="/styles/discover.css" />
+  <link rel="stylesheet" href="/styles/discover-test.css" />
+  <link rel="stylesheet" href="/styles/popup.css" />
   <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
-  <script src="/scripts/footer.js"></script>
-  <script src="/scripts/header.js"></script>
 </head>
 
 <body>
@@ -19,128 +18,99 @@
 
   <div class="discover-container">
     <div class="parent">
-      <div class="image-card div1">
-        <img src="../assets/images/discover-arts.jpg" alt="Discover Arts" loading="lazy" />
+      <div class="image-card div1" data-category="Arts">
+        <img src="/assets/images/discover-arts.jpg" alt="Discover Arts" loading="lazy" />
         <span class="card-label">Arts</span>
       </div>
-      <div class="image-card div2">
-        <img src="../assets/images/discover-business.jpg" alt="Discover Business" />
+      <div class="image-card div2" data-category="Business">
+        <img src="/assets/images/discover-business.jpg" alt="Discover Business" />
         <span class="card-label">Business</span>
       </div>
-      <div class="image-card div3">
-        <img src="../assets/images/discover-education.jpg" alt="Discover Education" />
+      <div class="image-card div3" data-category="Education">
+        <img src="/assets/images/discover-education.jpg" alt="Discover Education" />
         <span class="card-label">Education</span>
       </div>
-      <div class="image-card div4">
-        <img src="../assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
+      <div class="image-card div4" data-category="Entertainment">
+        <img src="/assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
         <span class="card-label">Entertainment</span>
       </div>
-      <div class="image-card div5">
-        <img src="../assets/images/discover-health.jpg" alt="Discover Health" />
+      <div class="image-card div5" data-category="Health">
+        <img src="/assets/images/discover-health.jpg" alt="Discover Health" />
         <span class="card-label">Health</span>
       </div>
-      <div class="image-card div6">
-        <img src="../assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
+      <div class="image-card div6" data-category="Outreach">
+        <img src="/assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
         <span class="card-label">Outreach</span>
       </div>
-      <div class="image-card div7">
-        <img src="../assets/images/discover-technology.avif" alt="Discover Technology" />
+      <div class="image-card div7" data-category="Technology">
+        <img src="/assets/images/discover-technology.avif" alt="Discover Technology" />
         <span class="card-label">Technology</span>
       </div>
       <div class="div8">
-        <button class="explore-btn" onclick="scrollToEvents()">Explore All Events →</button>
+        <button class="explore-btn" onclick="showCarousel()">Explore All Events →</button>
       </div>
-<div class="div9">
-  <h1>
-    <span class="gradient-text">Discover, Register, and <br> Be Part of the</span>
-    <span id="dynamic-word" class="experience"> Experience</span>!
-  </h1>
-</div>
+      <div class="div9">
+        <h1>
+          <span class="gradient-text">Discover, Register, and <br> Be Part of the</span>
+          <span id="dynamic-word" class="experience"> Experience</span>!
+        </h1>
+      </div>
     </div>
   </div>
-  <div class="slider-container" id="events-slider">
-    <ul class="slider">
-      <li class="item" style="background-image: url('../assets/images/clubbing-event.jpg')">
-        <span class="event-date">May 11, 2025</span>
-        <div class="event-content">
-          <h2 class="event-title">PURE VENOM: The After Party</h2>
-          <p class="event-description">Celebrate the grand finale of the Philippine Blockchain Week's PBWx 2024 at the
-            PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the perfect night to
-            let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.</p>
-          <p class="event-location">Location: 512 Main Building, National University</p>
-            <button>Register</button>
+  <section class="carousel-wrapper" id="carousel-section">
+    <div class="carousel">
+      <div class="list" id="events-list"></div>
+
+      <div class="thumbnail" id="next-event"></div>
+
+
+
+      <div class="nav-buttons">
+        <button class="button" id="prev"><img src="/assets/icons/previous-icon.svg" alt="Previous"></button>
+        <button class="button" id="next"><img src="/assets/icons/next-icon.svg" alt="Next"></button>
+      </div>
+
+    </div>
+  </section>
+  <section class="hover-cards-wrapper" id="hover-cards-section">
+    <div id="app" class="container">
+      
+    </div>
+  </section>
+
+  
+  <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
+    aria-describedby="eventDesc">
+    <!-- <article class="card-popup">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <div class="popup-event-content">
+        <div class="popup-event-date">May 11, 2025</div>
+        <div class="popup-event-title">PURE VENOM: The After Party</div>
+        <div class="popup-event-category">Entertainment</div>
+        <div class="popup-event-description">Celebrate the grand finale of the Philippine Blockchain Week's
+          PBWx 2024 at the
+          PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the
+          perfect night to
+          let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
         </div>
-      </li>
-
-      <li class="item" style="background-image: url('../assets/images/art-event.jpg')">
-        <span class="event-date">May 12, 2025</span>
-        <div class="event-content">
-          <h2 class="event-title">Estrange Bond</h2>
-          <p class="event-description">A captivating art exhibition that delves into the complexities of human
-            connections and isolation, showcasing thought-provoking pieces by emerging artists.</p>
-          <p class="event-location">Location: Sampaloc, Manila</p>
-          <button>Register</button>
-        </div>
-      </li>
-
-      <li class="item" style="background-image: url('../assets/images/business-event.jpg')">
-        <span class="event-date">May 13, 2025</span>
-        <div class="event-content">
-          <h2 class="event-title">Apple Worldwide Developers Conference 2025</h2>
-          <p class="event-description">Join industry experts at Apple to explore the latest trends in new software
-            features, tools, and frameworks for iOS, iPadOS, macOS, watchOS, tvOS, and visionOS.</p>
-          <p class="event-location">Location: BGC, Taguig</p>
-            <button>Register</button>
-        </div>
-      </li>
-
-
-      <li class="item" style="background-image: url('../assets/images/outreach-event.jpg')">
-        <span class="event-date">May 14, 2025</span>
-        <div class="event-content">
-          <h2 class="event-title">Last Trace Of Us</h2>
-          <p class="event-description">A community outreach initiative aimed at environmental preservation. Participate
-            in hands-on activities to learn how we can reduce our environmental impact and protect our planet.</p>
-          <p class="event-location">Location: Resorts World Manila</p>
-            <button>Register</button>
-        </div>
-      </li>
-
-      <li class="item" style="background-image: url('../assets/images/tech-event.avif')">
-        <span class="event-date">May 15, 2025</span>
-        <div class="event-content">
-          <h2 class="event-title">Urban Decay</h2>
-          <p class="event-description">Join us for an insightful discussion on the challenges of urban development,
-            smart cities, and the impact of technology on sustainable living in urban areas.</p>
-          <p class="event-location">Location: Solaire, North Edsa</p>
-            <button>Register</button>
-        </div>
-      </li>
-
-      <li class="item" style="background-image: url('../assets/images/entertainment-event.jpg')">
-        <span class="event-date">May 16, 2025</span>
-        <div class="event-content">
-          <h2 class="event-title">The Migration</h2>
-          <p class="event-description">An immersive theater experience highlighting the struggles and stories of people
-            displaced by conflict and climate change, offering a glimpse into the global migration crisis.</p>
-          <p class="event-location">Location: 512 Main Building, National University</p>
-            <button>Register</button>
-        </div>
-      </li>
-
-    </ul>
-
-<div class="nav-buttons">
-  <button class="button" id="prev"><img src="/assets/icons/previous-icon.svg" alt="Previous"></button>
-  <button class="button" id="next"><img src="/assets/icons/next-icon.svg" alt="Next"></button>
-</div>
-
+        <div class="popup-event-location">Location: <i>Xylo at the Palace</i></div>
+        <button class="popup-register-button">Register</button>
+      </div>
+    </article> -->
   </div>
   <footer>
     <div id="footer"></div>
   </footer>
-        <script src="/scripts/discover.js"></script>
-  <script src="/scripts/slider.js"></script>
+  <script src="/scripts/header.js" defer></script>
+  <script src="/scripts/footer.js" defer></script>
+  <script src="/scripts/discover.js" defer></script>
+  <script>
+    function scrollToEvents() {
+      const eventsSection = document.getElementById('carousel-section');
+      eventsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
 </body>
 
 </html>
