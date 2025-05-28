@@ -405,6 +405,26 @@ app.get("/api/user-registrations", async (req, res) => {
     }
 });
 
+// cancelation of registration
+app.delete("/cancel-registration", async (req, res) => {
+    const userID = req.session.user.id;
+    const { eventID } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .query(`DELETE FROM registrationTable WHERE eventID = @eventID AND userID = @userID`)
+
+        console.log("Event registration cancelation success")
+        res.status(200).json({ message : 'Event registration cancelation success' })
+    }
+    catch (e) {
+        console.log("Event registration cancelation failed")
+        res.status(500).json({ message : 'Event registration cancelation failed', error : e })
+    }
+});
+
 // user profile page
 app.get("/user-profile", (req, res) => { 
     res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))  
