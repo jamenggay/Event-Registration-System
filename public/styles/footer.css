@@ -30,12 +30,14 @@
     flex-wrap: wrap;
     max-width: 1200px;
     margin: 0 auto;
-    gap: 40px;
+    gap: 4rem;
+    padding: 0 2rem;
 }
 
 .footer-section {
     flex: 1;
     min-width: 250px;
+    margin-bottom: 2rem;
 }
 
 .footer-section:first-child {
@@ -57,9 +59,11 @@
 }
 
 .footer-heading {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    pointer-events: none;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: #000;
+    letter-spacing: 0.5px;
 }
 
 .footer-section p {
@@ -70,29 +74,59 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    gap: 5px;
-    font-size: 1rem;
 }
 
 .footer-links li {
-    margin-bottom: 0px;
-    transition: color 0.3s;
+    margin-bottom: 1rem;
 }
-
-.footer-links li:hover {
-    color: black;
-}
-
 
 .footer-links a {
-    font-weight: 400 !important;
-    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #666;
     text-decoration: none;
+    font-size: 1rem;
+    font-weight: 400;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+
+.footer-links svg {
+    color: #666;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+    opacity: 0.8;
+    position: relative;
+    top: 2px;
+}
+
+.footer-links a:hover,
+.footer-links a:hover svg {
+    color: #000;
+    opacity: 1;
+}
+
+.contact-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.contact-info svg {
+    color: #666;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+    opacity: 0.8;
 }
 
 .footer-bottom {
     text-align: center;
-    margin-top: 40px;
     font-size: 14px;
     color: #333;
     pointer-events: none;
