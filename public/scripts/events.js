@@ -1,108 +1,125 @@
-  document.addEventListener('DOMContentLoaded', async () => {
-    let eventsData = null 
-    
-    try {
-      const response = await fetch("/events-registered", {
-        method : 'GET'
-      })
+document.addEventListener("DOMContentLoaded", async () => {
+  let eventsData = null;
 
-      if (response.ok) {
-        const result = await response.json()
-        console.log("Events Registered: ", result)
-        eventsData = result
-      }
+  try {
+    const response = await fetch("/events-registered", {
+      method: "GET",
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("Events Registered: ", result);
+      eventsData = result;
+    } else {
+      const error = await response.json();
+      console.log("Backend Failed: ", error);
+    }
+  } catch (e) {
+    console.log("Client Error: ", e);
+  }
+
+  const eventSection = document.querySelector(".event-section");
+  const eventsContainer = document.createElement("div");
+  eventsContainer.id = "events-container";
+  const noEventsPlaceholder = document.querySelector(".no-events-wrapper");
+
+  if (!eventsData || eventsData.length === 0) {
+    noEventsPlaceholder.style.display = "flex";
+    eventsContainer.style.display = "none";
+  } 
+  else {
+    noEventsPlaceholder.style.display = "none";
+    eventsContainer.style.display = "block";
+  }
+
+  eventsContainer.innerHTML = eventsData
+    .map((event) => {
+      const statusClass =
+        event.status === "Approved"
+          ? "going"
+          : event.status === "Declined"
+          ? "declined"
+          : event.status === "Pending"
+          ? "pending"
+          : "waitlisted";
+
+      const status =
+        event.status === "Approved"
+          ? "Going"
+          : event.status === "Declined"
+          ? "Declined"
+          : event.status === "Pending"
+          ? "Pending"
+          : "Waitlisted";
+
+      const startYear = new Date(event.startDateTime).getFullYear();
+      const endYear = new Date(event.endDateTime).getFullYear();
+
+      const currentYear = new Date().getFullYear();
+      const yearPassed = endYear < currentYear;
+
+      let formattedDate;
+
+      if (yearPassed) {
+        if (event.sameDay == "True") {
+          formattedDate = `${
+            event.formattedStartDateTime.split(",")[0]}, ${endYear}`;
+        } 
+        else if (event.sameMonth == "True") {
+          const startDay = event.formattedStartDateTime.split(",")[0];
+          const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
+          formattedDate = `${startDay} - ${endDay}, ${endYear}`;
+        } 
+        else if (event.sameYear == "True") {
+          const start = event.formattedStartDateTime.split(",")[0];
+          const end = event.formattedEndDateTime.split(",")[0];
+          formattedDate = `${start} - ${end}, ${endYear}`;
+        } 
+        else {
+          const start = event.formattedStartDateTime.split(",")[0];
+          const end = event.formattedEndDateTime.split(",")[0];
+          formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
+        }
+      } 
+      else if (event.sameDay == "True") {
+        formattedDate = event.formattedStartDateTime.split(",")[0];
+      } 
+      else if (event.sameMonth == "True") {
+        const startDay = event.formattedStartDateTime.split(",")[0];
+        const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
+        formattedDate = `${startDay} - ${endDay}`;
+      } 
+      else if (event.sameYear == "True") {
+        const start = event.formattedStartDateTime.split(",")[0];
+        const end = event.formattedEndDateTime.split(",")[0];
+        formattedDate = `${start} - ${end}`;
+      } 
       else {
-        const error = await response.json()
-        console.log("Backend Failed: ", error)   
+        const start = event.formattedStartDateTime.split(",")[0];
+        const end = event.formattedEndDateTime.split(",")[0];
+        formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
       }
-    }
-    catch (e) {
-        console.log("Client Error: ", e)
-    }
 
-    const eventSection = document.querySelector('.event-section')
-    const eventsContainer = document.createElement('div')
-    eventsContainer.id = 'events-container'
+      let formattedDay;
 
-    // display message if no upcoming/ past events
-    const emptyMessage = document.createElement('p')
-    emptyMessage.textContent = 'Nothing to see here.'
-    emptyMessage.classList.add('empty-message')
-    emptyMessage.style.display = 'none'  
-    eventSection.appendChild(emptyMessage)
+      if (event.sameDay == "True") {
+        formattedDay = new Date(event.startDateTime).toLocaleString("en-US", {
+          weekday: "long",
+        });
+      } 
+      else {
+        const startDay = new Date(event.startDateTime).toLocaleString("en-US", {
+          weekday: "long",
+          timeZone: "UTC",
+        });
+        const endDay = new Date(event.endDateTime).toLocaleString("en-US", {
+          weekday: "long",
+          timeZone: "UTC",
+        });
+        formattedDay = `${startDay} - ${endDay}`;
+      }
 
-    eventsContainer.innerHTML = eventsData.map(event => {
-        const statusClass = 
-            event.status === 'Approved' ? 'going' 
-          : event.status === 'Declined' ? 'declined'
-          : event.status === 'Pending' ? 'pending'
-          : 'waitlisted'
-        
-        const status = 
-            event.status === 'Approved' ? 'Going' 
-          : event.status === 'Declined' ? 'Declined'
-          : event.status === 'Pending' ? 'Pending'
-          : 'Waitlisted'
-
-        const startYear = new Date(event.startDateTime).getFullYear()
-        const endYear = new Date(event.endDateTime).getFullYear()
-
-        const currentYear = new Date().getFullYear();
-        const yearPassed = endYear < currentYear;
-
-        let formattedDate
-
-        if (yearPassed) {
-          if (event.sameDay == 'True') {
-            formattedDate = `${event.formattedStartDateTime.split(',')[0]}, ${endYear}`
-          } 
-          else if (event.sameMonth == 'True') {
-            const startDay = event.formattedStartDateTime.split(',')[0]
-            const endDay = event.formattedEndDateTime.split(',')[0].split(' ')[1]
-            formattedDate = `${startDay} - ${endDay}, ${endYear}`
-          } 
-          else if (event.sameYear == 'True') {
-            const start = event.formattedStartDateTime.split(',')[0]
-            const end = event.formattedEndDateTime.split(',')[0]
-            formattedDate = `${start} - ${end}, ${endYear}`
-          } 
-          else {
-            const start = event.formattedStartDateTime.split(',')[0]
-            const end = event.formattedEndDateTime.split(',')[0]
-            formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`
-          }
-        }
-        else if (event.sameDay == 'True') {
-          formattedDate = event.formattedStartDateTime.split(',')[0]
-        } 
-        else if (event.sameMonth == 'True') {
-          const startDay = event.formattedStartDateTime.split(',')[0]
-          const endDay = event.formattedEndDateTime.split(',')[0].split(' ')[1]
-          formattedDate = `${startDay} - ${endDay}`
-        } 
-        else if (event.sameYear == 'True') {
-          const start = event.formattedStartDateTime.split(',')[0]
-          const end = event.formattedEndDateTime.split(',')[0]
-          formattedDate = `${start} - ${end}`
-        } 
-        else {
-          const start = event.formattedStartDateTime.split(',')[0]
-          const end = event.formattedEndDateTime.split(',')[0]
-          formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`
-        }
-
-        let formattedDay
-
-        if (event.sameDay == 'True') {
-          formattedDay = new Date(event.startDateTime).toLocaleString('en-US', { weekday: 'long' })
-        } 
-        else {
-          const startDay = new Date(event.startDateTime).toLocaleString('en-US', { weekday: 'long', timeZone: 'UTC' })
-          const endDay = new Date(event.endDateTime).toLocaleString('en-US', { weekday: 'long', timeZone: 'UTC' })
-          formattedDay = `${startDay} - ${endDay}`;
-        }
-
-        return `
+      return `
                 <div class="event-group" data-date="${event.startDateTime}">
                   <div class="event-date">
                     <strong>${formattedDate}</strong>
@@ -128,55 +145,70 @@
                     </div>
                   </div>
                 </div> 
-              `
+              `;
+    })
+    .join("");
+
+  eventSection.append(eventsContainer);
+
+  const eventCards = document.querySelectorAll(".event-cards");
+  const overlay = document.getElementById("popupOverlay");
+
+  eventCards.forEach((card, index) => {
+    card.addEventListener("click", () => {
+      const event = eventsData[index];
+      const statusClass =
+        event.status == "Approved"
+          ? "going"
+          : event.status === "Declined"
+          ? "declined"
+          : event.status === "Pending"
+          ? "pending"
+          : "waitlisted";
+
+      const status =
+        event.status == "Approved"
+          ? "You're going"
+          : event.status === "Declined"
+          ? "Declined"
+          : event.status === "Pending"
+          ? "Pending"
+          : "Waitlisted";
+
+      const optionsDate = { month: "long", day: "numeric", year: "numeric" };
+      const startYear = new Date(event.startDateTime).getFullYear();
+
+      let formattedDate;
+
+      if (event.sameDay == "True") {
+        formattedDate = new Date(event.startDateTime).toLocaleString(
+          "en-US",
+          optionsDate
+        );
+      } 
+      else if (event.sameMonth == "True") {
+        const startDay = event.formattedStartDateTime.split(",")[0];
+        const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
+        formattedDate = `${startDay} - ${endDay}, ${startYear}`;
+      } 
+      else if (event.sameYear == "True") {
+        const start = event.formattedStartDateTime.split(",")[0];
+        const end = event.formattedEndDateTime.split(",")[0];
+        formattedDate = `${start} - ${end}, ${startYear}`;
+      } 
+      else {
+        const start = new Date(event.startDateTime).toLocaleString(
+          "en-US",
+          optionsDate
+        );
+        const end = new Date(event.endDateTime).toLocaleString(
+          "en-US",
+          optionsDate
+        );
+        formattedDate = `${start} - ${end}`;
       }
-    ).join('')
 
-    eventSection.append(eventsContainer)
-
-    const eventCards = document.querySelectorAll('.event-cards')
-    const overlay = document.getElementById('popupOverlay') 
-
-    eventCards.forEach((card, index) => {
-      card.addEventListener('click', () => {
-        const event = eventsData[index]
-        const statusClass = 
-            event.status == 'Approved' ? 'going' 
-          : event.status === 'Declined' ? 'declined'
-          : event.status === 'Pending' ? 'pending'
-          : 'waitlisted'
-        
-        const status = 
-            event.status == 'Approved' ? 'You\'re going' 
-          : event.status === 'Declined' ? 'Declined'
-          : event.status === 'Pending' ? 'Pending'
-          : 'Waitlisted'
-
-        const optionsDate = { month : 'long', day : 'numeric', year : 'numeric'}
-        const startYear = new Date(event.startDateTime).getFullYear()
-
-        let formattedDate;
-
-        if (event.sameDay == 'True') {
-            formattedDate = new Date(event.startDateTime).toLocaleString('en-US', optionsDate);
-        }
-        else if (event.sameMonth == 'True') {
-            const startDay = event.formattedStartDateTime.split(',')[0];
-            const endDay = event.formattedEndDateTime.split(',')[0].split(' ')[1];
-            formattedDate = `${startDay} - ${endDay}, ${startYear}`;
-        } 
-        else if (event.sameYear == 'True') {
-            const start = event.formattedStartDateTime.split(',')[0];
-            const end = event.formattedEndDateTime.split(',')[0];
-            formattedDate = `${start} - ${end}, ${startYear}`;
-        } 
-        else {
-            const start = new Date(event.startDateTime).toLocaleString('en-US', optionsDate);
-            const end = new Date(event.endDateTime).toLocaleString('en-US', optionsDate);
-            formattedDate = `${start} - ${end}`;
-        }
-
-        overlay.innerHTML = `
+      overlay.innerHTML = `
           <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
             <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
             <span class="popup-event-date">${formattedDate}</span>
@@ -196,60 +228,67 @@
               </div>
             </div>
           </article>
-        `
-        openPopup()
-      })
-    })
-
-    function openPopup() {
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden'; 
-    }
-
-    function closePopup() {
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    overlay.addEventListener('click', e => {
-      if(e.target.id === 'closePopup' || e.target === overlay) closePopup();
+        `;
+      openPopup();
     });
+  });
 
-    document.addEventListener('keydown', e => {
-      if(e.key === "Escape" && overlay.classList.contains('active')) {
-        closePopup();
+  function openPopup() {
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closePopup() {
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target.id === "closePopup" || e.target === overlay) closePopup();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("active")) {
+      closePopup();
+    }
+  });
+
+  const buttons = document.querySelectorAll(".toggle-buttons button");
+  const groups = document.querySelectorAll(".event-group");
+
+  function filterEvents(showUpcoming) {
+    const today = new Date().setHours(0, 0, 0, 0);
+    let hasEventGroup = false;
+
+    groups.forEach((group) => {
+      const eventDate = new Date(group.dataset.date).setHours(0, 0, 0, 0);
+      const shouldShow = showUpcoming ? eventDate >= today : eventDate < today;
+      group.style.display = shouldShow ? "flex" : "none";
+
+      if (shouldShow) {
+        hasEventGroup = true;
       }
     });
 
-    const buttons = document.querySelectorAll(".toggle-buttons button");
-    const groups = document.querySelectorAll(".event-group");
-
-    function filterEvents(showUpcoming) {
-      const today = new Date().setHours(0, 0, 0, 0);
-      let hasEventGroup = false
-
-      groups.forEach(group => {
-        const eventDate = new Date(group.dataset.date).setHours(0, 0, 0, 0);
-        const shouldShow = showUpcoming ? eventDate >= today : eventDate < today;
-        group.style.display = shouldShow ? "flex" : "none";
-        
-        if (shouldShow) {
-          hasEventGroup = true 
-        }
-      });
-
-      emptyMessage.style.display = hasEventGroup ? 'none' : 'block';
+    if (!hasEventGroup) {
+      noEventsPlaceholder.style.display = "flex";
+      eventsContainer.style.display = "none";
+    } 
+    else {
+      noEventsPlaceholder.style.display = "none";
+      eventsContainer.style.display = "block";
     }
+  }
 
-    buttons.forEach(button => {
-      button.addEventListener("click", () => {
-        buttons.forEach(btn => btn.classList.remove("active"));
-        button.classList.add("active");
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      buttons.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
 
-        const isUpcoming = button.textContent.trim().toLowerCase() === "upcoming";
-        filterEvents(isUpcoming);
-      });
+      const isUpcoming = button.textContent.trim().toLowerCase() === "upcoming";
+      filterEvents(isUpcoming);
     });
-    
-    filterEvents(true)
-  })
+  });
+
+  filterEvents(true);
+});
