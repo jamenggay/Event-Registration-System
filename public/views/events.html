@@ -47,88 +47,16 @@
     </div>
 
     <!-- Event Cards handled within js -->
-     <div class="event-group" data-date="2025-05-20">
-      <div class="event-date">
-        <strong>May 20</strong>
-        <span class="weekday">Tuesday</span>
-      </div>
-      <div class="event-cards" onclick="openPopup()" style="background-color: #a3c8e1; border-radius: 1rem;">
-        <div class="event-card">
-          <div class="event-info">
-            <div class="event-time">4:00 PM</div>
-            <div class="event-title">
-              PURE VENOM: The After Party
-            </div>
-            <div class="event-meta">
-              <span><img src="../assets/icons/profile-icon.jpeg" alt="Profile">Bethany Laurente, Janelle Barreto, Web3 Philippines <br><br></span>
-              <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> Xylo at The Palace</span>
-            </div>
-            <div class="event-status going">Going</div>
-          </div>
-          <img class="event-thumbnail"
-            src="../assets/images/clubbing-event.jpg"
-            alt="Event Thumbnail" />
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
-    aria-describedby="eventDesc" onclick="openPopup()">
+    aria-describedby="eventDesc">
     <!-- Handled within js -->
-     <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
-          <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-          <span class="popup-event-date">${formattedDate}</span>
-
-          <div class="card-content">
-            <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
-            <p class="event-description" id="eventDesc">${event.description}</p>
-            <p class="event-location">Location: ${event.location}</p>
-            <p class="${statusClass}-status">${status}</p>
-      
-            <div class="feedback-box">
-              <a href="${event.feedbackLink}" class="feedback-link">
-                <span>Feedback</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </a>
-              <button class="cancel-box" title="Cancel Event">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="cancel-popup-overlay hidden"></div>
-          <div class="cancel-popup hidden">
-            <h3>Cancel Event</h3>
-            <p>We understand that sometimes the stars don't quite align, and you may need to step away from an event. Would you like to cancel your spot? If you change your mind later, no worries—you'll just need to register again to rejoin the fun!</p>
-            <div class="cancel-popup-buttons">
-            <button class="cancel-btn">Cancel</button>
-            <button class="confirm-btn">Confirm</button>
-            </div>
-          </div>
-        </article>
   </div>
 
   <footer>
     <div id="footer"></div>
   </footer>
-  <script>
-      const overlay = document.getElementById("popupOverlay");
-
-    function openPopup() {
-    overlay.classList.add("active");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closePopup() {
-    overlay.classList.remove("active");
-    document.body.style.overflow = "";
-  }
-  </script>
 
   <script src="../scripts/events.js"></script>
 
