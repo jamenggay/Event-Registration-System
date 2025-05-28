@@ -376,16 +376,18 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     console.log("Events Data: ", userEventsCreated)
 
-    const eventSection = document.querySelector('.event-section')
     const eventsContainer = document.createElement('div')
     eventsContainer.id = 'events-container'
+    const noEventsPlaceholder = document.querySelector(".no-events-wrapper");
 
-    // display message if no upcoming/ past events
-    const emptyMessage = document.createElement('p')
-    emptyMessage.textContent = 'Nothing to see here.'
-    emptyMessage.classList.add('empty-message')
-    emptyMessage.style.display = 'none'  
-    eventSection.appendChild(emptyMessage)
+    if (!userEventsCreated || userEventsCreated.length == 0) {
+        noEventsPlaceholder.style.display = "flex";
+        eventsContainer.style.display = "none";
+    } 
+    else {
+        noEventsPlaceholder.style.display = "none";
+        eventsContainer.style.display = "block";
+    }
 
     const eventsCreatedContainer = document.querySelector('.events_created_container')
     const overlay = document.getElementById('popupOverlay');
@@ -410,13 +412,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (yearPassed) {
             if (event.sameDay == 'True') {
-                formattedDate = startObj.toLocaleString('en-US', optionsDate);
+                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear}`;
             } 
             else if (event.sameMonth == 'True') {
-                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`;
+                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}, ${startYear}`;
             } 
             else if (event.sameYear == 'True') {
-                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`;
+                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}, ${startYear}`;
             } 
             else {
                 formattedDate = `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`;
@@ -528,36 +530,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         closePopup();
         }
     });
-
-    const buttons = document.querySelectorAll(".toggle-buttons button");
-    const groups = document.querySelectorAll(".event-group");
-
-    function filterEvents(showUpcoming) {
-        const today = new Date().setHours(0, 0, 0, 0);
-        let hasEventGroup = false
-
-        groups.forEach(group => {
-            const eventDate = new Date(group.dataset.date).setHours(0, 0, 0, 0);
-            const shouldShow = showUpcoming ? eventDate >= today : eventDate < today;
-            group.style.display = shouldShow ? "flex" : "none";
-            
-            if (shouldShow) {
-                hasEventGroup = true 
-            }
-        });
-
-        emptyMessage.style.display = hasEventGroup ? 'none' : 'block';
-    }
-
-    buttons.forEach(button => {
-        button.addEventListener("click", () => {
-            buttons.forEach(btn => btn.classList.remove("active"));
-            button.classList.add("active");
-
-            const isUpcoming = button.textContent.trim().toLowerCase() === "upcoming";
-            filterEvents(isUpcoming);
-        });
-    });
-    
-    filterEvents(true)
 });
