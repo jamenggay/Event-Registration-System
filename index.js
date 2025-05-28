@@ -288,8 +288,9 @@ app.post("/register-event", async (req, res) => {
         try {
             const result1 = await pool.request()
                 .input('eventID', sql.Int, eventID)
-                .query(`SELECT COUNT (*) AS registrationCount 
-                    FROM registrationTable WHERE eventID = @eventID`);
+                .query(`SELECT COUNT(*) AS total_registrations 
+                    FROM registrationTable 
+                    WHERE status != 'declined' AND eventID = @eventID`);
 
             const numOfRegistration = result1.recordset[0].registrationCount;
 

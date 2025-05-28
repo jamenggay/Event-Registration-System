@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       
 
         events.forEach((event, index) => {
-      
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');
       const div3 = document.createElement('div');    
@@ -107,7 +106,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       app.appendChild(div3);
 
    div3.querySelector('.card-wrap').addEventListener('click', () => {
+  article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
   const isSameDayPopup = sameDate[index].SameDay === 'True';
+  const isRegisteredPopup = registeredEventIDs.includes(event.eventID);
+
   const eventDatePopup = isSameDayPopup
     ? `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
     : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
@@ -124,6 +126,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     </div>
   `;
   
+    const popupRegBtn = article.querySelector('.popup-register-button');
+    popupRegBtn.disabled = isRegisteredPopup;
+
+    if (!isRegisteredPopup) {
+        popupRegBtn.addEventListener('click', () => {
+          const confirmed = confirm("Are you sure you want to register for this event?");
+          if (!confirmed) return;
+
+          fetch('/register-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (!data.success) {
+                alert(data.message); // Show backend error message
+                return;
+              }
+              popupRegBtn.textContent = 'Registered';
+              popupRegBtn.disabled = true;
+              alert(data.message);
+            })
+            .catch(err => {
+              console.error('Registration error:', err);
+            });
+
+        });
+      }
+
   openPopup();
 });
 
