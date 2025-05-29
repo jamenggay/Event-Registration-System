@@ -489,12 +489,20 @@ app.get("/user-events-created", async (req, res) => {
     try {
         const result = await pool.request()
                         .input('userID', sql.Int, userID)
-                        .query(`SELECT *,
-                                    IIF(CAST(startDateTime AS DATE) = CAST(endDateTime AS DATE), 'True', 'False') AS sameDay,
-                                    IIF(MONTH(startDateTime) = MONTH(endDateTime) AND YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameMonth,
-                                    IIF(YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameYear 
-                                FROM eventsTable 
-                                WHERE creatorID = @userID`)
+                        .query(`SELECT 
+                                    eT.eventID, eT.eventName, eT.description, eT.location, eT.startDateTime, eT.endDateTime,
+                                    eT.featureImage, eT.requireApproval, eT.capacity, eT.feedbackLink, eT.lastUpdated,
+                                    eT.category, eT.allowWaitlist, eT.themeIndex, AVG(fT.rating) AS ratings,
+                                    IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                    IIF(MONTH(eT.startDateTime) = MONTH(eT.endDateTime) AND YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameMonth,
+                                    IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear 
+                                FROM eventsTable eT
+                                LEFT JOIN feedbackTable fT ON eT.eventID = fT.eventID
+                                WHERE eT.creatorID = @userID
+                                GROUP BY 
+                                    eT.eventID, eT.eventName, eT.description, eT.location, eT.startDateTime, eT.endDateTime,
+                                    eT.featureImage, eT.requireApproval, eT.capacity, eT.feedbackLink, eT.lastUpdated,
+                                    eT.category, eT.allowWaitlist, eT.themeIndex`)
 
         const eventsData = result.recordset.map(event => ({
                                                 eventID         : event.eventID,
@@ -513,7 +521,8 @@ app.get("/user-events-created", async (req, res) => {
                                                 lastUpdated     : event.lastUpdated,
                                                 category        : event.category,
                                                 allowWaitlist   : event.allowWaitlist,
-                                                themeIndex      : event.themeIndex
+                                                themeIndex      : event.themeIndex,
+                                                ratings         : event.ratings
                                             }))
 
         console.log("User events created extraction success.")
@@ -1075,7 +1084,7 @@ app.get("/events-registered", async (req, res) => {
     }
 });
 
-// // custom page for not found
+// // custom route for page not found (404)
 // app.use((req, res) => {
 //     res.status(404).sendFile(path.join(__dirname, "public", "views", "test.html"))  
 // });
