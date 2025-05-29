@@ -1,4 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Dummy Data ni Rishaye
+    const eventData = {
+        "allowWaitlist": "Yes",
+        "capacity": 100,
+        "category": "Technology",
+        "description": "Join us in 𝐒𝐩𝐚𝐫𝐤𝐟𝐞𝐬𝐭 𝟐𝟎𝟐𝟓, a hackathon where brilliant minds come together to solve real-world challenges through 𝐜𝐫𝐞𝐚𝐭𝐢𝐯𝐢𝐭𝐲, 𝐜𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐢𝐨𝐧, 𝐚𝐧𝐝 𝐜𝐮𝐭𝐭𝐢𝐧𝐠-𝐞𝐝𝐠𝐞 𝐢𝐧𝐧𝐨𝐯𝐚𝐭𝐢𝐨𝐧.",
+        "endDateTime": "2025-06-07T18:30:00.000Z",
+        "eventID": 29,
+        "eventName": "SparkFest 2025",
+        "featureImage": "/uploads/featureImage/event_sample 5 (1).jpg",
+        "feedbackLink": "https://www.facebook.com/gdg.pupmnl",
+        "lastUpdated": "2025-05-27T20:05:57.747Z",
+        "location": "The Globe Tower, 2608 7th Ave, Taguig, 1634 Metro Manila",
+        "requireApproval": "Yes",
+        "startDateTime": "2025-06-07T08:00:00.000Z"
+    };
+
+    const registrationData = [
+        {
+            "eventID": 29,
+            "fullname": "Jamaine Tuazon",
+            "profilePic": "../assets/icons/profile-icon.jpeg",
+            "registrationID": 3,
+            "status": "Approved",
+            "userID": 7
+        },
+        {
+            "eventID": 29,
+            "fullname": "Jorge Fuertes",
+            "profilePic": "../assets/icons/profile-icon.jpeg",
+            "registrationID": 4,
+            "status": "Approved",
+            "userID": 8
+        },
+        {
+            "eventID": 29,
+            "fullname": "Reynald Quijano",
+            "profilePic": "../assets/icons/profile-icon.jpeg",
+            "registrationID": 6,
+            "status": "Declined",
+            "userID": 9
+        },
+        {
+            "eventID": 29,
+            "fullname": "Rishaye Melad",
+            "profilePic": "../assets/icons/profile-icon.jpeg",
+            "registrationID": 9,
+            "status": "Waitlisted",
+            "userID": 10
+        }
+    ];
+
+    const approvedGuestsData = [
+        {
+            "eventID": 29,
+            "fullname": "Jamaine Tuazon",
+            "profilePic": "../assets/icons/profile-icon.jpeg",
+            "registrationID": 3,
+            "status": "Approved",
+            "userID": 7
+        },
+        {
+            "eventID": 29,
+            "fullname": "Jorge Fuertes",
+            "profilePic": "../assets/icons/profile-icon.jpeg",
+            "registrationID": 4,
+            "status": "Approved",
+            "userID": 8
+        }
+    ];
+
     // Cache DOM elements
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -10,6 +81,113 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadButton = document.querySelector('.upload_button');
     const eventImage = document.getElementById('eventImage');
     const imagePreview = document.getElementById('imagePreview');
+
+    // Search functionality
+    const guestSearchInput = document.querySelector('#guest .search-input');
+    const checkinSearchInput = document.querySelector('#check-in .search-input');
+
+    const filterGuests = (searchTerm, container) => {
+        const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+        searchTerm = searchTerm.toLowerCase().trim();
+
+        if (!searchTerm) {
+            // If search is empty, show all guests
+            guests.forEach(guest => guest.style.display = '');
+            return;
+        }
+
+        guests.forEach(guest => {
+            const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
+            
+            // Check if the name starts with the search term
+            const matchFound = guestName.startsWith(searchTerm);
+            
+            // Apply smooth transition for showing/hiding
+            guest.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            
+            if (matchFound) {
+                guest.style.display = '';
+                guest.style.opacity = '1';
+                guest.style.transform = 'translateY(0)';
+            } else {
+                guest.style.opacity = '0';
+                guest.style.transform = 'translateY(-10px)';
+                // Hide the element after the transition
+                setTimeout(() => {
+                    guest.style.display = 'none';
+                }, 300);
+            }
+        });
+    };
+
+    // Add debounce function to prevent too many searches while typing
+    const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    };
+
+    // Apply debounced search to both inputs
+    if (guestSearchInput) {
+        guestSearchInput.addEventListener('input', debounce((e) => {
+            filterGuests(e.target.value, document.getElementById('guest'));
+        }, 300));
+    }
+
+    if (checkinSearchInput) {
+        checkinSearchInput.addEventListener('input', debounce((e) => {
+            filterGuests(e.target.value, document.getElementById('check-in'));
+        }, 300));
+    }
+
+    // Add clear search functionality
+    const addClearSearchButton = (input) => {
+        const clearButton = document.createElement('button');
+        clearButton.className = 'clear-search';
+        clearButton.innerHTML = '&times;';
+        clearButton.style.display = 'none';
+        
+        input.parentNode.style.position = 'relative';
+        input.parentNode.appendChild(clearButton);
+
+        clearButton.addEventListener('click', () => {
+            input.value = '';
+            input.focus();
+            clearButton.style.display = 'none';
+            
+            // Reset all guests in the current tab
+            const container = input.closest('.tab-pane');
+            const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+            guests.forEach(guest => {
+                guest.style.display = '';
+                guest.style.opacity = '1';
+                guest.style.transform = 'translateY(0)';
+            });
+        });
+
+        input.addEventListener('input', (e) => {
+            clearButton.style.display = e.target.value ? 'block' : 'none';
+            // If input is empty, reset the list
+            if (!e.target.value) {
+                const container = input.closest('.tab-pane');
+                const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+                guests.forEach(guest => {
+                    guest.style.display = '';
+                    guest.style.opacity = '1';
+                    guest.style.transform = 'translateY(0)';
+                });
+            }
+        });
+    };
+
+    if (guestSearchInput) addClearSearchButton(guestSearchInput);
+    if (checkinSearchInput) addClearSearchButton(checkinSearchInput);
 
     // Tab switching functionality
     tabButtons.forEach(button => {
@@ -27,14 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Function to format date and time
-    const formatDateTime = (date, time) => {
+    const formatDateTime = (dateTimeString) => {
         try {
-            const [year, month, day] = date.split('-').map(Number);
-            const [hours, minutes] = time.split(':').map(Number);
-            
-            const dateObj = new Date(year, month - 1, day, hours, minutes);
-            
-            return dateObj.toLocaleString('en-US', {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -68,40 +242,211 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Function to display event data
-    const displayEventData = (eventData) => {
+    const displayEventData = (data) => {
         try {
-            if (eventData.image) {
-                document.getElementById('eventImage').src = eventData.image;
-                document.getElementById('eventImage').style.display = 'block';
+            console.log('Displaying event data:', data); // Debug log
+
+            if (data.featureImage) {
+                const imagePath = data.featureImage.startsWith('/') ? data.featureImage : `/${data.featureImage}`;
+                const eventImage = document.getElementById('eventImage');
+                eventImage.src = imagePath;
+                eventImage.style.display = 'block';
+                console.log('Setting image path:', imagePath); // Debug log
             }
 
-            document.querySelector('.event_name').textContent = eventData.name || '';
+            // Update event details
+            const eventName = document.querySelector('.event_name');
+            if (eventName) eventName.textContent = data.eventName || '';
 
-            if (eventData.startDate && eventData.startTime) {
-                document.querySelector('.start-datetime').textContent = 
-                    formatDateTime(eventData.startDate, eventData.startTime);
-            }
-            if (eventData.endDate && eventData.endTime) {
-                document.querySelector('.end-datetime').textContent = 
-                    formatDateTime(eventData.endDate, eventData.endTime);
+            const startDateTime = document.querySelector('.start-datetime');
+            if (startDateTime && data.startDateTime) {
+                startDateTime.textContent = formatDateTime(data.startDateTime);
             }
 
-            document.querySelector('.location-text').textContent = eventData.location || '';
-            document.querySelector('.description-text').textContent = eventData.description || '';
-            document.querySelector('.category-text').textContent = eventData.category || '';
-            document.querySelector('.feedback-link').textContent = eventData.feedbackLink || '';
-            document.querySelector('.approval-status').textContent = 
-                eventData.requireApproval ? 'Required' : 'Not Required';
+            const endDateTime = document.querySelector('.end-datetime');
+            if (endDateTime && data.endDateTime) {
+                endDateTime.textContent = formatDateTime(data.endDateTime);
+            }
 
-            if (eventData.capacity) {
-                document.querySelector('.capacity-text').textContent = `Maximum: ${eventData.capacity}`;
-                document.querySelector('.waitlist-status').textContent = 
-                    `Waitlist: ${eventData.waitlist ? 'Enabled' : 'Disabled'}`;
+            const locationText = document.querySelector('.location-text');
+            if (locationText) locationText.textContent = data.location || '';
+
+            const descriptionText = document.querySelector('.description-text');
+            if (descriptionText) descriptionText.textContent = data.description || '';
+
+            const categoryText = document.querySelector('.category-text');
+            if (categoryText) categoryText.textContent = data.category || '';
+
+            const feedbackLink = document.querySelector('.feedback-link');
+            if (feedbackLink) feedbackLink.textContent = data.feedbackLink || '';
+
+            const approvalStatus = document.querySelector('.approval-status');
+            if (approvalStatus) {
+                approvalStatus.textContent = data.requireApproval === "Yes" ? 'Required' : 'Not Required';
+            }
+
+            const capacityText = document.querySelector('.capacity-text');
+            if (capacityText && data.capacity) {
+                capacityText.textContent = `Maximum: ${data.capacity}`;
+            }
+
+            const waitlistStatus = document.querySelector('.waitlist-status');
+            if (waitlistStatus) {
+                waitlistStatus.textContent = `Waitlist: ${data.allowWaitlist === "Yes" ? 'Enabled' : 'Disabled'}`;
             }
         } catch (error) {
             console.error('Error displaying event data:', error);
         }
     };
+
+    // Function to display guest list
+    const displayGuestList = (guests) => {
+        try {
+            console.log('Displaying guest list:', guests); // Debug log
+            const guestListContainer = document.querySelector('#guest');
+            if (!guestListContainer) {
+                console.error('Guest list container not found');
+                return;
+            }
+
+            const existingGuests = guestListContainer.querySelectorAll('.attendee-container');
+            existingGuests.forEach(guest => guest.remove());
+
+            guests.forEach(guest => {
+                const guestElement = document.createElement('div');
+                guestElement.className = 'attendee-container';
+                const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+                guestElement.innerHTML = `
+                    <div class="attendee-info">
+                        <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                        <span class="attendee-name">${guest.fullname}</span>
+                    </div>
+                    <div class="attendee-actions">
+                        <button class="accept">Dalo</button>
+                        <button class="decline">Decline</button>
+                    </div>
+                `;
+                guestListContainer.appendChild(guestElement);
+            });
+        } catch (error) {
+            console.error('Error displaying guest list:', error);
+        }
+    };
+
+    // Function to display check-in list
+    const displayCheckInList = (guests) => {
+        try {
+            console.log('Displaying check-in list:', guests);
+            const checkInContainer = document.querySelector('#check-in');
+            if (!checkInContainer) {
+                console.error('Check-in container not found');
+                return;
+            }
+
+            const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
+            existingGuests.forEach(guest => guest.remove());
+
+            guests.forEach(guest => {
+                const guestElement = document.createElement('div');
+                guestElement.className = 'checkin-guest';
+                const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+                guestElement.innerHTML = `
+                    <div class="guest-info">
+                        <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                        <span class="guest-name">${guest.fullname}</span>
+                    </div>
+                    <div class="attendance-options">
+                        <label class="attendance-option attended">
+                            <input type="radio" name="attendance${guest.registrationID}" value="attended">
+                            <span>Attended</span>
+                        </label>
+                        <label class="attendance-option not-attended">
+                            <input type="radio" name="attendance${guest.registrationID}" value="not-attended">
+                            <span>Not Attended</span>
+                        </label>
+                    </div>
+                `;
+                checkInContainer.appendChild(guestElement);
+
+                // Add event listeners for the radio buttons
+                const radioButtons = guestElement.querySelectorAll('input[type="radio"]');
+                radioButtons.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const checkinGuest = this.closest('.checkin-guest');
+                        checkinGuest.classList.remove('attended', 'not-attended');
+                        
+                        if (this.value === 'attended') {
+                            checkinGuest.classList.add('attended');
+                        } else if (this.value === 'not-attended') {
+                            checkinGuest.classList.add('not-attended');
+                        }
+
+                        // Update the guest's attendance status in the data
+                        guest.attendanceStatus = this.value;
+                        console.log(`Updated attendance for ${guest.fullname}: ${this.value}`);
+                    });
+                });
+            });
+        } catch (error) {
+            console.error('Error displaying check-in list:', error);
+        }
+    };
+
+    // Add CSS classes for attendance status
+    const style = document.createElement('style');
+    style.textContent = `
+        .checkin-guest.attended {
+            background-color: #28a745;
+        }
+        .checkin-guest.attended .guest-name,
+        .checkin-guest.attended .attendance-option span {
+            color: white;
+        }
+        .checkin-guest.attended .guest-info img {
+            filter: brightness(0) invert(1);
+        }
+        .checkin-guest.not-attended {
+            background-color: #dc3545;
+        }
+        .checkin-guest.not-attended .guest-name,
+        .checkin-guest.not-attended .attendance-option span {
+            color: white;
+        }
+        .checkin-guest.not-attended .guest-info img {
+            filter: brightness(0) invert(1);
+        }
+        .attendance-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+        .attendance-option input[type="radio"] {
+            display: none;
+        }
+        .attendance-option span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+        }
+        .attendance-option.attended {
+            background-color: #28a745;
+        }
+        .attendance-option.attended span {
+            color: white;
+        }
+        .attendance-option.not-attended {
+            background-color: #dc3545;
+        }
+        .attendance-option.not-attended span {
+            color: white;
+        }
+    `;
+    document.head.appendChild(style);
 
     // Function to populate modal form with current event data
     const populateModalForm = (eventData) => {
@@ -246,34 +591,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle radio button changes for check-in
-    document.querySelectorAll('input[type="radio"][name^="attendance"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const checkinGuest = this.closest('.checkin-guest');
-            checkinGuest.classList.remove('attended', 'not-attended');
-            
-            if (this.value === 'attended') {
-                checkinGuest.classList.add('attended');
-            } else if (this.value === 'not-attended') {
-                checkinGuest.classList.add('not-attended');
-            }
-        });
-    });
+    // Initialize the display
+    console.log('Initializing display with event data:', eventData);
+    displayEventData(eventData);
+    displayGuestList(registrationData);
+    displayCheckInList(approvedGuestsData);
 
-    // For testing/development - remove in production
-    const sampleEventData = {
-        name: "Event ni R2J",
-        startDate: "2024-03-20",
-        startTime: "14:00",
-        endDate: "2024-03-20",
-        endTime: "16:00",
-        location: "NU - Manila",
-        description: "ang tulang ito ay para sa mga batang ina.",
-        category: "Technology",
-        feedbackLink: "https://feedback.example.com",
-        requireApproval: true,
-        capacity: 100,
-        waitlist: true
-    };
-    displayEventData(sampleEventData);
+  
 });
+

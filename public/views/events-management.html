@@ -73,7 +73,9 @@
                             <div class="icon-heading">
                                 <img src="../assets/icons/description-icon.png" class="icon-flex">
                                 <h3>Description: </h3>
-                                <p class="description-text"></p>
+                                <div class="text-holder">
+                                    <p class="description-text"></p>
+                                </div>
                             </div>
                         </div>
 
@@ -119,11 +121,18 @@
                         <img src="../assets/icons/edit-icon.png" class="edit-icon" alt="Edit">
                         Edit Event
                     </button>
+                    <button class="delete-button">
+                        <img src="../assets/icons/delete-icon.png" class="delete-icon" alt="Delete">
+                        Delete Event
+                    </button>
                 </div>
             </div>
 
             <div class="tab-pane" id="guest">
                 <h1>Guest List</h1>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search guests...">
+                </div>
                 <div class="attendee-container">
                     <div class="attendee-info">
                         <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
@@ -156,72 +165,73 @@
                         <button class="decline">Decline</button>
                     </div>
                 </div>
-
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Belly Button</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <button class="accept">Dalo</button>
-                        <button class="decline">Decline</button>
-                    </div>
-                </div>
             </div>
 
 
             <div class="tab-pane" id="check-in">
                 <h1>Check In</h1>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search guests...">
+                </div>
 
-                <div class="checkin-guest">
-                    <div class="guest-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="guest-name">Browny</span>
+                <div class="checkin-list">
+                    <div class="checkin-guest">
+                        <div class="guest-info">
+                            <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                            <span class="guest-name">Browny</span>
+                        </div>
+                        <div class="attendance-options">
+                            <label class="attendance-option attended">
+                                <input type="radio" name="attendance1" value="attended">
+                                <span>Attended</span>
+                            </label>
+                            <label class="attendance-option not-attended">
+                                <input type="radio" name="attendance1" value="not-attended">
+                                <span>Not Attended</span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="attendance-options">
-                        <label class="attendance-option attended">
-                            <input type="radio" name="attendance1" value="attended">
-                            <span>Attended</span>
-                        </label>
-                        <label class="attendance-option not-attended">
-                            <input type="radio" name="attendance1" value="not-attended">
-                            <span>Not Attended</span>
-                        </label>
+
+                    <div class="checkin-guest">
+                        <div class="guest-info">
+                            <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                            <span class="guest-name">Bogart</span>
+                        </div>
+                        <div class="attendance-options">
+                            <label class="attendance-option attended">
+                                <input type="radio" name="attendance2" value="attended">
+                                <span>Attended</span>
+                            </label>
+                            <label class="attendance-option not-attended">
+                                <input type="radio" name="attendance2" value="not-attended">
+                                <span>Not Attended</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checkin-guest">
+                        <div class="guest-info">
+                            <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
+                            <span class="guest-name">Ice Spice</span>
+                        </div>
+                        <div class="attendance-options">
+                            <label class="attendance-option attended">
+                                <input type="radio" name="attendance3" value="attended">
+                                <span>Attended</span>
+                            </label>
+                            <label class="attendance-option not-attended">
+                                <input type="radio" name="attendance3" value="not-attended">
+                                <span>Not Attended</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <div class="checkin-guest">
-                    <div class="guest-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="guest-name">Bogart</span>
-                    </div>
-                    <div class="attendance-options">
-                        <label class="attendance-option attended">
-                            <input type="radio" name="attendance2" value="attended">
-                            <span>Attended</span>
-                        </label>
-                        <label class="attendance-option not-attended">
-                            <input type="radio" name="attendance2" value="not-attended">
-                            <span>Not Attended</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="checkin-guest">
-                    <div class="guest-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="guest-name">Ice Spice</span>
-                    </div>
-                    <div class="attendance-options">
-                        <label class="attendance-option attended">
-                            <input type="radio" name="attendance3" value="attended">
-                            <span>Attended</span>
-                        </label>
-                        <label class="attendance-option not-attended">
-                            <input type="radio" name="attendance3" value="not-attended">
-                            <span>Not Attended</span>
-                        </label>
-                    </div>
+                <div class="download-button-container">
+                    <button class="download-button">
+                        <img src="../assets/icons/download-icon.png" class="download-icon" alt="Download">
+                        Download 
+                    </button>
                 </div>
             </div>
         </div>

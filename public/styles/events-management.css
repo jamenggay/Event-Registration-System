@@ -129,6 +129,8 @@ body::before {
 .tab-pane {
     display: none;
     min-height: 100%;
+    position: relative;
+    padding-bottom: 80px;
 }
 
 .tab-pane.active {
@@ -340,6 +342,7 @@ body::before {
 .edit-button-container {
     display: flex;
     justify-content: flex-end;
+    gap: 1rem;
     margin-top: 2rem;
     padding: 0 1rem;
 }
@@ -367,8 +370,37 @@ body::before {
     box-shadow: 0 4px 8px rgba(0, 117, 187, 0.3);
 }
 
+.delete-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #c82333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 117, 187, 0.2);
+    text-transform: none;
+}
+
+.delete-button:hover {
+    background-color: #a71d2a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(200, 35, 51, 0.3);
+}
+
 .edit-icon {
     width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.delete-icon {
+    width: 15px;
     height: 20px;
     filter: brightness(0) invert(1);
 }
@@ -393,32 +425,36 @@ body::before {
     margin-bottom: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.attendee-info,
-.guest-info {
+.attendee-info {
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
-.attendee-info img,
-.guest-info img {
+.attendee-info img {
     width: 24px;
     height: 24px;
     opacity: 0.8;
 }
 
-.attendee-name,
-.guest-name {
+.attendee-name {
     font-size: 1rem;
     font-weight: 500;
     color: #333;
 }
 
+.attendee-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .attendee-actions button {
     padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
     border: none;
     border-radius: 6px;
     font-weight: 500;
@@ -444,6 +480,40 @@ body::before {
     background-color: #c82333;
 }
 
+/* Remove all previous custom styles for buttons to ensure a clean revert */
+/* This includes pill, maximize/minimize, toggle, and forceful overrides */
+.attendee-actions .accept,
+.attendee-actions .decline,
+.attendee-actions .accept:focus,
+.attendee-actions .accept:focus-visible,
+.attendee-actions .decline:focus,
+.attendee-actions .decline:focus-visible,
+.attendee-actions button.active,
+.attendee-actions button.inactive,
+.attendee-actions button:focus,
+.attendee-actions button:active,
+.attendee-toggle,
+.toggle-btn {
+    all: unset !important; /* Attempt to remove all inherited styles */
+    /* Re-apply basic styles that were unset */
+    display: inline-block !important;
+    padding: 0.5rem 1rem !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+    color: white !important; /* Default button text color */
+}
+
+/* Specific background colors for accept and decline */
+.attendee-actions .accept { background-color: #28a745 !important; }
+.attendee-actions .decline { background-color: #dc3545 !important; }
+
+/* Basic hover styles */
+.attendee-actions .accept:hover { background-color: #218838 !important; }
+.attendee-actions .decline:hover { background-color: #c82333 !important; }
+
 .checkin-guest {
     display: flex;
     justify-content: space-between;
@@ -453,7 +523,7 @@ body::before {
     border-radius: 8px;
     margin-bottom: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
 .checkin-guest input[type="radio"][value="attended"]:checked ~ .guest-info ~ .attendance-options,
@@ -738,6 +808,9 @@ body::before {
     padding: 0.75rem;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 12px;
+      word-wrap: break-word;
+  overflow-wrap: break-word;
+
 }
 
 .icon-heading {
@@ -1094,4 +1167,135 @@ h3 {
 
 .checkin-guest.not-attended .guest-info img {
     filter: brightness(0) invert(1);
+}
+
+.search-container {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 2.5rem;
+    border: 1px solid rgba(0, 117, 187, 0.2);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #0075BB;
+    box-shadow: 0 0 0 2px rgba(0, 117, 187, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.clear-search:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.download-button-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.download-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    text-transform: none;
+}
+
+.download-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.download-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.checkin-list {
+    margin-bottom: 2rem;
+}
+
+.attendee-toggle {
+    display: inline-flex;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1.5px solid #28a745;
+    background: #f5f5f5;
+}
+
+.toggle-btn {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #333;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.toggle-btn.dalo.active {
+    background: #28a745;
+    color: #fff;
+}
+
+.toggle-btn.decline.active {
+    background: #dc3545;
+    color: #fff;
+}
+
+.toggle-btn:not(.active) {
+    background: transparent;
+    color: #333;
 }
