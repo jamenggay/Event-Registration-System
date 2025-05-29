@@ -107,16 +107,16 @@ app.get('/logout', (req, res)=>{
 
 // create events page
 app.get("/create-events", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/'); //require log in
+    }
+
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 });
 
 // create events page
 app.post("/create-events", async (req, res) => { 
     const userID = req.session.user.id;
-  
-    if (!userID) {
-        res.status(401).json({ message: 'Unauthorized: No user session found.' });
-    }
     
     const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
             startDateTime, endDateTime, location, description, category, 
@@ -203,11 +203,21 @@ app.post("/create-events", async (req, res) => {
 
 //fetch event details from eventsTable
 app.get("/event-details", async (req, res) => {
-    try {
-        let result = await pool.request().query('SELECT * FROM eventsTable;');
+    const userID = req.session.user.id;
 
-        res.json(result.recordset);
-        console.log("data fetched successfully!")
+    try {
+        let eventsResult = await pool.request().query(`SELECT * FROM eventsTable
+            WHERE endDateTime > GETDATE();`);
+
+
+        let createdEventsResult= await pool.request()
+        .input('userID', sql.Int, userID)
+        .query(`SELECT * FROM eventsTable WHERE creatorID = @userID`);
+
+        res.json({ 
+            events: eventsResult.recordset,
+            createdEvents : createdEventsResult.recordset
+        });
     }
     catch (err) {
         console.error("Error fetching data", err);
@@ -715,11 +725,30 @@ app.patch("/user-password", async (req, res) => {
 });
 
 // event management page
-app.get("/event/:eventID", (req, res) => {
+app.get("/event/:eventID", async (req, res) => {
     if (!req.session.user) {
-    return res.redirect('/'); //require log in
-  }
-    res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
+        return res.redirect('/'); //require log in
+    }
+
+    const eventID = req.params.eventID
+    const userID = req.session.user.id
+
+    try {
+        const result = await pool.request()
+                        .input('eventID', sql.Int, eventID)
+                        .input('userID', sql.Int, userID)
+                        .query(`SELECT * FROM eventsTable WHERE eventID = @eventID AND creatorID = @userID`)
+
+        if (result.recordset.length == 0) { 
+            res.redirect('/events')
+        }
+        else if (result.recordset.length != 0) {
+            res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
+        }
+    }
+    catch (e) {
+
+    }
 });
 
 //event management page 
