@@ -115,11 +115,19 @@ app.post("/login", async (req, res) => {
     }
 });
 
+// home page
+app.get('/logout', (req, res)=>{
+    req.session = null; // clears the session
+
+    res.redirect('/');
+});
+
 // create events page
 app.get("/create-events", (req, res) => {
     if (!req.session.user) {
-    return res.redirect('/'); //require log in
-  }
+        return res.redirect('/'); //require log in
+    }
+
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 });
 
@@ -212,7 +220,6 @@ app.post("/create-events", async (req, res) => {
 
 //fetch event details from eventsTable
 app.get("/event-details", async (req, res) => {
-    
     const userID = req.session.user.id;
 
     try {
@@ -438,10 +445,28 @@ app.get("/api/user-registrations", async (req, res) => {
 
 });
 
+// cancelation of registration
+app.delete("/cancel-registration", async (req, res) => {
+    const userID = req.session.user.id;
+    const { eventID } = req.body
 
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .input('userID', sql.Int, userID)
+            .query(`DELETE FROM registrationTable WHERE eventID = @eventID AND userID = @userID`)
+
+        console.log("Event registration cancelation success")
+        res.status(200).json({ message : 'Event registration cancelation success' })
+    }
+    catch (e) {
+        console.log("Event registration cancelation failed")
+        res.status(500).json({ message : 'Event registration cancelation failed', error : e })
+    }
+});
 
 // user profile page
-app.get("/user-profile", (req, res) => {
+app.get("/user-profile", (req, res) => { 
     if (!req.session.user) {
     return res.redirect('/'); //require log in
   }
@@ -506,33 +531,42 @@ app.get("/user-events-created", async (req, res) => {
 
     try {
         const result = await pool.request()
-            .input('userID', sql.Int, userID)
-            .query(`SELECT *,
-                                    IIF(CAST(startDateTime AS DATE) = CAST(endDateTime AS DATE), 'True', 'False') AS sameDay,
-                                    IIF(MONTH(startDateTime) = MONTH(endDateTime) AND YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameMonth,
-                                    IIF(YEAR(startDateTime) = YEAR(endDateTime), 'True', 'False') AS sameYear 
-                                FROM eventsTable 
-                                WHERE creatorID = @userID`)
+                        .input('userID', sql.Int, userID)
+                        .query(`SELECT 
+                                    eT.eventID, eT.eventName, eT.description, eT.location, eT.startDateTime, eT.endDateTime,
+                                    eT.featureImage, eT.requireApproval, eT.capacity, eT.feedbackLink, eT.lastUpdated,
+                                    eT.category, eT.allowWaitlist, eT.themeIndex, AVG(fT.rating) AS ratings,
+                                    IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
+                                    IIF(MONTH(eT.startDateTime) = MONTH(eT.endDateTime) AND YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameMonth,
+                                    IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear 
+                                FROM eventsTable eT
+                                LEFT JOIN feedbackTable fT ON eT.eventID = fT.eventID
+                                WHERE eT.creatorID = @userID
+                                GROUP BY 
+                                    eT.eventID, eT.eventName, eT.description, eT.location, eT.startDateTime, eT.endDateTime,
+                                    eT.featureImage, eT.requireApproval, eT.capacity, eT.feedbackLink, eT.lastUpdated,
+                                    eT.category, eT.allowWaitlist, eT.themeIndex`)
 
         const eventsData = result.recordset.map(event => ({
-            eventID: event.eventID,
-            eventName: event.eventName,
-            description: event.description,
-            location: event.location,
-            startDateTime: event.startDateTime,
-            endDateTime: event.endDateTime,
-            sameDay: event.sameDay,
-            sameMonth: event.sameMonth,
-            sameYear: event.sameYear,
-            featureImage: event.featureImage,
-            requireApproval: event.requireApproval,
-            capacity: event.capacity,
-            feedbackLink: event.feedbackLink,
-            lastUpdated: event.lastUpdated,
-            category: event.category,
-            allowWaitlist: event.allowWaitlist,
-            themeIndex: event.themeIndex
-        }))
+                                                eventID         : event.eventID,
+                                                eventName       : event.eventName,
+                                                description     : event.description,
+                                                location        : event.location,
+                                                startDateTime   : event.startDateTime,
+                                                endDateTime     : event.endDateTime, 
+                                                sameDay         : event.sameDay,
+                                                sameMonth       : event.sameMonth,
+                                                sameYear        : event.sameYear,
+                                                featureImage    : event.featureImage,
+                                                requireApproval : event.requireApproval,
+                                                capacity        : event.capacity,
+                                                feedbackLink    : event.feedbackLink,
+                                                lastUpdated     : event.lastUpdated,
+                                                category        : event.category,
+                                                allowWaitlist   : event.allowWaitlist,
+                                                themeIndex      : event.themeIndex,
+                                                ratings         : event.ratings
+                                            }))
 
         console.log("User events created extraction success.")
         return res.status(200).json(eventsData)
@@ -707,11 +741,30 @@ app.patch("/user-password", async (req, res) => {
 });
 
 // event management page
-app.get("/event/:eventID", (req, res) => {
+app.get("/event/:eventID", async (req, res) => {
     if (!req.session.user) {
-    return res.redirect('/'); //require log in
-  }
-    res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))
+        return res.redirect('/'); //require log in
+    }
+
+    const eventID = req.params.eventID
+    const userID = req.session.user.id
+
+    try {
+        const result = await pool.request()
+                        .input('eventID', sql.Int, eventID)
+                        .input('userID', sql.Int, userID)
+                        .query(`SELECT * FROM eventsTable WHERE eventID = @eventID AND creatorID = @userID`)
+
+        if (result.recordset.length == 0) { 
+            res.redirect('/events')
+        }
+        else if (result.recordset.length != 0) {
+            res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
+        }
+    }
+    catch (e) {
+
+    }
 });
 
 //event management page 
@@ -1022,6 +1075,24 @@ app.delete("/checkin-attendee", async (req, res) => {
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
         res.status(500).json({ message: 'Attendee details extraction failed', error: e })
+    }
+});
+
+// event management page
+app.delete("/delete-event", async (req, res) => {
+    const { eventID } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
+
+        console.log("Event deletion success")
+        res.status(200).json({ message : 'Event deletion success' })
+    }
+    catch (e) {
+        console.log("Event deletion failed: ", e)
+        res.status(500).json({ message : 'Event deletion failed', error : e})
     }
 });
 
