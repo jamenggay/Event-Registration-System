@@ -957,6 +957,9 @@ button.close-btn:hover {
 }
 
 .card-actions .going-status,
+.card-actions .declined-status,
+.card-actions .pending-status,
+.card-actions .waitlisted-status,
 .card-actions .feedback-box,
 .card-actions .cancel-box {
   margin-top: 0;
