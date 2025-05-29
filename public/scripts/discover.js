@@ -9,25 +9,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const res1 = await fetch('/event-details');
+    const eventsData = await res1.json();
+    const events = eventsData.events;
+    const createdEvents = eventsData.createdEvents;
+
     const res2 = await fetch('/api/formatStartDate');
-    const res3 = await fetch('/api/formatEndDate');
-    const res4 = await fetch('/api/compareDate');
-    const res5 = await fetch('/api/endTime');
-    const res6 = await fetch('/api/user-registrations');
-    const events = await res1.json();
     const startDateTime = await res2.json();
+
+    const res3 = await fetch('/api/formatEndDate');
     const endDateTime = await res3.json();
+
+    const res4 = await fetch('/api/compareDate');
     const sameDate = await res4.json();
+
+    const res5 = await fetch('/api/endTime');
     const endTime = await res5.json();
+
+    const res6 = await fetch('/api/user-registrations');
+    const registeredData = await res6.json();
+
     const article = document.createElement('article');
     article.className = "card-popup";
     overlay.appendChild(article);
-    const registeredData = await res6.json();
+
 
     const eventStatusMap = {};
     registeredData.registrations.forEach(reg => {
       eventStatusMap[reg.eventID] = reg.status;
     });
+
+
 
 
 
@@ -45,12 +56,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isSameDay = sameDate[index].SameDay === 'True';
       const registrationStatus = eventStatusMap[event.eventID];
 
-
+      const isUserCreated = createdEvents.some(createdEvent => createdEvent.eventID === event.eventID);
       let buttonText = 'Register';
-      if (registrationStatus === 'Waitlisted') {
-        buttonText = 'Waitlisted';
-      } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved') {
-        buttonText = 'Registered';
+
+      if (isUserCreated) {
+        buttonText = 'Your Event';
+      }
+      else {
+        if (registrationStatus === 'Waitlisted') {
+          buttonText = 'Waitlisted';
+        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved') {
+          buttonText = 'Registered';
+        }
       }
 
 
@@ -74,8 +91,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       eventList.appendChild(div1);
 
+      
+
       const button = div1.querySelector('.register-button');
-      button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
+      button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted' || buttonText === 'Your Event';
 
 
 
@@ -128,39 +147,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       div3.querySelector('.card-wrap').addEventListener('click', () => {
         article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
-        const isSameDayPopup = sameDate[index].SameDay === 'True';
-        const registrationStatusPopup = eventStatusMap[event.eventID];
-
-        let buttonTextPopup = 'Register';
-      if (registrationStatus === 'Waitlisted') {
-        buttonTextPopup = 'Waitlisted';
-      } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved') {
-        buttonTextPopup = 'Registered';
-      }
-
-
-        const eventDatePopup = isSameDayPopup
-          ? `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</div>`
-          : `<div class="popup-event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</div>`;
-
+  
         article.innerHTML = `
     <button class="close-btn" onclick="closePopup()">&times;</button>
     <div class="popup-event-content">
-      ${eventDatePopup}
+      ${eventDateHTML}
       <div class="popup-event-title">${event.eventName}</div>
       <div class="popup-event-category">${event.category}</div>
       <div class="popup-event-description">${event.description}</div>
       <div class="popup-event-location">Location: <i>${event.location}</i></div>
       <button class="popup-register-button" data-event-id="${event.eventID}">
-      ${buttonTextPopup}
+      ${buttonText}
     </button>
     </div>
   `;
 
         const popupRegBtn = article.querySelector('.popup-register-button');
-        popupRegBtn.disabled = registrationStatusPopup === 'Registered' || registrationStatusPopup === 'Waitlisted';
+        popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
 
-        if (!registrationStatusPopup) {
+        if (!registrationStatus) {
           popupRegBtn.addEventListener('click', () => {
             const confirmed = confirm("Are you sure you want to register for this event?");
             if (!confirmed) return;

@@ -34,6 +34,12 @@ app.use(cookieSession({
     keys: ['cooKey'],
 }));
 
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
+
 // set http server for http requests (few GET, POST, PUT, PATCH, DELETE)
 const server = http.createServer(app)
 
@@ -42,6 +48,7 @@ const wss = new WebSocketServer({ server })
 
 // home page
 app.get("/", (req, res) => {
+    
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
 });
 
@@ -110,6 +117,9 @@ app.post("/login", async (req, res) => {
 
 // create events page
 app.get("/create-events", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
 });
 
@@ -206,11 +216,22 @@ app.post("/create-events", async (req, res) => {
 
 //fetch event details from eventsTable
 app.get("/event-details", async (req, res) => {
-    try {
-        let result = await pool.request().query('SELECT * FROM eventsTable;');
+    
+    const userID = req.session.user.id;
 
-        res.json(result.recordset);
-        console.log("data fetched successfully!")
+    try {
+        let eventsResult = await pool.request().query(`SELECT * FROM eventsTable
+            WHERE endDateTime > GETDATE();`);
+
+
+        let createdEventsResult= await pool.request()
+        .input('userID', sql.Int, userID)
+        .query(`SELECT * FROM eventsTable WHERE creatorID = @userID`);
+
+        res.json({ 
+            events: eventsResult.recordset,
+            createdEvents : createdEventsResult.recordset
+        });
     }
     catch (err) {
         console.error("Error fetching data", err);
@@ -268,12 +289,18 @@ app.get("/api/compareDate", async (req, res) => {
 
 // events page
 app.get("/events", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
 
 });
 
 // discover page
 app.get("/discover", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
 
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
 
@@ -419,6 +446,9 @@ app.get("/api/user-registrations", async (req, res) => {
 
 // user profile page
 app.get("/user-profile", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
     res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))
 })
 
@@ -682,6 +712,9 @@ app.patch("/user-password", async (req, res) => {
 
 // event management page
 app.get("/event/:eventID", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
     res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))
 });
 
@@ -1047,6 +1080,12 @@ app.get("/events-registered", async (req, res) => {
         console.log("Events registered extraction failed: ", e)
         return res.status(500).json({ message: 'Events registered extration failed', error: e })
     }
+});
+
+app.get('/logout', (req, res)=>{
+    req.session = null; // clears the session
+
+    res.redirect('/');
 });
 
 server.listen(port, () => {

@@ -806,3 +806,161 @@ button.close-btn:hover {
   opacity: 1;
   animation: text 1.5s linear infinite;
 }
+
+.cancel-event-box {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-event-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-event-btn:hover {
+  background: rgba(255, 68, 68, 0.2);
+  border-color: rgba(255, 68, 68, 0.3);
+}
+
+.cancel-event-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.cancel-event-btn span {
+  font-weight: 500;
+}
+
+.cancel-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  max-width: 400px;
+  width: 90%;
+  display: none;
+}
+
+.cancel-popup.active {
+  display: block;
+}
+
+.cancel-popup h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.cancel-popup p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.cancel-popup-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.cancel-popup-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-popup-buttons .confirm-btn {
+  background: #ff4444;
+  color: white;
+}
+
+.cancel-popup-buttons .confirm-btn:hover {
+  background: #ff2222;
+}
+
+.cancel-popup-buttons .cancel-btn {
+  background: #f1f1f5;
+  color: #666;
+}
+
+.cancel-popup-buttons .cancel-btn:hover {
+  background: #e1e1e5;
+}
+
+.cancel-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+}
+
+.cancel-popup-overlay.active {
+  display: block;
+}
+
+.cancel-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 68, 68, 0.12);
+  border: 1.5px solid #ff4444;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  color: #ff4444;
+  box-shadow: 0 1px 4px rgba(255, 68, 68, 0.07);
+}
+
+.cancel-box:hover {
+  background: #ff4444;
+  color: #fff;
+  border-color: #ff2222;
+}
+
+.cancel-box svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.5rem;
+}
+
+.card-actions .going-status,
+.card-actions .declined-status,
+.card-actions .pending-status,
+.card-actions .waitlisted-status,
+.card-actions .feedback-box,
+.card-actions .cancel-box {
+  margin-top: 0;
+}
