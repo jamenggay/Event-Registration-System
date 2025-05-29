@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     profilePic.src = userData.profilePic 
     profilePic.onerror =  function() {
         this.onerror = null; // prevent infinite loop if fallback fails
-        this.src = "../assets/icons/profile-icon.jpeg";
+        this.src = "/assets/icons/profile-icon.jpeg";
     };
     
     const uploadButton = document.getElementById('uploadButton');

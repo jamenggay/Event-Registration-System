@@ -124,16 +124,12 @@ app.get("/create-events", (req, res) => {
 });
 
 // create events page
-app.post("/create-events", async (req, res) => {
+app.post("/create-events", async (req, res) => { 
     const userID = req.session.user.id;
-
-    if (!userID) {
-        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
-    }
-
-    const { base64FeatureImage, imageFileName, imageFileExtension, eventName,
-        startDateTime, endDateTime, location, description, category,
-        feedback, requireApproval, capacity, allowWaitlist, lastUpdated, themeIndex } = req.body
+    
+    const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
+            startDateTime, endDateTime, location, description, category, 
+            feedback, requireApproval, capacity, allowWaitlist, lastUpdated, themeIndex } = req.body
 
     // convert base64 string of featureImage into binary
     function getBinaryValue(base64FeatureImage) {
@@ -155,7 +151,7 @@ app.post("/create-events", async (req, res) => {
     if (!binaryFeatureImage) {
         return res.json({ message: 'Invalid image format.' });
     }
-
+    
     let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
     let featureImageFileName = `${imageFileName}.${imageFileExtension}`
 
@@ -172,9 +168,9 @@ app.post("/create-events", async (req, res) => {
     const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
 
     // saves featureImage in uploads/featureImage folder
-    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => {
-        if (error) {
-            console.log("Image Creation Failed: ", error)
+    fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
+        if (error) { 
+            console.log("Image Creation Failed: ", error) 
         }
     });
 
@@ -186,7 +182,7 @@ app.post("/create-events", async (req, res) => {
             .input('featureImage', sql.VarChar, publicFeatureImagePath)
             .input('eventName', sql.NVarChar, eventName)
             .input('startDateTime', sql.DateTime, startDateTime)
-            .input('endDateTime', sql.DateTime, endDateTime)
+            .input('endDateTime', sql.DateTime, endDateTime) 
             .input('location', sql.VarChar, location)
             .input('description', sql.NVarChar, description)
             .input('category', sql.VarChar, category)

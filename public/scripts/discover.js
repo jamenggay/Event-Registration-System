@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       let buttonText = 'Register';
 
       if (isUserCreated) {
-        buttonText = 'Your Event';
+        buttonText = 'Manage Event';
       }
       else {
         if (registrationStatus === 'Waitlisted') {
@@ -75,7 +75,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? `<span class="event-date">${startDateTime[index].formattedDate} - ${endTime[index].endTime}</span>`
         : `<span class="event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</span>`;
 
-      div1.innerHTML = `
+
+      if (buttonText == 'Manage Event') {
+        div1.innerHTML = `
+    
+        <img src="${event.featureImage}">
+        <div class="event-content">
+        ${eventDateHTML}
+          <h2 class="event-title">${event.eventName}</h2>
+          <p class="event-description">${event.description}</p>
+          <p class="event-location">${event.location}</p>
+          <button class="register-button" onclick="window.location.href='/event/${event.eventID}'" data-event-id="${event.eventID}">
+      ${buttonText}
+    </button>
+
+        </div>`;
+
+        eventList.appendChild(div1);
+
+      }
+
+      else {
+        div1.innerHTML = `
     
         <img src="${event.featureImage}">
         <div class="event-content">
@@ -89,42 +110,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         </div>`;
 
-      eventList.appendChild(div1);
-
-      
-
-      const button = div1.querySelector('.register-button');
-      button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted' || buttonText === 'Your Event';
+        eventList.appendChild(div1);
 
 
 
-      if (!registrationStatus) {
-        button.addEventListener('click', () => {
-          const confirmed = confirm("Are you sure you want to register for this event?");
-          if (!confirmed) return;
+        const button = div1.querySelector('.register-button');
+        button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted' || buttonText === 'Your Event';
 
-          fetch('/register-event', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (!data.success) {
-                alert(data.message); // Show backend error message
-                return;
-              }
-              button.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
-              button.disabled = true;
-              alert(data.message);
+
+
+        if (!registrationStatus) {
+          button.addEventListener('click', () => {
+            const confirmed = confirm("Are you sure you want to register for this event?");
+            if (!confirmed) return;
+
+            fetch('/register-event', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
             })
-            .catch(err => {
-              console.error('Registration error:', err);
-            });
+              .then(res => res.json())
+              .then(data => {
+                if (!data.success) {
+                  alert(data.message); // Show backend error message
+                  return;
+                }
+                button.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
+                button.disabled = true;
+                alert(data.message);
+              })
+              .catch(err => {
+                console.error('Registration error:', err);
+              });
 
-        });
+          });
+        }
+
       }
-
 
 
       div2.innerHTML =
@@ -147,8 +169,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       div3.querySelector('.card-wrap').addEventListener('click', () => {
         article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
-  
-        article.innerHTML = `
+
+        if (buttonText == 'Manage Event') {
+
+          article.innerHTML = `
+    <button class="close-btn" onclick="closePopup()">&times;</button>
+    <div class="popup-event-content">
+      ${eventDateHTML}
+      <div class="popup-event-title">${event.eventName}</div>
+      <div class="popup-event-category">${event.category}</div>
+      <div class="popup-event-description">${event.description}</div>
+      <div class="popup-event-location">Location: <i>${event.location}</i></div>
+      <button class="popup-register-button" onclick="window.location.href='/event/${event.eventID}'" data-event-id="${event.eventID}">
+      ${buttonText}
+    </button>
+    </div>
+  `;
+
+        }
+        else {
+
+          article.innerHTML = `
     <button class="close-btn" onclick="closePopup()">&times;</button>
     <div class="popup-event-content">
       ${eventDateHTML}
@@ -162,35 +203,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     </div>
   `;
 
-        const popupRegBtn = article.querySelector('.popup-register-button');
-        popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
+          const popupRegBtn = article.querySelector('.popup-register-button');
+          popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
 
-        if (!registrationStatus) {
-          popupRegBtn.addEventListener('click', () => {
-            const confirmed = confirm("Are you sure you want to register for this event?");
-            if (!confirmed) return;
+          if (!registrationStatus) {
+            popupRegBtn.addEventListener('click', () => {
+              const confirmed = confirm("Are you sure you want to register for this event?");
+              if (!confirmed) return;
 
-            fetch('/register-event', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
-            })
-              .then(res => res.json())
-              .then(data => {
-                if (!data.success) {
-                  alert(data.message); // Show backend error message
-                  return;
-                }
-                popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
-                popupRegBtn.disabled = true;
-                alert(data.message);
+              fetch('/register-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
               })
-              .catch(err => {
-                console.error('Registration error:', err);
-              });
+                .then(res => res.json())
+                .then(data => {
+                  if (!data.success) {
+                    alert(data.message); // Show backend error message
+                    return;
+                  }
+                  popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
+                  popupRegBtn.disabled = true;
+                  alert(data.message);
+                })
+                .catch(err => {
+                  console.error('Registration error:', err);
+                });
 
-          });
+            });
+          }
+
         }
+
 
         openPopup();
       });
