@@ -98,6 +98,13 @@ app.post("/login", async (req, res) => {
     }
 });
 
+// home page
+app.get('/logout', (req, res)=>{
+    req.session = null; // clears the session
+
+    res.redirect('/');
+});
+
 // create events page
 app.get("/create-events", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "views", "create-events.html"))
@@ -108,7 +115,7 @@ app.post("/create-events", async (req, res) => {
     const userID = req.session.user.id;
   
     if (!userID) {
-        return res.status(401).json({ message: 'Unauthorized: No user session found.' });
+        res.status(401).json({ message: 'Unauthorized: No user session found.' });
     }
     
     const { base64FeatureImage, imageFileName, imageFileExtension, eventName, 
@@ -261,11 +268,18 @@ app.get("/api/compareDate", async (req, res) => {
 
 // events page
 app.get("/events", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
     res.sendFile(path.join(__dirname, "public", "views", "events.html"))
 });
 
 // discover page
 app.get("/discover", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
+
     res.sendFile(path.join(__dirname, "public", "views", "discover.html"))
 });
 
@@ -427,7 +441,10 @@ app.delete("/cancel-registration", async (req, res) => {
 
 // user profile page
 app.get("/user-profile", (req, res) => { 
-    res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))  
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
+    res.sendFile(path.join(__dirname, "public", "views", "user-profile.html"))
 })
 
 // user profile page
@@ -699,6 +716,9 @@ app.patch("/user-password", async (req, res) => {
 
 // event management page
 app.get("/event/:eventID", (req, res) => {
+    if (!req.session.user) {
+    return res.redirect('/'); //require log in
+  }
     res.sendFile(path.join(__dirname, "public", "views", "events-management.html"))  
 });
 
