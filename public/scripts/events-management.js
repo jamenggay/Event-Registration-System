@@ -95,14 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!searchTerm) {
             // If search is empty, show all guests
-            guests.forEach(guest => guest.style.display = '');
+            guests.forEach(guest => {
+                guest.style.display = '';
+                guest.style.opacity = '1';
+                guest.style.transform = 'translateY(0)';
+            });
             return;
         }
 
         guests.forEach(guest => {
             const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
             
-            // Check if the name starts with the search term
+            // Check if the name starts with the search term (prefix matching)
             const matchFound = guestName.startsWith(searchTerm);
             
             // Apply smooth transition for showing/hiding
@@ -331,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Get the status containers
             const statusContainer = guestListContainer.querySelector('.status-container:not(.waitlisted-container)');
-            const waitlistedContainer = guestListContainer.querySelector('.waitlisted-container'); // This might be null if waitlist is disabled
+            const waitlistedContainer = guestListContainer.querySelector('.waitlisted-container');
 
             guests.forEach(guest => {
                 const guestElement = document.createElement('div');
@@ -432,6 +436,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             });
+
+            // Reinitialize search functionality after displaying the guest list
+            const newGuestSearchInput = guestListContainer.querySelector('.search-input');
+            if (newGuestSearchInput) {
+                newGuestSearchInput.addEventListener('input', debounce((e) => {
+                    filterGuests(e.target.value, guestListContainer);
+                }, 300));
+                addClearSearchButton(newGuestSearchInput);
+            }
         } catch (error) {
             console.error('Error displaying guest list:', error);
         }
