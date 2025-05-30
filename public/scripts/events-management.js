@@ -305,15 +305,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to display guest list
     const displayGuestList = (guests) => {
         try {
-            console.log('Displaying guest list:', guests); // Debug log
+            console.log('Displaying guest list:', guests);
             const guestListContainer = document.querySelector('#guest');
             if (!guestListContainer) {
                 console.error('Guest list container not found');
                 return;
             }
 
-            const existingGuests = guestListContainer.querySelectorAll('.attendee-container');
-            existingGuests.forEach(guest => guest.remove());
+            // Clear existing content and add title
+            guestListContainer.innerHTML = `
+                <h1>Guest List</h1>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search guests...">
+                </div>
+                <div class="status-section">
+                    <div class="status-container"></div>
+                </div>
+                ${eventData.allowWaitlist === "Yes" ? `
+                <div class="status-section">
+                    <h3>Waitlisted</h3>
+                    <div class="status-container waitlisted-container"></div>
+                </div>
+                ` : ''}
+            `;
+
+            // Get the status containers
+            const statusContainer = guestListContainer.querySelector('.status-container:not(.waitlisted-container)');
+            const waitlistedContainer = guestListContainer.querySelector('.waitlisted-container'); // This might be null if waitlist is disabled
 
             guests.forEach(guest => {
                 const guestElement = document.createElement('div');
@@ -345,20 +363,74 @@ document.addEventListener('DOMContentLoaded', () => {
                         statusText = 'Pending';
                 }
 
-                guestElement.innerHTML = `
-                    <div class="attendee-info">
-                        <img src="${profilePicPath}" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">${guest.fullname}</span>
-                    </div>
-                    <div class="attendee-status">
-                        <span class="event-status ${statusClass}">${statusText}</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <button class="accept">Dalo</button>
-                        <button class="decline">Decline</button>
-                    </div>
-                `;
-                guestListContainer.appendChild(guestElement);
+                // Create different HTML based on status
+                if (guest.status.toLowerCase() === 'waitlisted') {
+                    // Only append waitlisted guests if the waitlist container exists (i.e., waitlist is enabled)
+                    if (waitlistedContainer) {
+                         guestElement.innerHTML = `
+                            <div class="attendee-info">
+                                <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                                <span class="attendee-name">${guest.fullname}</span>
+                            </div>
+                        `;
+                        waitlistedContainer.appendChild(guestElement);
+                    }
+                } else {
+                    guestElement.innerHTML = `
+                        <div class="attendee-info">
+                            <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                            <span class="attendee-name">${guest.fullname}</span>
+                        </div>
+                        <div class="attendee-status">
+                            <span class="event-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="attendee-actions">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoffswitch-${guest.registrationID}" tabindex="0" ${guest.status.toLowerCase() !== 'declined' ? 'checked' : ''}>
+                                <label class="onoffswitch-label" for="onoffswitch-${guest.registrationID}">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                    statusContainer.appendChild(guestElement);
+
+                    // Add click event listeners to the toggle buttons only for non-waitlisted guests
+                    const toggleGroup = guestElement.querySelector('.onoffswitch');
+                    const checkbox = toggleGroup.querySelector('.onoffswitch-checkbox');
+                    
+                    checkbox.addEventListener('change', function(e) {
+                        const container = this.closest('.attendee-container');
+                        const statusElement = container.querySelector('.event-status');
+                        
+                        // Toggle between states
+                        if (this.checked) {
+                            statusElement.textContent = 'Going';
+                            statusElement.className = 'event-status going';
+                            newStatus = 'Approved';
+                        } else {
+                            statusElement.textContent = 'Declined';
+                            statusElement.className = 'event-status declined';
+                            newStatus = 'Declined';
+                        }
+
+                        // Find the guest in registrationData and update their status
+                        const guestName = container.querySelector('.attendee-name').textContent;
+                        const guestToUpdate = registrationData.find(guest => guest.fullname === guestName);
+
+                        if (guestToUpdate) {
+                            guestToUpdate.status = newStatus;
+                            console.log(`Updated status for ${guestToUpdate.fullname} to ${newStatus}`);
+                            
+                            // Optionally, re-filter the list if there's a search term
+                            const currentSearchTerm = guestSearchInput.value;
+                            if (currentSearchTerm) {
+                                filterGuests(currentSearchTerm, document.getElementById('guest'));
+                            }
+                        }
+                    });
+                }
             });
         } catch (error) {
             console.error('Error displaying guest list:', error);
@@ -676,23 +748,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error handling form submission:', error);
         }
-    });
-
-    // Add toggle switch functionality
-    const toggleSwitches = document.querySelectorAll('.attendee-toggle input');
-    toggleSwitches.forEach(toggle => {
-        toggle.addEventListener('change', function() {
-            const container = this.closest('.attendee-container');
-            const statusElement = container.querySelector('.event-status');
-            
-            if (this.checked) {
-                statusElement.textContent = 'Going';
-                statusElement.className = 'event-status going';
-            } else {
-                statusElement.textContent = 'Declined';
-                statusElement.className = 'event-status declined';
-            }
-        });
     });
 
     // Initialize the display
