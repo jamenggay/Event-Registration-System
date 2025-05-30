@@ -73,10 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cache DOM elements
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
-    const modal = document.getElementById('editEventModal');
+    const editModal = document.getElementById('editEventModal');
+    const deleteModal = document.getElementById('deleteEventModal');
+    const deleteOverlay = document.getElementById('deleteEventOverlay');
     const editButton = document.querySelector('.edit-button');
-    const closeModal = document.querySelector('.close-modal');
-    const cancelButton = document.querySelector('.cancel-button');
+    const deleteButton = document.querySelector('.delete-button');
+    const closeModalButtons = document.querySelectorAll('.close-modal');
+    const cancelButtons = document.querySelectorAll('.cancel-button');
     const editEventForm = document.getElementById('editEventForm');
     const uploadButton = document.querySelector('.upload_button');
     const eventImage = document.getElementById('eventImage');
@@ -316,10 +319,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const guestElement = document.createElement('div');
                 guestElement.className = 'attendee-container';
                 const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+                
+                // Map the status to the appropriate class and display text
+                let statusClass = '';
+                let statusText = '';
+                switch(guest.status.toLowerCase()) {
+                    case 'approved':
+                        statusClass = 'going';
+                        statusText = 'Going';
+                        break;
+                    case 'declined':
+                        statusClass = 'declined';
+                        statusText = 'Declined';
+                        break;
+                    case 'pending':
+                        statusClass = 'pending';
+                        statusText = 'Pending';
+                        break;
+                    case 'waitlisted':
+                        statusClass = 'waitlisted';
+                        statusText = 'Waitlisted';
+                        break;
+                    default:
+                        statusClass = 'pending';
+                        statusText = 'Pending';
+                }
+
                 guestElement.innerHTML = `
                     <div class="attendee-info">
                         <img src="${profilePicPath}" class="icon-flex" alt="Profile">
                         <span class="attendee-name">${guest.fullname}</span>
+                    </div>
+                    <div class="attendee-status">
+                        <span class="event-status ${statusClass}">${statusText}</span>
                     </div>
                     <div class="attendee-actions">
                         <button class="accept">Dalo</button>
@@ -519,28 +551,83 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Modal functionality
-    const closeModalHandler = () => {
-        modal.style.display = 'none';
+    const closeModalHandler = (modal) => {
+        if (modal === deleteModal) {
+            deleteModal.classList.remove('active');
+            deleteOverlay.classList.remove('active');
+        } else {
+            modal.style.display = 'none';
+        }
     };
 
-    const openModalHandler = (e) => {
+    const openEditModalHandler = (e) => {
         e.preventDefault();
         try {
             const currentEventData = getCurrentEventData();
             populateModalForm(currentEventData);
-            modal.style.display = 'block';
+            editModal.style.display = 'block';
         } catch (error) {
-            console.error('Error opening modal:', error);
+            console.error('Error opening edit modal:', error);
         }
     };
 
-    editButton.addEventListener('click', openModalHandler);
-    closeModal.addEventListener('click', closeModalHandler);
-    cancelButton.addEventListener('click', closeModalHandler);
+    const openDeleteModalHandler = (e) => {
+        e.preventDefault();
+        deleteModal.classList.add('active');
+        deleteOverlay.classList.add('active');
+    };
+
+    // Event listeners for modals
+    editButton.addEventListener('click', openEditModalHandler);
+    deleteButton.addEventListener('click', openDeleteModalHandler);
+
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const modal = button.closest('.modal');
+            closeModalHandler(modal);
+        });
+    });
+
+    cancelButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const modal = button.closest('.modal');
+            closeModalHandler(modal);
+        });
+    });
+
+    // Handle delete modal buttons
+    const deleteModalCancelBtn = deleteModal.querySelector('.cancel-btn');
+    const deleteModalConfirmBtn = deleteModal.querySelector('.confirm-btn');
+
+    deleteModalCancelBtn.addEventListener('click', () => {
+        closeModalHandler(deleteModal);
+    });
+
+    deleteModalConfirmBtn.addEventListener('click', () => {
+        try {
+            // Here you would typically make an API call to delete the event
+            console.log('Deleting event:', eventData.eventID);
+            
+            // Close the modal and show a success message
+            closeModalHandler(deleteModal);
+            alert('Event deleted successfully!');
+            
+            // Redirect to events list page or handle as needed
+            // window.location.href = '/events';
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            alert('Failed to delete event. Please try again.');
+        }
+    });
+
+    // Close delete modal when clicking overlay
+    deleteOverlay.addEventListener('click', () => {
+        closeModalHandler(deleteModal);
+    });
 
     window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModalHandler();
+        if (e.target.classList.contains('modal')) {
+            closeModalHandler(e.target);
         }
     });
 
@@ -585,10 +672,27 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             displayEventData(formData);
-            closeModalHandler();
+            closeModalHandler(editModal);
         } catch (error) {
             console.error('Error handling form submission:', error);
         }
+    });
+
+    // Add toggle switch functionality
+    const toggleSwitches = document.querySelectorAll('.attendee-toggle input');
+    toggleSwitches.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const container = this.closest('.attendee-container');
+            const statusElement = container.querySelector('.event-status');
+            
+            if (this.checked) {
+                statusElement.textContent = 'Going';
+                statusElement.className = 'event-status going';
+            } else {
+                statusElement.textContent = 'Declined';
+                statusElement.className = 'event-status declined';
+            }
+        });
     });
 
     // Initialize the display
@@ -596,7 +700,5 @@ document.addEventListener('DOMContentLoaded', () => {
     displayEventData(eventData);
     displayGuestList(registrationData);
     displayCheckInList(approvedGuestsData);
-
-  
 });
 
