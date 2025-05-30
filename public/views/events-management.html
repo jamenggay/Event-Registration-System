@@ -131,53 +131,8 @@
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Search guests...">
                 </div>
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Jamainosaurus</span>
-                    </div>
-                    <div class="attendee-status">
-                        <span class="event-status pending">Pending</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <div class="attendee-toggle">
-                            <input type="checkbox">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Neneng B</span>
-                    </div>
-                    <div class="attendee-status">
-                        <span class="event-status pending">Pending</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <div class="attendee-toggle">
-                            <input type="checkbox">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="attendee-container">
-                    <div class="attendee-info">
-                        <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                        <span class="attendee-name">Fe Fer Mint (Diva)</span>
-                    </div>
-                    <div class="attendee-status">
-                        <span class="event-status pending">Pending</span>
-                    </div>
-                    <div class="attendee-actions">
-                        <div class="attendee-toggle">
-                            <input type="checkbox">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </div>
-                </div>
+                
+                <!-- Handled within events-management.js -->
             </div>
 
 
@@ -189,54 +144,7 @@
 
                 <div class="checkin-list">
                     <div class="checkin-guest">
-                        <div class="guest-info">
-                            <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                            <span class="guest-name">Browny</span>
-                        </div>
-                        <div class="attendance-options">
-                            <label class="attendance-option attended">
-                                <input type="radio" name="attendance1" value="attended">
-                                <span>Attended</span>
-                            </label>
-                            <label class="attendance-option not-attended">
-                                <input type="radio" name="attendance1" value="not-attended">
-                                <span>Not Attended</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="checkin-guest">
-                        <div class="guest-info">
-                            <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                            <span class="guest-name">Bogart</span>
-                        </div>
-                        <div class="attendance-options">
-                            <label class="attendance-option attended">
-                                <input type="radio" name="attendance2" value="attended">
-                                <span>Attended</span>
-                            </label>
-                            <label class="attendance-option not-attended">
-                                <input type="radio" name="attendance2" value="not-attended">
-                                <span>Not Attended</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="checkin-guest">
-                        <div class="guest-info">
-                            <img src="../assets/icons/profile-icon.jpeg" class="icon-flex" alt="Profile">
-                            <span class="guest-name">Ice Spice</span>
-                        </div>
-                        <div class="attendance-options">
-                            <label class="attendance-option attended">
-                                <input type="radio" name="attendance3" value="attended">
-                                <span>Attended</span>
-                            </label>
-                            <label class="attendance-option not-attended">
-                                <input type="radio" name="attendance3" value="not-attended">
-                                <span>Not Attended</span>
-                            </label>
-                        </div>
+                        <!-- Handled within events-management.js -->
                     </div>
                 </div>
 
@@ -276,7 +184,7 @@
                     
                     <div class="event_details">
                         <form id="editEventForm">
-                            <input type="file" id="eventImage" name="eventImage" accept="image/*" style="display: none;" />
+                            <input type="file" id="latestEventImage" name="eventImage" accept="image/*" style="display: none;" />
                             
                             <div class="event_name-wrapper">
                                 <input type="text" id="eventName" class="event_name" placeholder="Enter event name" required>
@@ -328,13 +236,13 @@
                                 </div>
                                 <select id="category" name="category" required>
                                     <option value="" disabled selected>Select a category</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="education">Education</option>
-                                    <option value="health">Health</option>
-                                    <option value="business">Business</option>
-                                    <option value="arts">Arts</option>
-                                    <option value="outreach">Outreach</option>
-                                    <option value="entertainment">Entertainment</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Arts">Arts</option>
+                                    <option value="Outreach">Outreach</option>
+                                    <option value="Entertainment">Entertainment</option>
                                 </select>
                             </div>
 
@@ -390,7 +298,7 @@
 
                             <div class="modal-footer">
                                 <button type="button" class="cancel-button">Cancel</button>
-                                <button type="submit" class="save-button">Save Changes</button>
+                                <button type="submit" class="save-button" id="save-changes-btn" disabled>Save Changes</button>
                             </div>
                         </form>
                     </div>
