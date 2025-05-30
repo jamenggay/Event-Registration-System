@@ -282,7 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const feedbackLink = document.querySelector('.feedback-link');
                 if (feedbackLink) feedbackLink.textContent = eventData.feedbackLink || '';
 
-                const approvalStatus = document.querySelector('.approval-status');
+                let approvalStatus = document.querySelector('.approval-status');
+                // displayGuestData(approvalStatus)
                 if (approvalStatus) {
                     approvalStatus.textContent = eventData.requireApproval === "Yes" ? 'Required' : 'Not Required';
                 }
@@ -456,19 +457,28 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModalHandler(deleteModal);
         });
 
-        deleteModalConfirmBtn.addEventListener('click', () => {
+        deleteModalConfirmBtn.addEventListener('click', async () => {
             try {
-                // Here you would typically make an API call to delete the event
-                console.log('Deleting event:', eventData.eventID);
-                
-                // Close the modal and show a success message
-                closeModalHandler(deleteModal);
-                alert('Event deleted successfully!');
-                
-                // Redirect to events list page or handle as needed
-                // window.location.href = '/events';
-            } catch (error) {
-                console.error('Error deleting event:', error);
+                const response = await fetch('/delete-event', {
+                    method : 'DELETE',
+                    headers : { 'Content-Type' : 'application/json' },
+                    body : JSON.stringify({ eventID : eventData.eventID })
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    console.log("Backend Sucess: ", result)
+                    alert('Event deleted successfully!');
+                    closeModalHandler(deleteModal);
+                    window.location.href = '/events'
+                }
+                else {
+                    const error = await response.json()
+                    console.log("Backend Sucess: ", error)
+                }
+            } 
+            catch (error) {
+                console.error('Client Error:', error);
                 alert('Failed to delete event. Please try again.');
             }
         });
