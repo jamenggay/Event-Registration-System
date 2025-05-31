@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dalo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="/styles/preloader.css">
     <link rel="stylesheet" href="/styles/user-profile.css">
     <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
-    <script src="/scripts/footer.js"></script>
-    <script src="/scripts/header.js"></script>
-    <script src="/scripts/user-profile.js"></script>
+    
 </head>
-<body>
+<body class="loading">
+    <div id="preloader">
+  <img class="preloader-bg" src="/assets/images/preloader-bg.png"/>
+  <div class="spinner"></div>
+</div>
     <header>
         <div id="header"></div>
     </header> 
@@ -158,6 +161,7 @@
     <footer>
         <div id="footer"></div>
     </footer>
+    <script src="/scripts/preloader.js"></script>
     <script>
         window.userDataReady = new Promise(async (resolve, reject) => { 
             try {
@@ -236,6 +240,10 @@
             }
         })        
     </script>
+
+    <script src="/scripts/footer.js"></script>
+    <script src="/scripts/header.js"></script>
+    <script src="/scripts/user-profile.js"></script>
 </body>
 </html>
     

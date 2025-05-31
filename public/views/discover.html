@@ -6,14 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Discover</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="/styles/alert-toast.css">
+  <link rel="stylesheet" href="/styles/preloader.css">
   <link rel="stylesheet" href="/styles/discover.css" />
   <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
+  <div id="preloader">
+    <img class="preloader-bg" src="/assets/images/preloader-bg.png" />
+    <div class="spinner"></div>
+  </div>
   <header>
     <div id="header"></div>
   </header>
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <div class="discover-container">
     <div class="parent">
@@ -58,9 +67,13 @@
   </div>
   <section class="carousel-wrapper" id="carousel-section">
     <div class="carousel">
-      <div class="list" id="events-list"></div>
+      <div class="list" id="events-list">
+        <!-- HTML IN JS -->
+      </div>
 
-      <div class="thumbnail" id="next-event"></div>
+      <div class="thumbnail" id="next-event">
+        <!-- HTML IN JS -->
+      </div>
 
 
 
@@ -73,42 +86,29 @@
   </section>
   <section class="hover-cards-wrapper" id="hover-cards-section">
     <div id="app" class="container">
-      
+      <!-- HTML IN JS -->
     </div>
   </section>
 
-  
+
   <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
     aria-describedby="eventDesc">
-    <!-- <article class="card-popup">
-      <button class="close-btn" onclick="closePopup()">&times;</button>
-      <div class="popup-event-content">
-        <div class="popup-event-date">May 11, 2025</div>
-        <div class="popup-event-title">PURE VENOM: The After Party</div>
-        <div class="popup-event-category">Entertainment</div>
-        <div class="popup-event-description">Celebrate the grand finale of the Philippine Blockchain Week's
-          PBWx 2024 at the
-          PURE VENOM After Party. With DJ Xander and Bandit spinning the hottest beats, this is the
-          perfect night to
-          let loose. Free entry, food, and drinks sponsored by Venom Foundation U.A.E.
-        </div>
-        <div class="popup-event-location">Location: <i>Xylo at the Palace</i></div>
-        <button class="popup-register-button">Register</button>
-      </div>
-    </article> -->
-  </div>
-  <footer>
-    <div id="footer"></div>
-  </footer>
-  <script src="/scripts/header.js"></script>
-  <script src="/scripts/footer.js"></script>
-  <script src="/scripts/discover.js"></script>
-  <script>
-    function scrollToEvents() {
-      const eventsSection = document.getElementById('carousel-section');
-      eventsSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  </script>
+
+    <!-- HTML IN JS -->
+    <footer>
+      <div id="footer"></div>
+    </footer>
+    <script src="/scripts/preloader.js"></script>
+    <script src="/scripts/header.js"></script>
+    <script src="/scripts/footer.js"></script>
+    <script type="module" src="/scripts/discover.js"></script>
+    <script type="module" src="/scripts/alert-toast.js"></script>
+    <script>
+      function scrollToEvents() {
+        const eventsSection = document.getElementById('carousel-section');
+        eventsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    </script>
 
 </body>
 

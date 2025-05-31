@@ -1,3 +1,6 @@
+import { toastData, showToast } from "./alert-toast.js";
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   let eventsData = null;
 
@@ -277,9 +280,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.log("Client Error: ", e)
         }
 
-        alert("Event cancelled!");
-        closePopup();
-        location.reload()
+        toastData.successalternate.title = "Event cancelled.";
+        showToast("successalternate");
+        
+        setTimeout(() => {
+          closePopup();
+          location.reload()
+        }, 2500);
+        
       });
     });
   });

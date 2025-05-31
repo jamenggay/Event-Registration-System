@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dalo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+    <link rel="stylesheet" href="/styles/alert-toast.css">
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="stylesheet" href="/styles/form.css">
     <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
@@ -12,6 +14,10 @@
     <script src="/scripts/footer.js"></script>
 </head>
 <body>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <div class="landingpage-container">
     <div class="landingpage">
       <div class="landingpage-logo">
@@ -67,56 +73,9 @@
       <div id="footer"></div>
     </footer>
     <script>
-
-      //Sign-up form
-      document.getElementById('signup-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const data = {
-            email: document.getElementById('email').value,
-            mobileNum: document.getElementById('mobileNum').value,
-            fullName: document.getElementById('fullName').value,
-            userName: document.getElementById('userName').value,
-            password: document.getElementById('password').value            
-        };
-
-        const response = await fetch('/register', {
-          method: 'POST',
-          headers: {'Content-type': 'application/json'}, //sending json file
-          body: JSON.stringify(data) //converts object into JSON string
-        });
-
-        const result = await response.json();
-        alert(result.message);
-
-        if(result.success){
-          document.getElementById("signup-form").classList.add("hidden");
-          document.getElementById("login-form").classList.remove("hidden");
-        }
-      });
-        //LOGIN FORM
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          
-          const data = {
-            userName: document.getElementById('login_userName').value,
-            password: document.getElementById('login_password').value
-          };
-
-          const response = await fetch("/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(data)
-          });
-          const result = await response.json();
-          alert(result.message);
-
-        if(result.success){
-          localStorage.setItem('currentUser', data.userName)
-          window.location.href = "/events"
-        }
-
-        });
+     
     </script>
+    <script type="module" src="/scripts/alert-toast.js"></script>
+    <script type="module" src="/scripts/homepage.js"></script>
 </body>
 </html>

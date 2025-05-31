@@ -11,6 +11,8 @@ import bcrypt from "bcrypt";
 import { error } from "console";
 import { WebSocketServer } from 'ws';
 import http from 'http';
+import { json2csv } from "json-2-csv";
+import { sourceMapsEnabled } from "process";
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -69,12 +71,12 @@ app.post("/register", async (req, res) => {
             .input('hashedPassword', sql.VarChar, hashedPassword)
             .query('INSERT INTO userTable (email, mobileNumber, fullName, username, password) VALUES (@email, @mobileNum, @fullName, @userName, @hashedPassword)');
 
-        res.json({ success: true, message: 'Registration successful!' });
+        res.json({ success: true, message: 'Account registered.' });
 
     }
     catch (err) {
         console.error("Error during registration:", err);
-        res.status(500).json({ message: 'Registration Failed' });
+        res.status(500).json({ message: 'Registration Failed.' });
     }
 });
 
@@ -352,7 +354,7 @@ app.post("/register-event", async (req, res) => {
                 .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
             
                 
-                res.json({success: true, message: 'Maximum capacity reached. You are waitlisted.', status: "Waitlisted" });
+                res.json({success: true, message: 'Maximum capacity reached.', status: "Waitlisted" });
             }
             else{
                 const status = 'Pending';
@@ -362,7 +364,7 @@ app.post("/register-event", async (req, res) => {
                 .input('status', sql.VarChar, status)
                 .query('INSERT INTO registrationTable (eventID, userID, status) VALUES (@eventID, @userID, @status)');
                 
-                res.json({success: true, message: 'User successfully registered into an event', status: "Registered" });
+                res.json({success: true, message: 'You have registered into an event', status: "Registered" });
             } 
         }
         catch(err) {
@@ -457,11 +459,11 @@ app.delete("/cancel-registration", async (req, res) => {
             .query(`DELETE FROM registrationTable WHERE eventID = @eventID AND userID = @userID`)
 
         console.log("Event registration cancelation success")
-        res.status(200).json({ message : 'Event registration cancelation success' })
+        res.status(200).json({ success: true, message : 'Event registration cancelled.' })
     }
     catch (e) {
         console.log("Event registration cancelation failed")
-        res.status(500).json({ message : 'Event registration cancelation failed', error : e })
+        res.status(500).json({success: false, message : 'Event registration cancelation failed', error : e })
     }
 });
 
@@ -1140,7 +1142,7 @@ app.get("/events-registered", async (req, res) => {
             status: event.status
         }))
 
-        console.log("Events registered extraction success.")
+        console.log("Event registration cancelled.")
         return res.status(200).json(eventsData)
     }
     catch (e) {

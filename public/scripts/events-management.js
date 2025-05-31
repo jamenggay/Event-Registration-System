@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     const eventID = window.location.pathname.split('/').pop()
 
     const socket = new WebSocket(`ws://localhost:3000/event/${eventID}`)
@@ -14,12 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     function flagData() {
         if (hasEventData && hasRegistrationData && hasApprovedGuestsData) {
             setEventManagement(eventData, registrationData, approvedGuestsData);
-        }
-        else if (hasRegistrationData == false && hasApprovedGuestsData == false) {
-            console.log("Registration and Approved Guests data are still missing.")
-        }
-        else if (hasApprovedGuestsData == false) {
-            console.log("Approved Guests data is still missing.")  
         }
     }
 
@@ -65,21 +59,129 @@ document.addEventListener('DOMContentLoaded', async () => {
             flagData()
         })
     })
-    
-    async function setEventManagement(eventData, registrationData, approvedGuestsData) {
-        // Event Handling
 
+    async function setEventManagement(eventData, registrationData, approvedGuestsData) {
         // Cache DOM elements
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabPanes = document.querySelectorAll('.tab-pane');
-        const modal = document.getElementById('editEventModal');
+        const editModal = document.getElementById('editEventModal');
+        const deleteModal = document.getElementById('deleteEventModal');
+        const deleteOverlay = document.getElementById('deleteEventOverlay');
         const editButton = document.querySelector('.edit-button');
-        const closeModal = document.querySelector('.close-modal');
-        const cancelButton = document.querySelector('.cancel-button');
+        const deleteButton = document.querySelector('.delete-button');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+        const cancelButtons = document.querySelectorAll('.cancel-button');
         const editEventForm = document.getElementById('editEventForm');
         const uploadButton = document.querySelector('.upload_button');
         const eventImage = document.getElementById('latestEventImage');
         const imagePreview = document.getElementById('imagePreview');
+
+        // Search functionality
+        const guestSearchInput = document.querySelector('#guest .search-input');
+        const checkinSearchInput = document.querySelector('#check-in .search-input');
+
+        const filterGuests = (searchTerm, container) => {
+            const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+            searchTerm = searchTerm.toLowerCase().trim();
+
+            if (!searchTerm) {
+                // If search is empty, show all guests
+                guests.forEach(guest => guest.style.display = '');
+                return;
+            }
+
+            guests.forEach(guest => {
+                const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
+                
+                // Check if the name starts with the search term
+                const matchFound = guestName.startsWith(searchTerm);
+                
+                // Apply smooth transition for showing/hiding
+                guest.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                
+                if (matchFound) {
+                    guest.style.display = '';
+                    guest.style.opacity = '1';
+                    guest.style.transform = 'translateY(0)';
+                } else {
+                    guest.style.opacity = '0';
+                    guest.style.transform = 'translateY(-10px)';
+                    // Hide the element after the transition
+                    setTimeout(() => {
+                        guest.style.display = 'none';
+                    }, 300);
+                }
+            });
+        };
+
+        // Add debounce function to prevent too many searches while typing
+        const debounce = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        // Apply debounced search to both inputs
+        if (guestSearchInput) {
+            guestSearchInput.addEventListener('input', debounce((e) => {
+                filterGuests(e.target.value, document.getElementById('guest'));
+            }, 300));
+        }
+
+        if (checkinSearchInput) {
+            checkinSearchInput.addEventListener('input', debounce((e) => {
+                filterGuests(e.target.value, document.getElementById('check-in'));
+            }, 300));
+        }
+
+        // Add clear search functionality
+        const addClearSearchButton = (input) => {
+            const clearButton = document.createElement('button');
+            clearButton.className = 'clear-search';
+            clearButton.innerHTML = '&times;';
+            clearButton.style.display = 'none';
+            
+            input.parentNode.style.position = 'relative';
+            input.parentNode.appendChild(clearButton);
+
+            clearButton.addEventListener('click', () => {
+                input.value = '';
+                input.focus();
+                clearButton.style.display = 'none';
+                
+                // Reset all guests in the current tab
+                const container = input.closest('.tab-pane');
+                const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+                guests.forEach(guest => {
+                    guest.style.display = '';
+                    guest.style.opacity = '1';
+                    guest.style.transform = 'translateY(0)';
+                });
+            });
+
+            input.addEventListener('input', (e) => {
+                clearButton.style.display = e.target.value ? 'block' : 'none';
+                // If input is empty, reset the list
+                if (!e.target.value) {
+                    const container = input.closest('.tab-pane');
+                    const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+                    guests.forEach(guest => {
+                        guest.style.display = '';
+                        guest.style.opacity = '1';
+                        guest.style.transform = 'translateY(0)';
+                    });
+                }
+            });
+        };
+
+        if (guestSearchInput) addClearSearchButton(guestSearchInput);
+        if (checkinSearchInput) addClearSearchButton(checkinSearchInput);
 
         // Tab switching functionality
         tabButtons.forEach(button => {
@@ -144,48 +246,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         const displayEventData = (eventData) => {
             try {
                 if (eventData.base64FeatureImage) {
-                    // Show newly uploaded image
-                    document.getElementById('eventImage').src = eventData.base64FeatureImage;
-                    document.getElementById('eventImage').style.display = 'block';
-                } 
+                    const eventImage = document.getElementById('eventImage');
+                    eventImage.src = eventData.base64FeatureImage;
+                    eventImage.style.display = 'block';
+                }
                 else if (eventData.featureImage) {
-                    document.getElementById('eventImage').src = eventData.featureImage;
-                    document.getElementById('eventImage').style.display = 'block';
+                    const eventImage = document.getElementById('eventImage');
+                    eventImage.src = eventData.featureImage;
+                    eventImage.style.display = 'block';
                 }
 
-                document.querySelector('.event_name').textContent = eventData.eventName || '';
+                // Update event details
+                const eventName = document.querySelector('.event_name');
+                if (eventName) eventName.textContent = eventData.eventName || '';
 
-                if (eventData.startDateTime) {
-                    document.querySelector('.start-datetime').textContent = 
-                        formatDateTime(eventData.startDateTime);
+                const startDateTime = document.querySelector('.start-datetime');
+                if (startDateTime && eventData.startDateTime) {
+                    startDateTime.textContent = formatDateTime(eventData.startDateTime);
                 }
 
-                if (eventData.endDateTime) {
-                    document.querySelector('.end-datetime').textContent = 
-                        formatDateTime(eventData.endDateTime);
+                const endDateTime = document.querySelector('.end-datetime');
+                if (endDateTime && eventData.endDateTime) {
+                    endDateTime.textContent = formatDateTime(eventData.endDateTime);
                 }
 
-                document.querySelector('.location-text').textContent = eventData.location || '';
-                document.querySelector('.description-text').textContent = eventData.description || '';
-                document.querySelector('.category-text').textContent = eventData.category || '';
-                document.querySelector('.feedback-link').textContent = eventData.feedbackLink || '';
-                document.querySelector('.approval-status').textContent = 
-                    eventData.requireApproval === 'Yes' ? 'Required' : 'Not Required';
+                const locationText = document.querySelector('.location-text');
+                if (locationText) locationText.textContent = eventData.location || '';
 
-                let approvalStatus = document.querySelector('.approval-status').textContent
-                displayGuestData(approvalStatus)
+                const descriptionText = document.querySelector('.description-text');
+                if (descriptionText) descriptionText.textContent = eventData.description || '';
 
+                const categoryText = document.querySelector('.category-text');
+                if (categoryText) categoryText.textContent = eventData.category || '';
+
+                const feedbackLink = document.querySelector('.feedback-link');
+                if (feedbackLink) feedbackLink.textContent = eventData.feedbackLink || '';
+
+                let approvalStatus = document.querySelector('.approval-status');
+                // displayGuestData(approvalStatus)
+                if (approvalStatus) {
+                    approvalStatus.textContent = eventData.requireApproval === "Yes" ? 'Required' : 'Not Required';
+                }
+
+                const capacityText = document.querySelector('.capacity-text');
+                const waitlistStatus = document.querySelector('.waitlist-status');
+            
                 if (eventData.capacity == 0) {
-                    document.querySelector('.capacity-text').textContent = ``;
-                    document.querySelector('.waitlist-status').textContent = 
+                    capacityText.textContent = ``;
+                    waitlistStatus.textContent =
                         `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
                 }
                 else if (eventData.capacity) {
-                    document.querySelector('.capacity-text').textContent = `${eventData.capacity}`;
-                    document.querySelector('.waitlist-status').textContent = 
+                    capacityText.textContent = `${eventData.capacity}`;
+                    waitlistStatus.textContent = 
                         `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
                 }
-
             } 
             catch (error) {
                 console.error('Error displaying event data:', error);
@@ -229,7 +344,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.error('Error populating modal form:', error);
             }
         };
-
+    
         const saveChangesButton = document.getElementById('save-changes-btn');
         
         const eventFormFields = [ 
@@ -290,28 +405,92 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         // Modal functionality
-        const closeModalHandler = () => {
-            modal.style.display = 'none';
+        const closeModalHandler = (modal) => {
+            if (modal === deleteModal) {
+                deleteModal.classList.remove('active');
+                deleteOverlay.classList.remove('active');
+            } else {
+                modal.style.display = 'none';
+            }
         };
 
-        const openModalHandler = (e) => {
+        const openEditModalHandler = (e) => {
             e.preventDefault();
             try {
                 const currentEventData = getCurrentEventData();
                 populateModalForm(currentEventData);
-                modal.style.display = 'block';
+                editModal.style.display = 'block';
             } catch (error) {
-                console.error('Error opening modal:', error);
+                console.error('Error opening edit modal:', error);
             }
         };
 
-        editButton.addEventListener('click', openModalHandler);
-        closeModal.addEventListener('click', closeModalHandler);
-        cancelButton.addEventListener('click', closeModalHandler);
+        const openDeleteModalHandler = (e) => {
+            e.preventDefault();
+            deleteModal.classList.add('active');
+            deleteOverlay.classList.add('active');
+        };
+
+        // Event listeners for modals
+        editButton.addEventListener('click', openEditModalHandler);
+        deleteButton.addEventListener('click', openDeleteModalHandler);
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal');
+                closeModalHandler(modal);
+            });
+        });
+
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal');
+                closeModalHandler(modal);
+            });
+        });
+
+        // Handle delete modal buttons
+        const deleteModalCancelBtn = deleteModal.querySelector('.cancel-btn');
+        const deleteModalConfirmBtn = deleteModal.querySelector('.confirm-btn');
+
+        deleteModalCancelBtn.addEventListener('click', () => {
+            closeModalHandler(deleteModal);
+        });
+
+        deleteModalConfirmBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/delete-event', {
+                    method : 'DELETE',
+                    headers : { 'Content-Type' : 'application/json' },
+                    body : JSON.stringify({ eventID : eventData.eventID })
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    console.log("Backend Sucess: ", result)
+                    alert('Event deleted successfully!');
+                    closeModalHandler(deleteModal);
+                    window.location.href = '/events'
+                }
+                else {
+                    const error = await response.json()
+                    console.log("Backend Sucess: ", error)
+                }
+            } 
+            catch (error) {
+                console.error('Client Error:', error);
+                alert('Failed to delete event. Please try again.');
+            }
+        });
+
+        // Close delete modal when clicking overlay
+        deleteOverlay.addEventListener('click', () => {
+            closeModalHandler(deleteModal);
+        });
 
         window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModalHandler();
+            if (e.target.classList.contains('modal')) {
+                closeModalHandler(e.target);
             }
         });
 
@@ -404,7 +583,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const result = await response.json()
                     console.log("Backend Success: ", result)
                     displayEventData(updatedEventData);
-                    closeModalHandler();            
+                    closeModalHandler(editModal);
                 }
                 else {
                     const error = await response.json()
@@ -416,326 +595,148 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-
-        // Guest Handling
-        const guestsContainer = document.getElementById('guest')
-
-        function displayGuestData(approvalStatus) {
-            if (approvalStatus === 'Required') {
-                if (registrationData.length == 0) {
-                    guestsContainer.innerHTML = `
-                                        <h1>Guest List</h1>
-                                        <p class = 'empty-message'>Guest list is currently empty.</p>
-                                    `
-                }
-                else if (registrationData.length != 0) {
-                    let pendingGuests = registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
-                    pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
-
-                    let waitlistedGuests = registrationData.filter(guest => guest.status == 'Waitlisted')
-
-                    if (pendingGuests.length == 0) {
-                        guestsContainer.innerHTML = `
-                                            <h1>Guest List</h1>
-                                            <p class = 'empty-message'>Guest list is currently empty.</p>
-                                        `
-                    }
-
-                    if (pendingGuests.length != 0) {
-                        guestsContainer.innerHTML = `
-                            <h1>Guest List</h1> ${pendingGuests.map(guest => 
-                            `<div class="attendee-container">
-                                <div class="attendee-info">
-                                    <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
-                                    <span class="attendee-name">${guest.fullname}</span>
-                                </div>
-                                <div class="attendee-actions">
-                                    <button class="accept">Dalo</button>
-                                    <button class="decline">Decline</button>
-                                </div>
-                            </div>`
-                        ).join('')}`
-                    }
-                    
-                    const waitlistStatus = document.querySelector('.waitlist-status');
-                    
-                    if (waitlistStatus) {
-                        waitlistStatus.textContent = `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
-                        
-                        const waitlistedContainer = document.createElement('div')
-                        waitlistedContainer.id = "waitlisted-container"
-
-                        if (waitlistStatus.textContent.includes('Enabled')) {
-
-                            if (waitlistedGuests.length != 0) {                             
-                                waitlistedContainer.innerHTML = `
-                                    <h1>Waitlisted</h1> ${waitlistedGuests.map(guest => 
-                                    `<div class="attendee-container">
-                                        <div class="attendee-info">
-                                            <img src="${guest.profilePic}" onerror= "this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
-                                            <span class="attendee-name">${guest.fullname}</span>
-                                        </div>
-                                        <div class="attendee-actions">
-                                            <button class="accept">Dalo</button>
-                                            <button class="decline">Decline</button>
-                                        </div>
-                                    </div>`
-                                ).join('')}`
-                                
-                                guestsContainer.append(waitlistedContainer)
-                            }
-                            else if (waitlistedGuests.length == 0) {
-                                waitlistedContainer.innerHTML = `
-                                                <h1>Waitlisted </h1>
-                                                <p class = 'empty-message'>Waitlisted is currently empty.</p>
-                                `
-
-                                guestsContainer.append(waitlistedContainer)
-                            }
-                        }
-                    }
-                    
-                    const acceptGuestBtn = document.querySelectorAll('.accept')
-
-                    acceptGuestBtn.forEach((button, index) => {
-                        button.addEventListener('click', async () => {
-                            registrationData = [...pendingGuests, ...waitlistedGuests]
-
-                            const acceptedGuest = registrationData[index]
-                            console.log(acceptedGuest)
-                            
-                            const guestData = {
-                                eventID : acceptedGuest.eventID,
-                                userID : acceptedGuest.userID,
-                                status : 'Approved'
-                            }
-                            
-                            try {
-                                const response = await fetch(`/registrant`, {
-                                    method : 'PATCH',
-                                    headers : { 'Content-Type' : 'application/json' },
-                                    body : JSON.stringify(guestData)
-                                })
-
-                                socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                                if (response.ok) {
-                                    const result = await response.json()
-                                    console.log("Backend Success: ", result)
-                                    alert('Guest Accepted!')
-                                }
-                                else {
-                                    const error = await response.json()
-                                    console.log("Backend Failed: ", error)
-                                }
-                            }
-                            catch (e) {
-                                console.log("Client Error: ", e)
-                            }
-                        })
-                    })
-
-                    const declineGuestBtn = document.querySelectorAll('.decline')
-
-                    declineGuestBtn.forEach((button, index) => {
-                        button.addEventListener('click', async () => {
-                            registrationData = [...pendingGuests, ...waitlistedGuests]
-
-                            const declinedGuest = registrationData[index]
-                            console.log(declinedGuest)
-
-                            const guestData = {
-                                eventID : declinedGuest.eventID,
-                                userID : declinedGuest.userID,
-                                status : 'Declined'
-                            }
-                            
-                            try {
-                                const response = await fetch(`/registrant`, {
-                                    method : 'PATCH',
-                                    headers : { 'Content-Type' : 'application/json' },
-                                    body : JSON.stringify(guestData)
-                                })
-
-                                socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                                if (response.ok) {
-                                    const result = await response.json()
-                                    console.log("Backend Success: ", result)
-                                    alert('Guest Declined!')
-                                }
-                                else {
-                                    const error = await response.json()
-                                    console.log("Backend Failed: ", error)
-                                }
-                            }
-                            catch (e) {
-                                console.log("Client Error: ", e)
-                            }
-                        })
-                    })
-                }
-            }
-            else {
-                guestsContainer.innerHTML = `
-                                        <h1>Guest List</h1>
-                                        <p class = 'empty-message'>Guest list is currently empty.</p>
-                                    `
-            }
-        }
-
-        
-        // Check-In Handling
-        const checkInContainer = document.getElementById('check-in')
-
-        if (approvedGuestsData.length == 0) {
-            checkInContainer.innerHTML = `
-                                        <h1>Check In</h1>
-                                        <p class = 'empty-message'>Check In is currently empty.</p>
-                                    `
-        }
-        else if (approvedGuestsData.length != 0) {
-            checkInContainer.innerHTML = `
-                <h1>Check In</h1>
-                ${approvedGuestsData.map(guest => `
-                    <div class="checkin-guest">
-                        <div class="guest-info">
-                            <img src="${guest.profilePic}" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg';" class="icon-flex" alt="Profile">
-                            <span class="guest-name">${guest.fullname}</span>
-                        </div>
-                        <div class="attendance-options">
-                            <label class="attendance-option attended">
-                                <input type="radio" class="attended-guest" name="attendance1" value="attended">
-                                <span>Attended</span>
-                            </label>
-                            <label class="attendance-option not-attended">
-                                <input type="radio" class="not-attended-guest" name="attendance1" value="not-attended">
-                                <span>Not Attended</span>
-                            </label>
-                        </div>
-                    </div>`
-                ).join('')}
-            `
-
-            const attendedButton = document.querySelectorAll('.attended-guest')
-
-            attendedButton.forEach((button, index) => {
-                button.addEventListener('click', async () => {
-                    const guest = approvedGuestsData[index]
-
-                    const attendanceData = {
-                        eventID : eventData.eventID,
-                        userID : guest.userID,
-                        checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
-                    }
-
-                    try {
-                        const response = await fetch("/checkin-attendee", {
-                            method : 'POST',
-                            headers : { 'Content-Type' : 'application/json' },
-                            body : JSON.stringify(attendanceData)
-                        })
-
-                        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                        if (response.ok) {
-                            const result = await response.json()
-                            console.log("Backend Success: ", result)
-                        }
-                        else {
-                            const error = await response.json()
-                            console.log("Backend Failed: ", error)
-                        }
-                    }
-                    catch (e) {
-                        console.log("Client Error: ", e)
-                    }
-                })
-            })
-
-            const notAttendedButton = document.querySelectorAll('.not-attended-guest')
-
-            notAttendedButton.forEach((button, index) => {
-                button.addEventListener('click', async () => {
-                    const guest = approvedGuestsData[index]
-
-                    const attendanceData = {
-                        eventID : eventData.eventID,
-                        userID : guest.userID,
-                    }
-
-                    try {
-                        const response = await fetch("/checkin-attendee", {
-                            method : 'DELETE',
-                            headers : { 'Content-Type' : 'application/json' },
-                            body : JSON.stringify(attendanceData)
-                        })
-
-                        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                        if (response.ok) {
-                            const result = await response.json()
-                            console.log("Backend Success: ", result)
-                        }
-                        else if (response.status == 404) {
-                            const result = await response.json()
-                            console.log("Backend Message: ", result)
-                        }
-                        else {
-                            const error = await response.json()
-                            console.log("Backend Failed: ", error)
-                        }
-                    }
-                    catch (e) {
-                        console.log("Client Error: ", e)
-                    }
-                })
-            })
-        }
-
-        // Handle radio button changes for check-in
-        document.querySelectorAll('input[type="radio"][name^="attendance"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const checkinGuest = this.closest('.checkin-guest');
-                checkinGuest.classList.remove('attended', 'not-attended');
-                
-                if (this.value === 'attended') {
-                    checkinGuest.classList.add('attended');
-                } else if (this.value === 'not-attended') {
-                    checkinGuest.classList.add('not-attended');
-                }
-            });
-        });
-
-        // replace with real button (make sure type=button)
-        // const deleteEventButton = document.getElementById('delete-button')
-        
-        // deleteEventButton.addEventListener('click', async () => {
-        //     try {
-        //         const response = await fetch('/delete-event', {
-        //             method : 'DELETE',
-        //             headers : { 'Content-Type' : 'application/json' },
-        //             body : JSON.stringify({ eventID : eventData.eventID })
-        //         })
-
-        //         if (response.ok) {
-        //             const result = await response.json()
-        //             console.log("Backend Sucess: ", result)
-        //         }
-        //         else {
-        //             const error = await response.json()
-        //             console.log("Backend Sucess: ", error)
-        //         }
-
-        //     }
-        //     catch (e) {
-        //         console.log("Client Error: ", e)
-        //     }
-        // })
-
         displayEventData(eventData);
+        // displayGuestList(registrationData);
+        // displayCheckInList(approvedGuestsData);
     }
 
+    // // Function to display guest list
+    // const displayGuestList = (guests) => {
+    //     try {
+    //         console.log('Displaying guest list:', guests); // Debug log
+    //         const guestListContainer = document.querySelector('#guest');
+    //         if (!guestListContainer) {
+    //             console.error('Guest list container not found');
+    //             return;
+    //         }
+
+    //         const existingGuests = guestListContainer.querySelectorAll('.attendee-container');
+    //         existingGuests.forEach(guest => guest.remove());
+
+    //         guests.forEach(guest => {
+    //             const guestElement = document.createElement('div');
+    //             guestElement.className = 'attendee-container';
+    //             const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+                
+    //             // Map the status to the appropriate class and display text
+    //             let statusClass = '';
+    //             let statusText = '';
+    //             switch(guest.status.toLowerCase()) {
+    //                 case 'approved':
+    //                     statusClass = 'going';
+    //                     statusText = 'Going';
+    //                     break;
+    //                 case 'declined':
+    //                     statusClass = 'declined';
+    //                     statusText = 'Declined';
+    //                     break;
+    //                 case 'pending':
+    //                     statusClass = 'pending';
+    //                     statusText = 'Pending';
+    //                     break;
+    //                 case 'waitlisted':
+    //                     statusClass = 'waitlisted';
+    //                     statusText = 'Waitlisted';
+    //                     break;
+    //                 default:
+    //                     statusClass = 'pending';
+    //                     statusText = 'Pending';
+    //             }
+
+    //             guestElement.innerHTML = `
+    //                 <div class="attendee-info">
+    //                     <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+    //                     <span class="attendee-name">${guest.fullname}</span>
+    //                 </div>
+    //                 <div class="attendee-status">
+    //                     <span class="event-status ${statusClass}">${statusText}</span>
+    //                 </div>
+    //                 <div class="attendee-actions">
+    //                     <button class="accept">Dalo</button>
+    //                     <button class="decline">Decline</button>
+    //                 </div>
+    //             `;
+    //             guestListContainer.appendChild(guestElement);
+    //         });
+    //     } catch (error) {
+    //         console.error('Error displaying guest list:', error);
+    //     }
+    // };
+
+    // // Function to display check-in list
+    // const displayCheckInList = (guests) => {
+    //     try {
+    //         console.log('Displaying check-in list:', guests);
+    //         const checkInContainer = document.querySelector('#check-in');
+    //         if (!checkInContainer) {
+    //             console.error('Check-in container not found');
+    //             return;
+    //         }
+
+    //         const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
+    //         existingGuests.forEach(guest => guest.remove());
+
+    //         guests.forEach(guest => {
+    //             const guestElement = document.createElement('div');
+    //             guestElement.className = 'checkin-guest';
+    //             const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+    //             guestElement.innerHTML = `
+    //                 <div class="guest-info">
+    //                     <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+    //                     <span class="guest-name">${guest.fullname}</span>
+    //                 </div>
+    //                 <div class="attendance-options">
+    //                     <label class="attendance-option attended">
+    //                         <input type="radio" name="attendance${guest.registrationID}" value="attended">
+    //                         <span>Attended</span>
+    //                     </label>
+    //                     <label class="attendance-option not-attended">
+    //                         <input type="radio" name="attendance${guest.registrationID}" value="not-attended">
+    //                         <span>Not Attended</span>
+    //                     </label>
+    //                 </div>
+    //             `;
+    //             checkInContainer.appendChild(guestElement);
+
+    //             // Add event listeners for the radio buttons
+    //             const radioButtons = guestElement.querySelectorAll('input[type="radio"]');
+    //             radioButtons.forEach(radio => {
+    //                 radio.addEventListener('change', function() {
+    //                     const checkinGuest = this.closest('.checkin-guest');
+    //                     checkinGuest.classList.remove('attended', 'not-attended');
+                        
+    //                     if (this.value === 'attended') {
+    //                         checkinGuest.classList.add('attended');
+    //                     } else if (this.value === 'not-attended') {
+    //                         checkinGuest.classList.add('not-attended');
+    //                     }
+
+    //                     // Update the guest's attendance status in the data
+    //                     guest.attendanceStatus = this.value;
+    //                     console.log(`Updated attendance for ${guest.fullname}: ${this.value}`);
+    //                 });
+    //             });
+    //         });
+    //     } catch (error) {
+    //         console.error('Error displaying check-in list:', error);
+    //     }
+    // };
+
+    
+    // // Add toggle switch functionality
+    // const toggleSwitches = document.querySelectorAll('.attendee-toggle input');
+    // toggleSwitches.forEach(toggle => {
+    //     toggle.addEventListener('change', function() {
+    //         const container = this.closest('.attendee-container');
+    //         const statusElement = container.querySelector('.event-status');
+            
+    //         if (this.checked) {
+    //             statusElement.textContent = 'Going';
+    //             statusElement.className = 'event-status going';
+    //         } else {
+    //             statusElement.textContent = 'Declined';
+    //             statusElement.className = 'event-status declined';
+    //         }
+    //     });
+    // });
 });

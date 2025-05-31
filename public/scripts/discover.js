@@ -1,4 +1,5 @@
 //BACKEND SCRIPT
+import { toastData, showToast } from "./alert-toast.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const eventList = document.getElementById("events-list");
@@ -118,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted' || buttonText === 'Your Event';
 
 
-
+        
         if (!registrationStatus) {
           button.addEventListener('click', () => {
             const confirmed = confirm("Are you sure you want to register for this event?");
@@ -132,12 +133,29 @@ document.addEventListener("DOMContentLoaded", async () => {
               .then(res => res.json())
               .then(data => {
                 if (!data.success) {
-                  alert(data.message); // Show backend error message
+                  toastData.danger.title = "Registration Failed!";
+                  toastData.danger.message = data.message; //show backend error
+                  
+                  showToast('danger');
                   return;
                 }
+
                 button.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
                 button.disabled = true;
-                alert(data.message);
+
+                if (button.textContent == 'Registered'){
+                  toastData.success.message = data.message; //show backend error
+                showToast('success');
+                  return;
+                }
+                else if (button.textContent == 'Waitlisted'){
+                  toastData.info.title = "You're on Waitlist!";
+                  toastData.info.message = data.message; //show backend error
+                  showToast('info');
+                  return;
+                }
+                
+              
               })
               .catch(err => {
                 console.error('Registration error:', err);
@@ -219,12 +237,27 @@ document.addEventListener("DOMContentLoaded", async () => {
                 .then(res => res.json())
                 .then(data => {
                   if (!data.success) {
-                    alert(data.message); // Show backend error message
-                    return;
+                  toastData.danger.title = "Registration Failed!";
+                  toastData.danger.message = data.message; //show backend error
+                  
+                  showToast('danger');
+                  return;
                   }
                   popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
                   popupRegBtn.disabled = true;
-                  alert(data.message);
+
+                  if (button.textContent == 'Registered'){
+                  toastData.success.message = data.message; //show backend error
+                showToast('success');
+                  return;
+                }
+                else if (button.textContent == 'Waitlisted'){
+                  toastData.info.title = "You're on Waitlist!";
+                  toastData.info.message = data.message; //show backend error
+                  showToast('info');
+                  return;
+                }
+                  
                 })
                 .catch(err => {
                   console.error('Registration error:', err);
