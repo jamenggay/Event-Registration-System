@@ -61,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     async function setEventManagement(eventData, registrationData, approvedGuestsData) {
+        //Event Tab Handling
+
         // Cache DOM elements
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabPanes = document.querySelectorAll('.tab-pane');
@@ -75,113 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const uploadButton = document.querySelector('.upload_button');
         const eventImage = document.getElementById('latestEventImage');
         const imagePreview = document.getElementById('imagePreview');
-
-        // Search functionality
-        const guestSearchInput = document.querySelector('#guest .search-input');
-        const checkinSearchInput = document.querySelector('#check-in .search-input');
-
-        const filterGuests = (searchTerm, container) => {
-            const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
-            searchTerm = searchTerm.toLowerCase().trim();
-
-            if (!searchTerm) {
-                // If search is empty, show all guests
-                guests.forEach(guest => guest.style.display = '');
-                return;
-            }
-
-            guests.forEach(guest => {
-                const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
-                
-                // Check if the name starts with the search term
-                const matchFound = guestName.startsWith(searchTerm);
-                
-                // Apply smooth transition for showing/hiding
-                guest.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
-                if (matchFound) {
-                    guest.style.display = '';
-                    guest.style.opacity = '1';
-                    guest.style.transform = 'translateY(0)';
-                } else {
-                    guest.style.opacity = '0';
-                    guest.style.transform = 'translateY(-10px)';
-                    // Hide the element after the transition
-                    setTimeout(() => {
-                        guest.style.display = 'none';
-                    }, 300);
-                }
-            });
-        };
-
-        // Add debounce function to prevent too many searches while typing
-        const debounce = (func, wait) => {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        };
-
-        // Apply debounced search to both inputs
-        if (guestSearchInput) {
-            guestSearchInput.addEventListener('input', debounce((e) => {
-                filterGuests(e.target.value, document.getElementById('guest'));
-            }, 300));
-        }
-
-        if (checkinSearchInput) {
-            checkinSearchInput.addEventListener('input', debounce((e) => {
-                filterGuests(e.target.value, document.getElementById('check-in'));
-            }, 300));
-        }
-
-        // Add clear search functionality
-        const addClearSearchButton = (input) => {
-            const clearButton = document.createElement('button');
-            clearButton.className = 'clear-search';
-            clearButton.innerHTML = '&times;';
-            clearButton.style.display = 'none';
-            
-            input.parentNode.style.position = 'relative';
-            input.parentNode.appendChild(clearButton);
-
-            clearButton.addEventListener('click', () => {
-                input.value = '';
-                input.focus();
-                clearButton.style.display = 'none';
-                
-                // Reset all guests in the current tab
-                const container = input.closest('.tab-pane');
-                const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
-                guests.forEach(guest => {
-                    guest.style.display = '';
-                    guest.style.opacity = '1';
-                    guest.style.transform = 'translateY(0)';
-                });
-            });
-
-            input.addEventListener('input', (e) => {
-                clearButton.style.display = e.target.value ? 'block' : 'none';
-                // If input is empty, reset the list
-                if (!e.target.value) {
-                    const container = input.closest('.tab-pane');
-                    const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
-                    guests.forEach(guest => {
-                        guest.style.display = '';
-                        guest.style.opacity = '1';
-                        guest.style.transform = 'translateY(0)';
-                    });
-                }
-            });
-        };
-
-        if (guestSearchInput) addClearSearchButton(guestSearchInput);
-        if (checkinSearchInput) addClearSearchButton(checkinSearchInput);
 
         // Tab switching functionality
         tabButtons.forEach(button => {
@@ -595,148 +490,473 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Search functionality
+        const guestSearchInput = document.querySelector('#guest .search-input');
+        const checkinSearchInput = document.querySelector('#check-in .search-input');
+
+        const filterGuests = (searchTerm, container) => {
+            const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+            searchTerm = searchTerm.toLowerCase().trim();
+
+            if (!searchTerm) {
+                // If search is empty, show all guests
+                guests.forEach(guest => {
+                    guest.style.display = '';
+                    guest.style.opacity = '1';
+                    guest.style.transform = 'translateY(0)';
+                });
+                return;
+            }
+
+            guests.forEach(guest => {
+                const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
+                
+                // Check if the name starts with the search term (prefix matching)
+                const matchFound = guestName.startsWith(searchTerm);
+                
+                // Apply smooth transition for showing/hiding
+                guest.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                
+                if (matchFound) {
+                    guest.style.display = '';
+                    guest.style.opacity = '1';
+                    guest.style.transform = 'translateY(0)';
+                } else {
+                    guest.style.opacity = '0';
+                    guest.style.transform = 'translateY(-10px)';
+                    // Hide the element after the transition
+                    setTimeout(() => {
+                        guest.style.display = 'none';
+                    }, 300);
+                }
+            });
+        };
+
+        // Add debounce function to prevent too many searches while typing
+        const debounce = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        // Apply debounced search to both inputs
+        if (guestSearchInput) {
+            guestSearchInput.addEventListener('input', debounce((e) => {
+                filterGuests(e.target.value, document.getElementById('guest'));
+            }, 300));
+        }
+
+        if (checkinSearchInput) {
+            checkinSearchInput.addEventListener('input', debounce((e) => {
+                filterGuests(e.target.value, document.getElementById('check-in'));
+            }, 300));
+        }
+
+        // Add clear search functionality
+        const addClearSearchButton = (input) => {
+            const clearButton = document.createElement('button');
+            clearButton.className = 'clear-search';
+            clearButton.innerHTML = '&times;';
+            clearButton.style.display = 'none';
+            
+            input.parentNode.style.position = 'relative';
+            input.parentNode.appendChild(clearButton);
+
+            clearButton.addEventListener('click', () => {
+                input.value = '';
+                input.focus();
+                clearButton.style.display = 'none';
+                
+                // Reset all guests in the current tab
+                const container = input.closest('.tab-pane');
+                const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+                guests.forEach(guest => {
+                    guest.style.display = '';
+                    guest.style.opacity = '1';
+                    guest.style.transform = 'translateY(0)';
+                });
+            });
+
+            input.addEventListener('input', (e) => {
+                clearButton.style.display = e.target.value ? 'block' : 'none';
+                // If input is empty, reset the list
+                if (!e.target.value) {
+                    const container = input.closest('.tab-pane');
+                    const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
+                    guests.forEach(guest => {
+                        guest.style.display = '';
+                        guest.style.opacity = '1';
+                        guest.style.transform = 'translateY(0)';
+                    });
+                }
+            });
+        };
+
+        if (guestSearchInput) addClearSearchButton(guestSearchInput);
+        if (checkinSearchInput) addClearSearchButton(checkinSearchInput);
+
+        
+        // Guest Tab Handling
+
+        // Function to display guest list
+        const displayGuestList = (guests) => {
+            try {
+                const guestListContainer = document.querySelector('#guest');
+                if (!guestListContainer) {
+                    console.error('Guest list container not found');
+                    return;
+                }
+
+                // Clear existing content and add title
+                guestListContainer.innerHTML = `
+                    <h1>Guest List</h1>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search guests...">
+                    </div>
+                    <div class="status-section">
+                        <div class="status-container"></div>
+                    </div>
+                    ${eventData.allowWaitlist === "Yes" ? `
+                    <div class="status-section">
+                        <h3>Waitlisted</h3>
+                        <div class="status-container waitlisted-container"></div>
+                    </div>
+                    ` : ''}
+                `;
+
+                // Get the status containers
+                const statusContainer = guestListContainer.querySelector('.status-container:not(.waitlisted-container)');
+                const waitlistedContainer = guestListContainer.querySelector('.waitlisted-container');
+
+                guests.forEach(guest => {
+                    const guestElement = document.createElement('div');
+                    guestElement.className = 'attendee-container';
+                    const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+                    
+                    // Map the status to the appropriate class and display text
+                    let statusClass = '';
+                    let statusText = '';
+                    switch(guest.status.toLowerCase()) {
+                        case 'approved':
+                            statusClass = 'going';
+                            statusText = 'Going';
+                            break;
+                        case 'declined':
+                            statusClass = 'declined';
+                            statusText = 'Declined';
+                            break;
+                        case 'pending':
+                            statusClass = 'pending';
+                            statusText = 'Pending';
+                            break;
+                        case 'waitlisted':
+                            statusClass = 'waitlisted';
+                            statusText = 'Waitlisted';
+                            break;
+                        default:
+                            statusClass = 'pending';
+                            statusText = 'Pending';
+                    }
+
+                    // Create different HTML based on status
+                    if (guest.status.toLowerCase() === 'waitlisted') {
+                        // Only append waitlisted guests if the waitlist container exists (i.e., waitlist is enabled)
+                        if (waitlistedContainer) {
+                            guestElement.innerHTML = `
+                                <div class="attendee-info">
+                                    <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                                    <span class="attendee-name">${guest.fullname}</span>
+                                </div>
+                                <div class="attendee-actions">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoffswitch-${guest.registrationID}" 
+                                        ${guest.status.toLowerCase() !== 'declined' ? 'checked' : ''}>
+                                        <label class="onoffswitch-label" for="onoffswitch-${guest.registrationID}">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            `;
+                            waitlistedContainer.appendChild(guestElement);
+
+                            // Add click event listeners to the toggle buttons
+                            const checkbox = guestElement.querySelector('.onoffswitch-checkbox');
+                            
+                            checkbox.addEventListener('change', async function(e) {
+                                // Toggle between states
+                                if (this.checked) {
+                                    newStatus = 'Approved';
+
+                                    const guestData = {
+                                        eventID : guest.eventID,
+                                        userID : guest.userID,
+                                        status : newStatus
+                                    }
+                                    
+                                    try {
+                                        const response = await fetch(`/registrant`, {
+                                            method : 'PATCH',
+                                            headers : { 'Content-Type' : 'application/json' },
+                                            body : JSON.stringify(guestData)
+                                        })
+
+                                        socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+                                        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+
+                                        if (response.ok) {
+                                            const result = await response.json()
+                                            console.log("Backend Success: ", result)
+                                            alert('Guest Accepted!')
+                                        }
+                                        else {
+                                            const error = await response.json()
+                                            console.log("Backend Failed: ", error)
+                                        }
+                                    }
+                                    catch (e) {
+                                        console.log("Client Error: ", e)
+                                    }
+                                    
+                                } else {
+                                    newStatus = 'Declined';
+
+                                    const guestData = {
+                                        eventID : guest.eventID,
+                                        userID : guest.userID,
+                                        status : newStatus
+                                    }
+
+                                    try {
+                                        const response = await fetch(`/registrant`, {
+                                            method : 'PATCH',
+                                            headers : { 'Content-Type' : 'application/json' },
+                                            body : JSON.stringify(guestData)
+                                        })
+
+                                        socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+                                        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+
+                                        if (response.ok) {
+                                            const result = await response.json()
+                                            console.log("Backend Success: ", result)
+                                            alert('Guest Declined!')
+                                        }
+                                        else {
+                                            const error = await response.json()
+                                            console.log("Backend Failed: ", error)
+                                        }
+                                    }
+                                    catch (e) {
+                                        console.log("Client Error: ", e)
+                                    }
+                                }
+                                
+                                // Optionally, re-filter the list if there's a search term
+                                const currentSearchTerm = guestSearchInput.value;
+                                if (currentSearchTerm) {
+                                    filterGuests(currentSearchTerm, document.getElementById('guest'));
+                                }
+                            });
+                        }
+                    } else {
+                        guestElement.innerHTML = `
+                            <div class="attendee-info">
+                                <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                                <span class="attendee-name">${guest.fullname}</span>
+                            </div>
+                            <div class="attendee-status">
+                                <span class="event-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="attendee-actions">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoffswitch-${guest.registrationID}" ${guest.status.toLowerCase() !== 'declined' ? 'checked' : ''}>
+                                    <label class="onoffswitch-label" for="onoffswitch-${guest.registrationID}">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        `;
+                        statusContainer.appendChild(guestElement);
+
+                        // Add click event listeners to the toggle buttons
+                        const checkbox = guestElement.querySelector('.onoffswitch-checkbox');
+                        
+                        checkbox.addEventListener('change', async function(e) {
+                            const container = this.closest('.attendee-container');
+                            const statusElement = container.querySelector('.event-status');
+
+                            // Toggle between states
+                            if (this.checked) {
+                                statusElement.textContent = 'Going';
+                                statusElement.className = 'event-status going';
+                                newStatus = 'Approved';
+
+                                const guestData = {
+                                    eventID : guest.eventID,
+                                    userID : guest.userID,
+                                    status : newStatus
+                                }
+
+                                try {
+                                    const response = await fetch(`/registrant`, {
+                                        method : 'PATCH',
+                                        headers : { 'Content-Type' : 'application/json' },
+                                        body : JSON.stringify(guestData)
+                                    })
+
+                                    socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+                                    socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+
+                                    if (response.ok) {
+                                        const result = await response.json()
+                                        console.log("Backend Success: ", result)
+                                        alert('Guest Accepted!')
+                                    }
+                                    else {
+                                        const error = await response.json()
+                                        console.log("Backend Failed: ", error)
+                                    }
+                                }
+                                catch (e) {
+                                    console.log("Client Error: ", e)
+                                }                                
+                            } else {
+                                statusElement.textContent = 'Declined';
+                                statusElement.className = 'event-status declined';
+                                newStatus = 'Declined';
+
+                                const guestData = {
+                                    eventID : guest.eventID,
+                                    userID : guest.userID,
+                                    status : newStatus
+                                }
+
+                                try {
+                                    const response = await fetch(`/registrant`, {
+                                        method : 'PATCH',
+                                        headers : { 'Content-Type' : 'application/json' },
+                                        body : JSON.stringify(guestData)
+                                    })
+
+                                    socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+                                    socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+
+                                    if (response.ok) {
+                                        const result = await response.json()
+                                        console.log("Backend Success: ", result)
+                                        alert('Guest Declined!')
+                                    }
+                                    else {
+                                        const error = await response.json()
+                                        console.log("Backend Failed: ", error)
+                                    }
+                                }
+                                catch (e) {
+                                    console.log("Client Error: ", e)
+                                }
+                            }
+                            
+                            // Optionally, re-filter the list if there's a search term
+                            const currentSearchTerm = guestSearchInput.value;
+                            if (currentSearchTerm) {
+                                filterGuests(currentSearchTerm, document.getElementById('guest'));
+                            }
+                        });
+                    }
+                });
+
+                // Reinitialize search functionality after displaying the guest list
+                const newGuestSearchInput = guestListContainer.querySelector('.search-input');
+                if (newGuestSearchInput) {
+                    newGuestSearchInput.addEventListener('input', debounce((e) => {
+                        filterGuests(e.target.value, guestListContainer);
+                    }, 300));
+                    addClearSearchButton(newGuestSearchInput);
+                }
+            } catch (error) {
+                console.error('Error displaying guest list:', error);
+            }
+        };
+
+
+        //Check In Tab Handling
+
+        // // Function to display check-in list
+        // const displayCheckInList = (guests) => {
+        //     try {
+        //         console.log('Displaying check-in list:', guests);
+        //         const checkInContainer = document.querySelector('#check-in');
+        //         if (!checkInContainer) {
+        //             console.error('Check-in container not found');
+        //             return;
+        //         }
+
+        //         const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
+        //         existingGuests.forEach(guest => guest.remove());
+
+        //         guests.forEach(guest => {
+        //             const guestElement = document.createElement('div');
+        //             guestElement.className = 'checkin-guest';
+        //             const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+        //             guestElement.innerHTML = `
+        //                 <div class="guest-info">
+        //                     <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+        //                     <span class="guest-name">${guest.fullname}</span>
+        //                 </div>
+        //                 <div class="attendance-options">
+        //                     <label class="attendance-option attended">
+        //                         <input type="radio" name="attendance${guest.registrationID}" value="attended">
+        //                         <span>Attended</span>
+        //                     </label>
+        //                     <label class="attendance-option not-attended">
+        //                         <input type="radio" name="attendance${guest.registrationID}" value="not-attended">
+        //                         <span>Not Attended</span>
+        //                     </label>
+        //                 </div>
+        //             `;
+        //             checkInContainer.appendChild(guestElement);
+
+        //             // Add event listeners for the radio buttons
+        //             const radioButtons = guestElement.querySelectorAll('input[type="radio"]');
+        //             radioButtons.forEach(radio => {
+        //                 radio.addEventListener('change', function() {
+        //                     const checkinGuest = this.closest('.checkin-guest');
+        //                     checkinGuest.classList.remove('attended', 'not-attended');
+                            
+        //                     if (this.value === 'attended') {
+        //                         checkinGuest.classList.add('attended');
+        //                     } else if (this.value === 'not-attended') {
+        //                         checkinGuest.classList.add('not-attended');
+        //                     }
+
+        //                     // Update the guest's attendance status in the data
+        //                     guest.attendanceStatus = this.value;
+        //                     console.log(`Updated attendance for ${guest.fullname}: ${this.value}`);
+        //                 });
+        //             });
+        //         });
+        //     } catch (error) {
+        //         console.error('Error displaying check-in list:', error);
+        //     }
+        // };
+
         displayEventData(eventData);
-        // displayGuestList(registrationData);
+
+        let pendingGuests = registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
+        pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
+
+        let waitlistedGuests = registrationData.filter(guest => guest.status == 'Waitlisted')
+        registrationData = [...pendingGuests, ...waitlistedGuests]
+
+        displayGuestList(registrationData);
         // displayCheckInList(approvedGuestsData);
     }
-
-    // // Function to display guest list
-    // const displayGuestList = (guests) => {
-    //     try {
-    //         console.log('Displaying guest list:', guests); // Debug log
-    //         const guestListContainer = document.querySelector('#guest');
-    //         if (!guestListContainer) {
-    //             console.error('Guest list container not found');
-    //             return;
-    //         }
-
-    //         const existingGuests = guestListContainer.querySelectorAll('.attendee-container');
-    //         existingGuests.forEach(guest => guest.remove());
-
-    //         guests.forEach(guest => {
-    //             const guestElement = document.createElement('div');
-    //             guestElement.className = 'attendee-container';
-    //             const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
-                
-    //             // Map the status to the appropriate class and display text
-    //             let statusClass = '';
-    //             let statusText = '';
-    //             switch(guest.status.toLowerCase()) {
-    //                 case 'approved':
-    //                     statusClass = 'going';
-    //                     statusText = 'Going';
-    //                     break;
-    //                 case 'declined':
-    //                     statusClass = 'declined';
-    //                     statusText = 'Declined';
-    //                     break;
-    //                 case 'pending':
-    //                     statusClass = 'pending';
-    //                     statusText = 'Pending';
-    //                     break;
-    //                 case 'waitlisted':
-    //                     statusClass = 'waitlisted';
-    //                     statusText = 'Waitlisted';
-    //                     break;
-    //                 default:
-    //                     statusClass = 'pending';
-    //                     statusText = 'Pending';
-    //             }
-
-    //             guestElement.innerHTML = `
-    //                 <div class="attendee-info">
-    //                     <img src="${profilePicPath}" class="icon-flex" alt="Profile">
-    //                     <span class="attendee-name">${guest.fullname}</span>
-    //                 </div>
-    //                 <div class="attendee-status">
-    //                     <span class="event-status ${statusClass}">${statusText}</span>
-    //                 </div>
-    //                 <div class="attendee-actions">
-    //                     <button class="accept">Dalo</button>
-    //                     <button class="decline">Decline</button>
-    //                 </div>
-    //             `;
-    //             guestListContainer.appendChild(guestElement);
-    //         });
-    //     } catch (error) {
-    //         console.error('Error displaying guest list:', error);
-    //     }
-    // };
-
-    // // Function to display check-in list
-    // const displayCheckInList = (guests) => {
-    //     try {
-    //         console.log('Displaying check-in list:', guests);
-    //         const checkInContainer = document.querySelector('#check-in');
-    //         if (!checkInContainer) {
-    //             console.error('Check-in container not found');
-    //             return;
-    //         }
-
-    //         const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
-    //         existingGuests.forEach(guest => guest.remove());
-
-    //         guests.forEach(guest => {
-    //             const guestElement = document.createElement('div');
-    //             guestElement.className = 'checkin-guest';
-    //             const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
-    //             guestElement.innerHTML = `
-    //                 <div class="guest-info">
-    //                     <img src="${profilePicPath}" class="icon-flex" alt="Profile">
-    //                     <span class="guest-name">${guest.fullname}</span>
-    //                 </div>
-    //                 <div class="attendance-options">
-    //                     <label class="attendance-option attended">
-    //                         <input type="radio" name="attendance${guest.registrationID}" value="attended">
-    //                         <span>Attended</span>
-    //                     </label>
-    //                     <label class="attendance-option not-attended">
-    //                         <input type="radio" name="attendance${guest.registrationID}" value="not-attended">
-    //                         <span>Not Attended</span>
-    //                     </label>
-    //                 </div>
-    //             `;
-    //             checkInContainer.appendChild(guestElement);
-
-    //             // Add event listeners for the radio buttons
-    //             const radioButtons = guestElement.querySelectorAll('input[type="radio"]');
-    //             radioButtons.forEach(radio => {
-    //                 radio.addEventListener('change', function() {
-    //                     const checkinGuest = this.closest('.checkin-guest');
-    //                     checkinGuest.classList.remove('attended', 'not-attended');
-                        
-    //                     if (this.value === 'attended') {
-    //                         checkinGuest.classList.add('attended');
-    //                     } else if (this.value === 'not-attended') {
-    //                         checkinGuest.classList.add('not-attended');
-    //                     }
-
-    //                     // Update the guest's attendance status in the data
-    //                     guest.attendanceStatus = this.value;
-    //                     console.log(`Updated attendance for ${guest.fullname}: ${this.value}`);
-    //                 });
-    //             });
-    //         });
-    //     } catch (error) {
-    //         console.error('Error displaying check-in list:', error);
-    //     }
-    // };
-
-    
-    // // Add toggle switch functionality
-    // const toggleSwitches = document.querySelectorAll('.attendee-toggle input');
-    // toggleSwitches.forEach(toggle => {
-    //     toggle.addEventListener('change', function() {
-    //         const container = this.closest('.attendee-container');
-    //         const statusElement = container.querySelector('.event-status');
-            
-    //         if (this.checked) {
-    //             statusElement.textContent = 'Going';
-    //             statusElement.className = 'event-status going';
-    //         } else {
-    //             statusElement.textContent = 'Declined';
-    //             statusElement.className = 'event-status declined';
-    //         }
-    //     });
-    // });
 });
