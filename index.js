@@ -845,6 +845,31 @@ wss.on('connection', async (ws, req) => {
                 ws.send(JSON.stringify({ status: 500, message : 'Approved guests extraction failed', error : e}))
             }
         }
+        // GET attended guest details
+        else if (requestedData.type == 'getAttendeesData') {
+            try {
+                const result = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT aT.attendanceID, aT.eventID, uT.userID, uT.fullName
+                            FROM attendeeTable aT
+                            JOIN userTable uT ON aT.userID = uT.userID
+                            WHERE aT.eventID = @eventID`)
+                
+                const attendeesData = result.recordset.map(attendee => ({
+                                                                attendanceID : attendee.attendanceID,
+                                                                eventID : attendee.eventID,
+                                                                userID : attendee.userID,
+                                                                fullname : attendee.fullName,
+                                                            }))
+
+                console.log("Attendees extraction successful")
+                ws.send(JSON.stringify({ status : 200, type : 'attendeesData', attendeesData : attendeesData }))
+            }
+            catch (e) {
+                console.log("Attendees extraction failed: ", e)
+                ws.send(JSON.stringify({ status: 500, message : 'Attendees extraction failed', error : e}))
+            }
+        }
     })
 })
 
