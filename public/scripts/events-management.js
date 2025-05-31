@@ -6,14 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let eventData = null
     let registrationData = null
     let approvedGuestsData = null
+    let attendeesData = null
 
-    let hasEventData = false;
-    let hasRegistrationData = false;
-    let hasApprovedGuestsData = false;
+    let hasEventData = false
+    let hasRegistrationData = false
+    let hasApprovedGuestsData = false
+    let hasAttendeesData = false
 
     function flagData() {
-        if (hasEventData && hasRegistrationData && hasApprovedGuestsData) {
-            setEventManagement(eventData, registrationData, approvedGuestsData);
+        if (hasEventData && hasRegistrationData && hasApprovedGuestsData && hasAttendeesData) {
+            setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData);
         }
     }
 
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.send(JSON.stringify({ type: 'getEventData' }));
         socket.send(JSON.stringify({ type: 'getRegistrationData' }));
         socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+        socket.send(JSON.stringify({ type : 'getAttendeesData' }))
 
         socket.addEventListener('message', event => {
             let data = JSON.parse(event.data)
@@ -39,7 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.status == 200) {
                     console.log("Client Registrants Details: ", data.registrationData)
                     hasRegistrationData = true;
-                    registrationData = data.registrationData
+                    
+                    let pendingGuests = data.registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
+                    pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
+
+                    let waitlistedGuests = data.registrationData.filter(guest => guest.status == 'Waitlisted')
+                    registrationData = [...pendingGuests, ...waitlistedGuests]
                 }
                 else if (data.status == 500) {
                     console.log("Backend Failed: ", data.message, data.error)
@@ -55,12 +63,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log("Backend Failed: ", data.message, data.error)
                 }                   
             }
+            else if (data.type == 'attendeesData') {
+                 if (data.status == 200) {
+                    console.log("Client Attendees Details: ", data.attendeesData)
+                    hasAttendeesData = true;                       
+                    attendeesData = data.attendeesData.sort((a, b) => a.attendanceID - b.attendanceID)
+                }
+                else if (data.status == 500) {
+                    console.log("Backend Failed: ", data.message, data.error)
+                }                   
+            }
              
             flagData()
         })
     })
 
-    async function setEventManagement(eventData, registrationData, approvedGuestsData) {
+    async function setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData) {
         //Event Tab Handling
 
         // Cache DOM elements
@@ -889,74 +907,119 @@ document.addEventListener('DOMContentLoaded', () => {
 
         //Check In Tab Handling
 
-        // // Function to display check-in list
-        // const displayCheckInList = (guests) => {
-        //     try {
-        //         console.log('Displaying check-in list:', guests);
-        //         const checkInContainer = document.querySelector('#check-in');
-        //         if (!checkInContainer) {
-        //             console.error('Check-in container not found');
-        //             return;
-        //         }
+        // Function to display check-in list
+        const displayCheckInList = (guests) => {
+            try {
+                const checkInContainer = document.querySelector('#check-in');
+                if (!checkInContainer) {
+                    console.error('Check-in container not found');
+                    return;
+                }
 
-        //         const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
-        //         existingGuests.forEach(guest => guest.remove());
+                const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
+                existingGuests.forEach(guest => guest.remove());
 
-        //         guests.forEach(guest => {
-        //             const guestElement = document.createElement('div');
-        //             guestElement.className = 'checkin-guest';
-        //             const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
-        //             guestElement.innerHTML = `
-        //                 <div class="guest-info">
-        //                     <img src="${profilePicPath}" class="icon-flex" alt="Profile">
-        //                     <span class="guest-name">${guest.fullname}</span>
-        //                 </div>
-        //                 <div class="attendance-options">
-        //                     <label class="attendance-option attended">
-        //                         <input type="radio" name="attendance${guest.registrationID}" value="attended">
-        //                         <span>Attended</span>
-        //                     </label>
-        //                     <label class="attendance-option not-attended">
-        //                         <input type="radio" name="attendance${guest.registrationID}" value="not-attended">
-        //                         <span>Not Attended</span>
-        //                     </label>
-        //                 </div>
-        //             `;
-        //             checkInContainer.appendChild(guestElement);
+                guests.forEach(guest => {
+                    const guestElement = document.createElement('div');
+                    guestElement.className = 'checkin-guest';
+                    
+                    const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
+                    
+                    guestElement.innerHTML = `
+                        <div class="guest-info">
+                            <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                            <span class="guest-name">${guest.fullname}</span>
+                        </div>
+                        <div class="checkin-actions">
+                            <div class="checkin-onoffswitch">
+                                <input type="checkbox" name="checkin-onoffswitch" class="checkin-onoffswitch-checkbox" id="checkin-onoffswitch-${guest.registrationID}" ${attendeesData.some(attendee => attendee.fullname == guest.fullname) ? 'checked' : ''}>
+                                <label class="checkin-onoffswitch-label" for="checkin-onoffswitch-${guest.registrationID}">
+                                    <span class="checkin-onoffswitch-inner"></span>
+                                    <span class="checkin-onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                    checkInContainer.appendChild(guestElement);
 
-        //             // Add event listeners for the radio buttons
-        //             const radioButtons = guestElement.querySelectorAll('input[type="radio"]');
-        //             radioButtons.forEach(radio => {
-        //                 radio.addEventListener('change', function() {
-        //                     const checkinGuest = this.closest('.checkin-guest');
-        //                     checkinGuest.classList.remove('attended', 'not-attended');
+                    // Add click event listeners to the toggle buttons
+                    const checkbox = guestElement.querySelector('.checkin-onoffswitch-checkbox');
+                    
+                    checkbox.addEventListener('change', async function(e) {
+                        // Toggle between states
+                        if (this.checked) {                            
+                            const attendanceData = {
+                                eventID : eventData.eventID,
+                                userID : guest.userID,
+                                checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                            }          
                             
-        //                     if (this.value === 'attended') {
-        //                         checkinGuest.classList.add('attended');
-        //                     } else if (this.value === 'not-attended') {
-        //                         checkinGuest.classList.add('not-attended');
-        //                     }
+                            try {
+                                const response = await fetch("/checkin-attendee", {
+                                    method : 'POST',
+                                    headers : { 'Content-Type' : 'application/json' },
+                                    body : JSON.stringify(attendanceData)
+                                })
 
-        //                     // Update the guest's attendance status in the data
-        //                     guest.attendanceStatus = this.value;
-        //                     console.log(`Updated attendance for ${guest.fullname}: ${this.value}`);
-        //                 });
-        //             });
-        //         });
-        //     } catch (error) {
-        //         console.error('Error displaying check-in list:', error);
-        //     }
-        // };
+                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                                socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+
+                                if (response.ok) {
+                                    const result = await response.json()
+                                    console.log("Backend Success: ", result)
+                                }
+                                else {
+                                    const error = await response.json()
+                                    console.log("Backend Failed: ", error)
+                                }
+                            }
+                            catch (e) {
+                                console.log("Client Error: ", e)
+                            }
+                        } 
+                        else {
+                            const attendanceData = {
+                                eventID : eventData.eventID,
+                                userID : guest.userID,
+                            }
+
+                            try {
+                                const response = await fetch("/checkin-attendee", {
+                                    method : 'DELETE',
+                                    headers : { 'Content-Type' : 'application/json' },
+                                    body : JSON.stringify(attendanceData)
+                                })
+
+                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                                socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+
+                                if (response.ok) {
+                                    const result = await response.json()
+                                    console.log("Backend Success: ", result)
+                                }
+                                else if (response.status == 404) {
+                                    const result = await response.json()
+                                    console.log("Backend Message: ", result)
+                                }
+                                else {
+                                    const error = await response.json()
+                                    console.log("Backend Failed: ", error)
+                                }
+                            }
+                            catch (e) {
+                                console.log("Client Error: ", e)
+                            }
+                        }
+                    });
+                });             
+            } 
+            catch (error) {
+                console.error('Error displaying check-in list:', error);
+            }
+        };
 
         displayEventData(eventData);
-
-        let pendingGuests = registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
-        pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
-
-        let waitlistedGuests = registrationData.filter(guest => guest.status == 'Waitlisted')
-        registrationData = [...pendingGuests, ...waitlistedGuests]
-
         displayGuestList(registrationData);
-        // displayCheckInList(approvedGuestsData);
+        displayCheckInList(approvedGuestsData);
     }
 });
