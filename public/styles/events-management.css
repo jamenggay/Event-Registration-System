@@ -426,32 +426,6 @@ body::before {
     }
 }
 
-.attendee-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.6);
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.attendee-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex: 1;
-}
-
-.attendee-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-}
-
 .event-status {
     padding: 0.4rem 1rem;
     border-radius: 20px;
@@ -463,28 +437,64 @@ body::before {
     border: 2px solid;
     width: 120px;
     text-align: center;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-sizing: border-box;
+    margin: 0 auto;
 }
 
 .event-status.going {
-    color: #32cd32;
-    border-color: #32cd32;
+    color: #28a745;
+    border-color: #28a745;
+    background-color: white;
 }
 
 .event-status.declined {
-    color: #bd0000;
-    border-color: #bd0000;
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: white;
 }
 
 .event-status.pending {
     color: #ffa500;
     border-color: #ffa500;
+    background-color: white;
 }
 
 .event-status.waitlisted {
     color: #666;
     border-color: #666;
+    background-color: white;
+}
+
+.attendee-container {
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 0.75rem 1rem;
+    margin: 0 0 0.5rem 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 1rem;
+}
+
+.attendee-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.attendee-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    margin: 0 auto;
 }
 
 .attendee-actions {
@@ -492,16 +502,42 @@ body::before {
     justify-content: flex-end;
     align-items: center;
     gap: 0.5rem;
-    flex: 1;
 }
 
-.attendee-actions button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.waitlisted-container .attendee-container {
+    grid-template-columns: 1fr 120px;
+    padding: 0.75rem 1rem;
+}
+
+.waitlisted-container .attendee-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.waitlisted-container .attendee-status {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.going-container .event-status {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.declined-container .event-status {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.pending-container .event-status {
+    color: #ffa500;
+    border-color: #ffa500;
+}
+
+.waitlisted-container .event-status {
+    color: #666;
+    border-color: #666;
 }
 
 .accept {
@@ -524,37 +560,7 @@ body::before {
 
 /* Remove all previous custom styles for buttons to ensure a clean revert */
 /* This includes pill, maximize/minimize, toggle, and forceful overrides */
-.attendee-actions .accept,
-.attendee-actions .decline,
-.attendee-actions .accept:focus,
-.attendee-actions .accept:focus-visible,
-.attendee-actions .decline:focus,
-.attendee-actions .decline:focus-visible,
-.attendee-actions button.active,
-.attendee-actions button.inactive,
-.attendee-actions button:focus,
-.attendee-actions button:active,
-.attendee-toggle,
-.toggle-btn {
-    all: unset !important; /* Attempt to remove all inherited styles */
-    /* Re-apply basic styles that were unset */
-    display: inline-block !important;
-    padding: 0.5rem 1rem !important;
-    border: none !important;
-    border-radius: 6px !important;
-    font-weight: 500 !important;
-    cursor: pointer !important;
-    transition: background-color 0.3s ease !important;
-    color: white !important; /* Default button text color */
-}
-
-/* Specific background colors for accept and decline */
-.attendee-actions .accept { background-color: #28a745 !important; }
-.attendee-actions .decline { background-color: #dc3545 !important; }
-
-/* Basic hover styles */
-.attendee-actions .accept:hover { background-color: #218838 !important; }
-.attendee-actions .decline:hover { background-color: #c82333 !important; }
+/* REMOVED conflicting styles causing issues with toggle appearance */
 
 .checkin-guest {
     display: flex;
@@ -563,9 +569,11 @@ body::before {
     padding: 0.75rem 1rem;
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 8px;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem 0;
     box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
     transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .checkin-guest input[type="radio"][value="attended"]:checked ~ .guest-info ~ .attendance-options,
@@ -656,8 +664,10 @@ body::before {
     color: white;
 }
 
-.checkin-guest.attended .guest-info img {
-    filter: brightness(0) invert(1);
+.guest-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .checkin-guest.not-attended {
@@ -666,10 +676,6 @@ body::before {
 
 .checkin-guest.not-attended .guest-name {
     color: white;
-}
-
-.checkin-guest.not-attended .guest-info img {
-    filter: brightness(0) invert(1);
 }
 
 .status-badge {
@@ -974,6 +980,10 @@ select {
     background-color: #005a8f;
 }
 
+.save-button:disabled {
+    cursor: not-allowed;
+}
+
 @keyframes modalSlideIn {
     from {
         opacity: 0;
@@ -1122,6 +1132,11 @@ h3 {
     font-weight: 500;
 }
 
+.icon-flex {
+    width: 50px;
+    height: 50px;
+}
+
 .attendee-name,
 .guest-name {
     font-size: 1rem;
@@ -1195,10 +1210,6 @@ h3 {
     color: white;
 }
 
-.checkin-guest.attended .guest-info img {
-    filter: brightness(0) invert(1);
-}
-
 .checkin-guest.not-attended {
     background-color: #dc3545;
 }
@@ -1207,14 +1218,12 @@ h3 {
     color: white;
 }
 
-.checkin-guest.not-attended .guest-info img {
-    filter: brightness(0) invert(1);
-}
-
 .search-container {
     margin-bottom: 1.5rem;
     width: 100%;
     position: relative;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .search-input {
@@ -1226,6 +1235,7 @@ h3 {
     font-size: 1rem;
     background-color: rgba(255, 255, 255, 0.8);
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -1305,99 +1315,104 @@ h3 {
 
 .checkin-list {
     margin-bottom: 2rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .attendee-toggle {
+    display: flex;
+    border: 2px solid #e0e0e0;
+    border-radius: 999px;
+    overflow: hidden;
     position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 30px;
-}
-
-.attendee-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc; /* Light grey for off state */
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white; /* White circle */
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .toggle-slider {
-    background-color: #007BFF; /* Blue for on state */
-}
-
-input:checked + .toggle-slider:before {
-    transform: translateX(30px); /* Adjust translation based on width and margin */
-}
-
-.toggle-btn {
-    border: none;
-    outline: none;
-    background: transparent;
-    color: #333;
-    padding: 0.5rem 1.5rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 1;
-    width: 50%;
-    height: 100%;
-}
-
-.toggle-btn.dalo.active {
-    background: #28a745;
-    color: #fff;
-}
-
-.toggle-btn.decline.active {
-    background: #dc3545;
-    color: #fff;
-}
-
-.toggle-btn:not(.active) {
-    background: transparent;
-    color: #333;
+    width: 120px;
+    height: 36px;
+    align-items: stretch;
+    box-sizing: border-box;
+    background-color: #f5f5f5;
 }
 
 .attendee-toggle::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    background: #28a745;
-    transition: transform 0.3s ease;
-    z-index: 0;
+    top: 2px;
+    left: 2px;
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
-.attendee-toggle .toggle-btn.decline.active + .attendee-toggle::before {
-    transform: translateX(100%);
-    background: #dc3545;
+.attendee-toggle.dalo-active {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.attendee-toggle.decline-active {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.attendee-toggle.dalo-active::before {
+    left: calc(100% - 34px);
+}
+
+.attendee-toggle.decline-active::before {
+    left: 2px;
+}
+
+.toggle-btn {
+    flex-grow: 1;
+    flex-basis: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #666;
+    padding: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+
+.toggle-btn.dalo {
+    color: #666;
+}
+
+.toggle-btn.decline {
+    color: #666;
+}
+
+.attendee-toggle.dalo-active .toggle-btn.dalo {
+    color: white;
+}
+
+.attendee-toggle.dalo-active .toggle-btn.decline {
+    opacity: 0;
+}
+
+.attendee-toggle.decline-active .toggle-btn.dalo {
+    opacity: 0;
+}
+
+.attendee-toggle.decline-active .toggle-btn.decline {
+    color: white;
+}
+
+/* Remove previous toggle-slider styles that are no longer needed */
+.toggle-slider {
+    display: none;
 }
 
 .delete-event-box {
@@ -1549,4 +1564,178 @@ input:checked + .toggle-slider:before {
     margin-top: 1.5rem;
 }
 
+.status-section {
+    margin-bottom: 1rem;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
 
+.status-section:first-of-type {
+    display: none;
+}
+
+.status-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Remove all old toggle button styles */
+.toggle-wrapper,
+.toggle-input,
+.toggle-label,
+.toggle-slider,
+.attendee-toggle,
+.toggle-btn,
+.toggle-btn.dalo,
+.toggle-btn.decline,
+.attendee-toggle.dalo-active,
+.attendee-toggle.decline-active,
+.attendee-toggle.dalo-active::before,
+.attendee-toggle.decline-active::before,
+.attendee-toggle.dalo-active .toggle-btn.dalo,
+.attendee-toggle.dalo-active .toggle-btn.decline,
+.attendee-toggle.decline-active .toggle-btn.dalo,
+.attendee-toggle.decline-active .toggle-btn.decline {
+    display: none;
+}
+
+/* New onoffswitch styles for guest tab */
+.onoffswitch {
+    position: relative; width: 92px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 11px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 27px; padding: 0; line-height: 27px;
+    font-size: 13px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "Dalo";
+    padding-left: 12px;
+    background-color: #28A745; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "Decline";
+    padding-right: 12px;
+    background-color: #DC3545; color: #FFFFFF;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 4.5px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 61px;
+    border: 2px solid #999999; border-radius: 11px;
+    transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+}
+
+
+.checkin-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkin-onoffswitch {
+    position: relative; width: 132px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+
+.checkin-onoffswitch-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.checkin-onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 11px;
+}
+
+.checkin-onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.checkin-onoffswitch-inner:before, .checkin-onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 27px; padding: 0; line-height: 27px;
+    font-size: 13px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+
+.checkin-onoffswitch-inner:before {
+    content: "Attended";
+    padding-left: 12px;
+    background-color: #28A745; color: #FFFFFF;
+}
+
+.checkin-onoffswitch-inner:after {
+    content: "Not Attended";
+    padding-right: 12px;
+    background-color: #DC3545; color: #FFFFFF;
+    text-align: right;
+}
+
+.checkin-onoffswitch-switch {
+    display: block; width: 18px; margin: 4.5px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 102px;
+    border: 2px solid #999999; border-radius: 11px;
+    transition: all 0.3s ease-in 0s; 
+}
+
+.checkin-onoffswitch-checkbox:checked + .checkin-onoffswitch-label .checkin-onoffswitch-inner {
+    margin-left: 0;
+}
+
+.checkin-onoffswitch-checkbox:checked + .checkin-onoffswitch-label .checkin-onoffswitch-switch {
+    right: 0px; 
+}
+
+/* Rule to override display: none for toggles in Edit Event Modal */
+#editEventModal .toggle-wrapper {
+    display: flex !important;
+}
+#editEventModal .toggle-input {
+    display: inline-block !important; /* Ensure input is not hidden */
+}
+#editEventModal .toggle-label {
+     display: inline-block !important; /* Ensure label is not hidden */
+}
+#editEventModal .toggle-slider {
+     display: block !important; /* Ensure slider is not hidden */
+}
