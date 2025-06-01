@@ -1013,7 +1013,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     });
-                });             
+                }); 
+                
+                const downloadButton = checkInContainer.querySelector('.download-button') 
+                
+                downloadButton.addEventListener('click', async () => {
+                    try {
+                        const response = await fetch(`/event-attendance/${eventID}`, {
+                            method : 'GET'
+                        })
+
+                        if (response.ok) {
+                            const result = await response.json()
+                            console.log("Backend Success: ", result)
+                        }
+                        else {
+                            const error = await response.json()
+                            console.log("Backend Failed: ", error)
+                        }
+                    }
+                    catch (e) {
+                        console.log('Client Error: ', e)
+                    }
+                })
             } 
             catch (error) {
                 console.error('Error displaying check-in list:', error);
