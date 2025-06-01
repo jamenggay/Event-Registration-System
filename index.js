@@ -8,6 +8,7 @@ import cookieSession from 'cookie-session'
 import bcrypt from "bcrypt";
 import { WebSocketServer } from 'ws';
 import http from 'http';
+import converter from 'json-2-csv';
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -976,6 +977,24 @@ app.put("/event/:eventID", async (req, res) => {
 });
 
 // event management page
+app.delete("/delete-event", async (req, res) => {
+    const { eventID } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
+
+        console.log("Event deletion success")
+        res.status(200).json({ message : 'Event deletion success' })
+    }
+    catch (e) {
+        console.log("Event deletion failed: ", e)
+        res.status(500).json({ message : 'Event deletion failed', error : e})
+    }
+});
+
+// event management page
 app.patch("/registrant", async (req, res) => {
     const { eventID, userID, status, approvedAt } = req.body
 
@@ -1089,20 +1108,36 @@ app.delete("/checkin-attendee", async (req, res) => {
 });
 
 // event management page
-app.delete("/delete-event", async (req, res) => {
-    const { eventID } = req.body
+app.get("/event-attendance/:eventID", async (req, res) => {
+    const eventID = req.params.eventID
 
     try {
-        await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
+        const result = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT aT.attendanceID, aT.eventID, uT.fullName, aT.checkedInAt
+                            FROM attendeeTable aT
+                            JOIN userTable uT ON aT.userID = uT.userID
+                            WHERE aT.eventID = @eventID
+                            ORDER BY aT.attendanceID ASC`)
+                
+        const attendeesData = result.recordset.map(attendee => ({
+                                                        eventID : attendee.eventID,
+                                                        attendanceID : attendee.attendanceID,
+                                                        fullname : attendee.fullName,
+                                                        checkedInAt : new Date(attendee.checkedInAt).toLocaleString('en-US', { timeZone : 'UTC'})
+                                                    }))
 
-        console.log("Event deletion success")
-        res.status(200).json({ message : 'Event deletion success' })
+        console.log(attendeesData)
+
+        let attendeesCSV = converter.json2csv(attendeesData)
+        
+        console.log(attendeesCSV)
+
+        //send csv string to client
     }
     catch (e) {
-        console.log("Event deletion failed: ", e)
-        res.status(500).json({ message : 'Event deletion failed', error : e})
+        console.log("Attendee details extraction failed: ", e)
+        return res.status(500).json({ message: 'Attendee details extration failed', error : e})
     }
 });
 
