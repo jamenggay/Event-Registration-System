@@ -54,7 +54,7 @@
           localStorage.setItem('currentUser', data.userName)
           setTimeout(() => {
             window.location.href = "/events"
-          },5000);
+          }, 3000);
           
         }
         else{

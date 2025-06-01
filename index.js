@@ -50,6 +50,8 @@ const wss = new WebSocketServer({ server })
 
 // home page
 app.get("/", (req, res) => {
+
+    req.session = null; 
     
     res.sendFile(path.join(__dirname, "public", "views", "index.html"));
 });
@@ -119,7 +121,6 @@ app.post("/login", async (req, res) => {
 
 // home page
 app.get('/logout', (req, res)=>{
-    req.session = null; // clears the session
 
     res.redirect('/');
 });
