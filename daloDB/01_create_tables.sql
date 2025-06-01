@@ -96,3 +96,8 @@ ALTER COLUMN eventName NVARCHAR(100);
 
 ALTER TABLE eventsTable
 ALTER COLUMN description NVARCHAR(MAX);
+
+ALTER TABLE registrationTable
+ADD
+    approvedAt DATETIME DEFAULT GETDATE();
+
