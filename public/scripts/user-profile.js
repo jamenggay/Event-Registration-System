@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     profilePic.src = userData.profilePic 
     profilePic.onerror =  function() {
         this.onerror = null; // prevent infinite loop if fallback fails
-        this.src = "/assets/icons/profile-icon.jpeg";
+        this.src = "../assets/icons/profile-icon.jpeg";
     };
     
     const uploadButton = document.getElementById('uploadButton');
@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (response.ok) {
                 const result = await response.json()
                 console.log("Server Success: ", result)
+                
                 alert("User profile edit success.")
             }
             else {
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert("An error occurred while updating user info.");
         }
     });
+
 
     function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -181,6 +183,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.querySelectorAll('.validation-message').forEach(msg => msg.remove());
         }, 300);
     }
+
     const saveChangesButton = document.getElementById('save-changes-btn');
 
     const basicInfoFields = [

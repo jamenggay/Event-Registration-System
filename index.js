@@ -842,11 +842,12 @@ wss.on('connection', async (ws, req) => {
             try {
                 const result = await pool.request()
                     .input('eventID', sql.Int, eventID)
-                    .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.profilePic, rT.status, rt.eventID 
+                    .query(`SELECT rT.registrationID, uT.userID, uT.fullName, uT.profilePic, rT.status, rT.eventID 
                             FROM registrationTable rT
-                            LEFT JOIN userTable uT ON rt.userID = uT.userID
-                            WHERE rT.eventID = @eventID AND status = 'Approved'`)
-
+                            LEFT JOIN userTable uT ON rT.userID = uT.userID
+                            WHERE rT.eventID = @eventID AND rT.status = 'Approved'
+                            ORDER BY rT.approvedAt ASC`)
+                
                 const approvedGuestsData = result.recordset.map(guest => ({
                     registrationID: guest.registrationID,
                     userID: guest.userID,
@@ -862,6 +863,32 @@ wss.on('connection', async (ws, req) => {
             catch (e) {
                 console.log("Approved registrants extraction failed: ", e)
                 ws.send(JSON.stringify({ status: 500, message: 'Approved guests extraction failed', error: e }))
+            }
+        }
+        // GET attended guest details
+        else if (requestedData.type == 'getAttendeesData') {
+            try {
+                const result = await pool.request()
+                    .input('eventID', sql.Int, eventID)
+                    .query(`SELECT aT.attendanceID, aT.eventID, uT.userID, uT.fullName
+                            FROM attendeeTable aT
+                            JOIN userTable uT ON aT.userID = uT.userID
+                            WHERE aT.eventID = @eventID
+                            ORDER BY aT.attendanceID ASC`)
+                
+                const attendeesData = result.recordset.map(attendee => ({
+                                                                attendanceID : attendee.attendanceID,
+                                                                eventID : attendee.eventID,
+                                                                userID : attendee.userID,
+                                                                fullname : attendee.fullName,
+                                                            }))
+
+                console.log("Attendees extraction successful")
+                ws.send(JSON.stringify({ status : 200, type : 'attendeesData', attendeesData : attendeesData }))
+            }
+            catch (e) {
+                console.log("Attendees extraction failed: ", e)
+                ws.send(JSON.stringify({ status: 500, message : 'Attendees extraction failed', error : e}))
             }
         }
     })
@@ -969,16 +996,48 @@ app.put("/event/:eventID", async (req, res) => {
 
 // event management page
 app.patch("/registrant", async (req, res) => {
-    const { eventID, userID, status } = req.body
+    const { eventID, userID, status, approvedAt } = req.body
 
     try {
         await pool.request()
             .input('userID', sql.Int, userID)
             .input('status', sql.VarChar, status)
             .input('eventID', sql.Int, eventID)
+            .input('approvedAt', sql.DateTime, approvedAt)
             .query(`UPDATE registrationTable
-                    SET status = @status
+                    SET status = @status, approvedAt = @approvedAt
                     WHERE eventID = @eventID AND userID = @userID`)
+
+        if (status === 'Declined') {
+            try {
+                const result = await pool.request()
+                                .input('userID', sql.Int, userID)
+                                .input('eventID', sql.Int, eventID)
+                                .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+
+                const guest = result.recordset[0]
+
+                if (guest != 0) {
+                    try {
+                        await pool.request()
+                            .input('userID', sql.Int, userID) 
+                            .input('eventID', sql.Int, eventID)
+                            .query(`DELETE FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+                        
+                        console.log("Registration details update and Attendee detail removal successful")
+                        res.status(200).json({ message : 'Registration details updated and Attendee details removed' })
+                    }
+                    catch (e) {
+                        console.log("Registration details update and Attendee detail removal failed")
+                        res.status(500).json({ message : 'Registration details update and Attendee details removal failed', error : e })
+                    }
+                }
+            }
+            catch (e) {
+                console.log("Attendee extraction failed: ", e)
+                return res.status(500).json({ message: 'Attendee extraction failed', error : e})
+            }
+        }
 
         console.log("Registration details update successful")
         res.status(200).json({ message: 'Registration details updated' })
@@ -994,52 +1053,19 @@ app.post("/checkin-attendee", async (req, res) => {
     const { eventID, userID, checkedInAt } = req.body
 
     try {
-        const result = await pool.request()
+        await pool.request()
             .input('eventID', sql.Int, eventID)
             .input('userID', sql.Int, userID)
-            .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+            .input('checkedInAt', sql.DateTime, checkedInAt)
+            .query(`INSERT INTO attendeeTable (eventID, userID, checkedInAt)
+                    VALUES (@eventID, @userID, @checkedInAt)`)
 
-        const attendee = result.recordset[0]
-
-        if (attendee) {
-            try {
-                await pool.request()
-                    .input('eventID', sql.Int, eventID)
-                    .input('userID', sql.Int, userID)
-                    .input('checkedInAt', sql.DateTime, checkedInAt)
-                    .query(`UPDATE attendeeTable
-                            SET checkedInAt = @checkedInAt
-                            WHERE eventID = @eventID AND userID = @userID`)
-
-                console.log("Attendee details update success")
-                res.status(201).json({ message: 'Attendee details update success' })
-            }
-            catch (e) {
-                console.log("Attendee details update failed: ", e)
-                res.status(500).json({ message: 'Attendee details update failed:', error: e })
-            }
-        }
-        else {
-            try {
-                await pool.request()
-                    .input('eventID', sql.Int, eventID)
-                    .input('userID', sql.Int, userID)
-                    .input('checkedInAt', sql.DateTime, checkedInAt)
-                    .query(`INSERT INTO attendeeTable (eventID, userID, checkedInAt)
-                            VALUES (@eventID, @userID, @checkedInAt)`)
-
-                console.log("Attendee details update success")
-                res.status(201).json({ message: 'Attendee details insert success' })
-            }
-            catch (e) {
-                console.log("Attendee details update failed: ", e)
-                res.status(500).json({ message: 'Attendee details insert failed:', error: e })
-            }
-        }
+        console.log("Attendee details update success")
+        res.status(201).json({ message : 'Attendee details insert success' })   
     }
     catch (e) {
-        console.log("Attendee details extraction failed: ", e)
-        res.status(500).json({ message: 'Attendee details extraction failed', error: e })
+        console.log("Attendee details update failed: ", e)
+        res.status(500).json({ message : 'Attendee details insert failed:', error : e })   
     }
 });
 
