@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  if (data.status == 200) {
                     console.log("Client Attendees Details: ", data.attendeesData)
                     hasAttendeesData = true;                       
-                    attendeesData = data.attendeesData.sort((a, b) => a.attendanceID - b.attendanceID)
+                    attendeesData = data.attendeesData
                 }
                 else if (data.status == 500) {
                     console.log("Backend Failed: ", data.message, data.error)
@@ -820,7 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const guestData = {
                                     eventID : guest.eventID,
                                     userID : guest.userID,
-                                    status : newStatus
+                                    status : newStatus,
+                                    approvedAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000)),
                                 }
 
                                 try {
@@ -866,6 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                                     socket.send(JSON.stringify({ type: 'getRegistrationData' }));
                                     socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                                    socket.send(JSON.stringify({ type : 'getAttendeesData' }))
 
                                     if (response.ok) {
                                         const result = await response.json()
