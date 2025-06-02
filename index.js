@@ -852,7 +852,7 @@ wss.on('connection', async (ws, req) => {
             try {
                 const result = await pool.request()
                     .input('eventID', sql.Int, eventID)
-                    .query(`SELECT aT.attendanceID, aT.eventID, uT.userID, uT.fullName
+                    .query(`SELECT aT.attendanceID, aT.eventID, uT.userID, uT.fullName, aT.checkedInAt
                             FROM attendeeTable aT
                             JOIN userTable uT ON aT.userID = uT.userID
                             WHERE aT.eventID = @eventID
@@ -863,6 +863,7 @@ wss.on('connection', async (ws, req) => {
                                                                 eventID : attendee.eventID,
                                                                 userID : attendee.userID,
                                                                 fullname : attendee.fullName,
+                                                                checkedInAt : attendee.checkedInAt
                                                             }))
 
                 console.log("Attendees extraction successful")
@@ -1104,40 +1105,6 @@ app.delete("/checkin-attendee", async (req, res) => {
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
         res.status(500).json({ message : 'Attendee details extraction failed', error : e})
-    }
-});
-
-// event management page
-app.get("/event-attendance/:eventID", async (req, res) => {
-    const eventID = req.params.eventID
-
-    try {
-        const result = await pool.request()
-                    .input('eventID', sql.Int, eventID)
-                    .query(`SELECT aT.attendanceID, aT.eventID, uT.fullName, aT.checkedInAt
-                            FROM attendeeTable aT
-                            JOIN userTable uT ON aT.userID = uT.userID
-                            WHERE aT.eventID = @eventID
-                            ORDER BY aT.attendanceID ASC`)
-                
-        const attendeesData = result.recordset.map(attendee => ({
-                                                        eventID : attendee.eventID,
-                                                        attendanceID : attendee.attendanceID,
-                                                        fullname : attendee.fullName,
-                                                        checkedInAt : new Date(attendee.checkedInAt).toLocaleString('en-US', { timeZone : 'UTC'})
-                                                    }))
-
-        console.log(attendeesData)
-
-        let attendeesCSV = converter.json2csv(attendeesData)
-        
-        console.log(attendeesCSV)
-
-        //send csv string to client
-    }
-    catch (e) {
-        console.log("Attendee details extraction failed: ", e)
-        return res.status(500).json({ message: 'Attendee details extration failed', error : e})
     }
 });
 
