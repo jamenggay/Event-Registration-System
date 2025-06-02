@@ -1178,6 +1178,27 @@ app.get("/events-registered", async (req, res) => {
     }
 });
 
+app.get('/api/past-events', async (req, res) => {
+    const userID = req.session.user.id;
+
+    try {
+       const result = await pool.request()
+       .input('userID', sql.Int, userID)
+       .query(`SELECT r.* FROM registrationTable r
+        JOIN eventsTable e ON r.eventID = e.eventID 
+        WHERE r.userID = @userID AND e.endDateTime < GETDATE();`);
+
+        res.json(result.recordset);
+        console.log("past events fetched successfully!");
+    }
+    catch(err){
+        console.error("Error fetching past events");
+
+    }
+
+    
+});
+
 app.get('/logout', (req, res)=>{
     req.session = null; // clears the session
 

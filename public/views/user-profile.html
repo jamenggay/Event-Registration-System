@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dalo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="/styles/alert-toast.css">
     <link rel="stylesheet" href="/styles/preloader.css">
     <link rel="stylesheet" href="/styles/user-profile.css">
     <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
@@ -18,6 +20,9 @@
     <header>
         <div id="header"></div>
     </header> 
+
+  <!-- TOAST -->
+   <div class="toast-container" id="toastContainer"></div>
 
     <div class="info_events_container">
         <div class="account_settings">
@@ -162,7 +167,7 @@
         <div id="footer"></div>
     </footer>
     <script src="/scripts/preloader.js"></script>
-    <script>
+    <!-- <script>
         window.userDataReady = new Promise(async (resolve, reject) => { 
             try {
                 const response = await fetch("/basic-profile", {
@@ -239,11 +244,12 @@
                 alert("An error occurred while creating the event");
             }
         })        
-    </script>
-
+    </script> -->
+    
     <script src="/scripts/footer.js"></script>
     <script src="/scripts/header.js"></script>
-    <script src="/scripts/user-profile.js"></script>
+    <script type="module" src="/scripts/user-profile.js"></script>
+    <script type="module" src="/scripts/alert-toast.js"></script>
 </body>
 </html>
     

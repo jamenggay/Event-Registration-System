@@ -1,3 +1,90 @@
+import { toastData, showToast } from "./alert-toast.js";
+// from user profile HTML file
+
+ window.userDataReady = new Promise(async (resolve, reject) => { 
+            try {
+                const response = await fetch("/basic-profile", {
+                    method: "GET",
+                    headers: {
+                        'Accept' : 'application/json'
+                    }
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    reject("Backend Failed: ", error)
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+                reject("Client Error: ", e);
+            }
+        }) 
+
+        window.userEventsCreatedReady = new Promise(async (resolve, reject) => { 
+            try {
+                const response = await fetch("/user-events-created", {
+                    method: "GET",
+                    headers: {
+                        'Accept' : 'application/json'
+                    }
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    reject("Backend Failed: ", error)
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+                reject("Client Error: ", e);
+            }
+        }) 
+        
+        const saveChangesButton = document.getElementById('save-changes-btn')
+        
+        saveChangesButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            try {
+                const response = await fetch("/user-info", {
+                    method: "PATCH",
+                    headers: { 'Content-Type' : 'application/json'},
+                    body: JSON.stringify(window.updatedUserData)
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    console.log("Server Success: ", result)
+                    toastData.success.message = "User profile has been updated.";
+                    showToast("success");
+                }
+                else {
+                    const result = await response.json();
+                    console.log("Server Failed: ", result)
+                    toastData.danger.title = "Failed:"
+                    toastData.danger.message = "User profile update failed.";
+                    showToast("danger");
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+                toastData.danger.message = "An error occurred while creating the event";
+                    
+            }
+        })        
+
+
+
+// --------------------------------------------------------
 window.addEventListener('pageshow', function (event) {
     // data receive from cache, reload it automatically
     if (event.persisted) {
@@ -41,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     profilePic.src = userData.profilePic 
     profilePic.onerror =  function() {
         this.onerror = null; // prevent infinite loop if fallback fails
-        this.src = "../assets/icons/profile-icon.jpeg";
+        this.src = "/assets/icons/profile-icon.jpeg";
     };
     
     const uploadButton = document.getElementById('uploadButton');
@@ -58,7 +145,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
+
+            toastData.info.title = "Please select an image file.";
+            showToast("info");
             return;
         }
 
@@ -72,7 +161,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             reader.onerror = function() {
                 console.error('Error reading file');
-                alert('Error reading file. Please try again.');
+                toastData.danger.message = "Error reading file. Please try again.";
+                showToast("danger");
             };
 
             reader.readAsDataURL(file);
@@ -98,19 +188,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (response.ok) {
                 const result = await response.json()
                 console.log("Server Success: ", result)
+
+                toastData.success.message = "User profile updated.";
+                showToast("success");
                 
-                alert("User profile edit success.")
             }
             else {
                 const result = await response.json();
                 console.log("Server Failed: ", result)
-                alert("User profile edit failed.")
+                toastData.danger.message = "User profile edit failed.";
+                showToast("danger");
             }
         }
         catch (e) {
             console.log("Client Error: ", e)
-            alert("An error occurred while updating user info.");
-        }
+            toastData.danger.message = "An error occurred while updating user info.";
+                showToast("danger");
+                    }
     });
 
 
