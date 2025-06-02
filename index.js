@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import { WebSocketServer } from 'ws';
 import http from 'http';
 import converter from 'json-2-csv';
+import { register } from "module";
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -748,7 +749,8 @@ app.get("/event/:eventID", async (req, res) => {
         }
     }
     catch (e) {
-
+        console.log("User event created details extraction failed: ", e)
+        res.status(500).send.json({ message : 'User event created details extraction failed', error : e })
     }
 });
 
