@@ -104,3 +104,15 @@ DROP CONSTRAINT CK__registrat__statu__403A8C7D;
 ALTER TABLE registrationTable
 ADD
     approvedAt DATETIME DEFAULT GETDATE();
+
+
+-- set deafult value for profilePic
+ALTER TABLE userTable
+ADD CONSTRAINT DF_userTable_profilePic
+DEFAULT '/assets/icons/profile-icon.jpeg' FOR profilePic;
+
+-- update null values of profilePic
+UPDATE userTable
+SET profilePic = '/assets/icons/profile-icon.jpeg'
+WHERE profilePic IS NULL;
+
