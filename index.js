@@ -777,7 +777,7 @@ wss.on('connection', async (ws, req) => {
                     location        : result.recordset[0].location,
                     startDateTime   : result.recordset[0].startDateTime,
                     endDateTime     : result.recordset[0].endDateTime, 
-                    featureImage    : result.recordset[0].featureImage,
+                    featureImage    : result.recordset[0].featureImage || null,
                     requireApproval : result.recordset[0].requireApproval,
                     capacity        : result.recordset[0].capacity,
                     feedbackLink    : result.recordset[0].feedbackLink,
@@ -808,7 +808,7 @@ wss.on('connection', async (ws, req) => {
                                                         registrationID : registrant.registrationID,
                                                         userID : registrant.userID,
                                                         fullname : registrant.fullName,
-                                                        profilePic : registrant.profilePic,
+                                                        profilePic : registrant.profilePic || null,
                                                         status : registrant.status,
                                                         eventID : registrant.eventID
                                                     }))
@@ -836,7 +836,7 @@ wss.on('connection', async (ws, req) => {
                                                                 registrationID : guest.registrationID,
                                                                 userID : guest.userID,
                                                                 fullname : guest.fullName,
-                                                                profilePic : guest.profilePic,
+                                                                profilePic : guest.profilePic || null,
                                                                 status : guest.status,
                                                                 eventID : guest.eventID
                                                             }))
