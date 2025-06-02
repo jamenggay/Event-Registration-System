@@ -11,7 +11,7 @@ import bcrypt from "bcrypt";
 import { error } from "console";
 import { WebSocketServer } from 'ws';
 import http from 'http';
-import { json2csv } from "json-2-csv";
+import converter from "json-2-csv";
 import { sourceMapsEnabled } from "process";
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
@@ -773,7 +773,7 @@ app.get("/event/:eventID", async (req, res) => {
 //event management page 
 wss.on('connection', async (ws, req) => {
     console.log('Client WebSocket Connected');
-
+    
     const eventID = req.url.split('/').pop()
 
     ws.on('message', async (message) => {
@@ -787,27 +787,27 @@ wss.on('connection', async (ws, req) => {
                     .query(`SELECT * FROM eventsTable WHERE eventID = @eventID`)
 
                 const eventData = {
-                    eventID: result.recordset[0].eventID,
-                    eventName: result.recordset[0].eventName,
-                    description: result.recordset[0].description,
-                    location: result.recordset[0].location,
-                    startDateTime: result.recordset[0].startDateTime,
-                    endDateTime: result.recordset[0].endDateTime,
-                    featureImage: result.recordset[0].featureImage,
-                    requireApproval: result.recordset[0].requireApproval,
-                    capacity: result.recordset[0].capacity,
-                    feedbackLink: result.recordset[0].feedbackLink,
-                    lastUpdated: result.recordset[0].lastUpdated,
-                    category: result.recordset[0].category,
-                    allowWaitlist: result.recordset[0].allowWaitlist
+                    eventID         : result.recordset[0].eventID,
+                    eventName       : result.recordset[0].eventName,
+                    description     : result.recordset[0].description,
+                    location        : result.recordset[0].location,
+                    startDateTime   : result.recordset[0].startDateTime,
+                    endDateTime     : result.recordset[0].endDateTime, 
+                    featureImage    : result.recordset[0].featureImage,
+                    requireApproval : result.recordset[0].requireApproval,
+                    capacity        : result.recordset[0].capacity,
+                    feedbackLink    : result.recordset[0].feedbackLink,
+                    lastUpdated     : result.recordset[0].lastUpdated,
+                    category        : result.recordset[0].category,
+                    allowWaitlist   : result.recordset[0].allowWaitlist
                 }
 
                 console.log("Event details extraction successful")
-                ws.send(JSON.stringify({ status: 200, type: 'eventData', eventData: eventData }))
+                ws.send(JSON.stringify({ status : 200, type : 'eventData', eventData : eventData}))
             }
             catch (e) {
                 console.log("Event details extraction failed: ", e)
-                ws.send(JSON.stringify({ status: 500, message: 'Event details extraction failed', error: e }))
+                ws.send(JSON.stringify({ status: 500, message : 'Event details extraction failed', error : e}))
             }
         }
         // GET registration details
@@ -821,20 +821,20 @@ wss.on('connection', async (ws, req) => {
                             WHERE rT.eventID = @eventID`)
 
                 const registrationData = result.recordset.map(registrant => ({
-                    registrationID: registrant.registrationID,
-                    userID: registrant.userID,
-                    fullname: registrant.fullName,
-                    profilePic: registrant.profilePic,
-                    status: registrant.status,
-                    eventID: registrant.eventID
-                }))
+                                                        registrationID : registrant.registrationID,
+                                                        userID : registrant.userID,
+                                                        fullname : registrant.fullName,
+                                                        profilePic : registrant.profilePic,
+                                                        status : registrant.status,
+                                                        eventID : registrant.eventID
+                                                    }))
 
                 console.log("Registration details extraction successful")
-                ws.send(JSON.stringify({ status: 200, type: 'registrationData', registrationData: registrationData }))
+                ws.send(JSON.stringify({ status : 200, type : 'registrationData', registrationData : registrationData }))
             }
             catch (e) {
                 console.log("Registration details extraction failed: ", e)
-                ws.send(JSON.stringify({ status: 500, message: 'Registration details extraction failed', error: e }))
+                ws.send(JSON.stringify({ status: 500, message : 'Registration details extraction failed', error : e}))
             }
         }
         // GET approved guest details
@@ -849,20 +849,20 @@ wss.on('connection', async (ws, req) => {
                             ORDER BY rT.approvedAt ASC`)
                 
                 const approvedGuestsData = result.recordset.map(guest => ({
-                    registrationID: guest.registrationID,
-                    userID: guest.userID,
-                    fullname: guest.fullName,
-                    profilePic: guest.profilePic,
-                    status: guest.status,
-                    eventID: guest.eventID
-                }))
+                                                                registrationID : guest.registrationID,
+                                                                userID : guest.userID,
+                                                                fullname : guest.fullName,
+                                                                profilePic : guest.profilePic,
+                                                                status : guest.status,
+                                                                eventID : guest.eventID
+                                                            }))
 
                 console.log("Approved guests extraction successful")
-                ws.send(JSON.stringify({ status: 200, type: 'approvedGuestsData', approvedGuestsData: approvedGuestsData }))
+                ws.send(JSON.stringify({ status : 200, type : 'approvedGuestsData', approvedGuestsData : approvedGuestsData }))
             }
             catch (e) {
                 console.log("Approved registrants extraction failed: ", e)
-                ws.send(JSON.stringify({ status: 500, message: 'Approved guests extraction failed', error: e }))
+                ws.send(JSON.stringify({ status: 500, message : 'Approved guests extraction failed', error : e}))
             }
         }
         // GET attended guest details
@@ -893,15 +893,15 @@ wss.on('connection', async (ws, req) => {
             }
         }
     })
-})
+});
 
 // event management page
 app.put("/event/:eventID", async (req, res) => {
     const eventID = req.params.eventID
 
     const { base64FeatureImage, imageFileName, imageFileExtension, dbImagePath,
-        eventName, startDateTime, endDateTime, location, description, category,
-        feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body
+            eventName, startDateTime, endDateTime, location, description, category, 
+            feedbackLink, requireApproval, capacity, allowWaitlist, lastUpdated } = req.body  
 
     let publicFeatureImagePath = null
 
@@ -929,7 +929,7 @@ app.put("/event/:eventID", async (req, res) => {
         if (!binaryFeatureImage) {
             return res.json({ message: 'Invalid image format.' });
         }
-
+        
         let uploadsfeatureImagesFileName = fs.readdirSync(path.join(__dirname, 'public', 'uploads', 'featureImage'))
         let featureImageFileName = `${imageFileName}.${imageFileExtension}`
 
@@ -946,22 +946,22 @@ app.put("/event/:eventID", async (req, res) => {
         const featureImagePath = path.join(__dirname, 'public', 'uploads', 'featureImage', `${featureImageFileName}`);
 
         // saves featureImage in uploads/featureImage folder
-        fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => {
-            if (error) {
-                console.log("Image Creation Failed: ", error)
+        fs.writeFile(featureImagePath, binaryFeatureImage.data, (error) => { 
+            if (error) { 
+                console.log("Image Creation Failed: ", error) 
             }
         });
 
         publicFeatureImagePath = `/uploads/featureImage/${featureImageFileName}`;
     }
-
+    
     try {
         await pool.request()
             .input('eventID', sql.Int, eventID)
             .input('eventName', sql.NVarChar, eventName)
             .input('featureImage', sql.VarChar, publicFeatureImagePath)
             .input('startDateTime', sql.DateTime, startDateTime)
-            .input('endDateTime', sql.DateTime, endDateTime)
+            .input('endDateTime', sql.DateTime, endDateTime) 
             .input('location', sql.VarChar, location)
             .input('description', sql.NVarChar, description)
             .input('category', sql.VarChar, category)
@@ -987,29 +987,11 @@ app.put("/event/:eventID", async (req, res) => {
                     WHERE eventID = @eventID`)
 
         console.log("Event details update successful")
-        res.status(200).json({ message: 'Event details updated' })
+        res.status(200).json({ message : 'Event details updated' })
     }
     catch (e) {
         console.log("Event details update failed: ", e)
-        res.status(500).json({ message: 'Event details update failed', error: e })
-    }
-});
-
-// event management page
-app.delete("/delete-event", async (req, res) => {
-    const { eventID } = req.body
-
-    try {
-        await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
-
-        console.log("Event deletion success")
-        res.status(200).json({ message : 'Event deletion success' })
-    }
-    catch (e) {
-        console.log("Event deletion failed: ", e)
-        res.status(500).json({ message : 'Event deletion failed', error : e})
+        res.status(500).json({ message : 'Event details update failed', error : e })
     }
 });
 
@@ -1059,13 +1041,14 @@ app.patch("/registrant", async (req, res) => {
         }
 
         console.log("Registration details update successful")
-        res.status(200).json({ message: 'Registration details updated' })
+        res.status(200).json({ message : 'Registration details updated' })
     }
     catch (e) {
         console.log("Registration details update failed: ", e)
-        res.status(500).json({ message: 'Registration details update failed:', error: e })
+        res.status(500).json({ message : 'Registration details update failed:', error : e })
     }
 });
+
 
 // event management page
 app.post("/checkin-attendee", async (req, res) => {
@@ -1094,12 +1077,12 @@ app.delete("/checkin-attendee", async (req, res) => {
 
     try {
         const result = await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .input('userID', sql.Int, userID)
-            .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
+                .input('eventID', sql.Int, eventID)
+                .input('userID', sql.Int, userID)
+                .query(`SELECT * FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
 
         const attendee = result.recordset[0]
-
+        
         if (attendee) {
             try {
                 await pool.request()
@@ -1108,23 +1091,44 @@ app.delete("/checkin-attendee", async (req, res) => {
                     .query(`DELETE FROM attendeeTable WHERE eventID = @eventID AND userID = @userID`)
 
                 console.log('Guest attendance removal success')
-                res.status(200).json({ message: 'Guest attendance removal success' })
+                res.status(200).json({ message: 'Guest attendance removal success'})
             }
             catch (e) {
                 console.log("Guest attendance removal failed: ", e)
-                res.status(500).json({ message: 'Guest attendance removal failed', error: e })
+                res.status(500).json({ message : 'Guest attendance removal failed', error : e})
             }
         }
         else {
             console.log('Guest not found in attendeeTable')
-            res.status(404).json({ message: 'Guest not found in attendeeTable' })
+            res.status(404).json({ message : 'Guest not found in attendeeTable'})
         }
     }
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
-        res.status(500).json({ message: 'Attendee details extraction failed', error: e })
+        res.status(500).json({ message : 'Attendee details extraction failed', error : e})
     }
 });
+
+// event management page
+app.delete("/delete-event", async (req, res) => {
+    const { eventID } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
+
+        console.log("Event deletion success")
+        res.status(200).json({ message : 'Event deletion success' })
+    }
+    catch (e) {
+        console.log("Event deletion failed: ", e)
+        res.status(500).json({ message : 'Event deletion failed', error : e})
+    }
+});
+
+
+
 
 // events page
 app.get("/events-registered", async (req, res) => {
