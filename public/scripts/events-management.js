@@ -1,3 +1,4 @@
+//backend
 document.addEventListener('DOMContentLoaded', () => {
     const eventID = window.location.pathname.split('/').pop()
 
