@@ -1,4 +1,3 @@
-//backend
 document.addEventListener('DOMContentLoaded', () => {
     const eventID = window.location.pathname.split('/').pop()
 
@@ -167,6 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (eventData.featureImage) {
                     const eventImage = document.getElementById('eventImage');
                     eventImage.src = eventData.featureImage;
+
+                    eventImage.onerror =  function() {
+                        this.onerror = null; // prevent infinite loop if fallback fails
+                        this.src = "../assets/icons/profile-icon.jpeg";
+                    };
+
                     eventImage.style.display = 'block';
                 }
 
@@ -689,7 +694,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (waitlistedContainer) {
                             guestElement.innerHTML = `
                                 <div class="attendee-info">
-                                    <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                                    <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
                                     <span class="attendee-name">${guest.fullname}</span>
                                 </div>
                                 <div class="attendee-actions">
@@ -787,7 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         guestElement.innerHTML = `
                             <div class="attendee-info">
-                                <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                                <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
                                 <span class="attendee-name">${guest.fullname}</span>
                             </div>
                             <div class="attendee-status">
@@ -930,7 +935,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     guestElement.innerHTML = `
                         <div class="guest-info">
-                            <img src="${profilePicPath}" class="icon-flex" alt="Profile">
+                            <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
                             <span class="guest-name">${guest.fullname}</span>
                         </div>
                         <div class="checkin-actions">
