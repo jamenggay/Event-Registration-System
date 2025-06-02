@@ -129,6 +129,8 @@ body::before {
 .tab-pane {
     display: none;
     min-height: 100%;
+    position: relative;
+    padding-bottom: 80px;
 }
 
 .tab-pane.active {
@@ -142,6 +144,7 @@ body::before {
     font-weight: 700;
     margin-bottom: 2rem;
     text-transform: none;
+    padding: 0 1rem;
 }
 
 .overview-container {
@@ -340,6 +343,7 @@ body::before {
 .edit-button-container {
     display: flex;
     justify-content: flex-end;
+    gap: 1rem;
     margin-top: 2rem;
     padding: 0 1rem;
 }
@@ -367,8 +371,47 @@ body::before {
     box-shadow: 0 4px 8px rgba(0, 117, 187, 0.3);
 }
 
+.delete-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #c82333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 117, 187, 0.2);
+    text-transform: none;
+}
+
+.delete-button:hover {
+    background-color: #a71d2a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(200, 35, 51, 0.3);
+}
+
+.delete-button svg {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) invert(1);
+}
+
+.delete-button span {
+    font-weight: 500;
+}
+
 .edit-icon {
     width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.delete-icon {
+    width: 15px;
     height: 20px;
     filter: brightness(0) invert(1);
 }
@@ -384,54 +427,118 @@ body::before {
     }
 }
 
-#waitlisted-container {
-    margin-top: 3rem;
+.event-status {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: white;
+    border: 2px solid;
+    width: 120px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 0 auto;
 }
 
-.icon-flex {
-    border-radius: 50%;
+.event-status.going {
+    color: #28a745;
+    border-color: #28a745;
+    background-color: white;
+}
+
+.event-status.declined {
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: white;
+}
+
+.event-status.pending {
+    color: #ffa500;
+    border-color: #ffa500;
+    background-color: white;
+}
+
+.event-status.waitlisted {
+    color: #666;
+    border-color: #666;
+    background-color: white;
 }
 
 .attendee-container {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr;
     align-items: center;
     background: rgba(255, 255, 255, 0.6);
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    margin: 0 0 0.5rem 0;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 1rem;
 }
 
-.attendee-info,
-.guest-info {
+.attendee-info {
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
-.attendee-info img,
-.guest-info img {
-    width: 24px;
-    height: 24px;
-    opacity: 0.8;
+.attendee-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    margin: 0 auto;
 }
 
-.attendee-name,
-.guest-name {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
+.attendee-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.attendee-actions button {
-    padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.waitlisted-container .attendee-container {
+    grid-template-columns: 1fr 120px;
+    padding: 0.75rem 1rem;
+}
+
+.waitlisted-container .attendee-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.waitlisted-container .attendee-status {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.going-container .event-status {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.declined-container .event-status {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.pending-container .event-status {
+    color: #ffa500;
+    border-color: #ffa500;
+}
+
+.waitlisted-container .event-status {
+    color: #666;
+    border-color: #666;
 }
 
 .accept {
@@ -452,6 +559,10 @@ body::before {
     background-color: #c82333;
 }
 
+/* Remove all previous custom styles for buttons to ensure a clean revert */
+/* This includes pill, maximize/minimize, toggle, and forceful overrides */
+/* REMOVED conflicting styles causing issues with toggle appearance */
+
 .checkin-guest {
     display: flex;
     justify-content: space-between;
@@ -459,9 +570,11 @@ body::before {
     padding: 0.75rem 1rem;
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 8px;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem 0;
     box-shadow: 0 2px 4px rgba(0, 117, 187, 0.1);
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .checkin-guest input[type="radio"][value="attended"]:checked ~ .guest-info ~ .attendance-options,
@@ -746,6 +859,9 @@ body::before {
     padding: 0.75rem;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 12px;
+      word-wrap: break-word;
+  overflow-wrap: break-word;
+
 }
 
 .icon-heading {
@@ -867,10 +983,6 @@ select {
     background-color: #005a8f;
 }
 
-#save-changes-btn:disabled {
-    cursor: not-allowed;
-}
-
 @keyframes modalSlideIn {
     from {
         opacity: 0;
@@ -917,58 +1029,136 @@ select {
     }
 }
 
+/* Remove old onoffswitch styles */
+.onoffswitch,
+.onoffswitch-checkbox,
+.onoffswitch-label,
+.onoffswitch-inner,
+.onoffswitch-inner:before,
+.onoffswitch-inner:after,
+.onoffswitch-switch {
+    display: none;
+}
+
+/* New toggle switch styles */
 .toggle-wrapper {
+    position: relative;
+    width: 160px;
+    height: 40px;
+    background: #f5f5f5;
+    border-radius: 20px;
     display: flex;
     align-items: center;
-    margin-left: auto;
+    justify-content: space-between;
+    padding: 0 4px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
-.toggle-input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+.toggle-wrapper.active-neutral .slider {
+    background-color: white; /* Plain white for pending */
+    left: 60px; /* Center position adjusted */
+    width: 32px; /* Even smaller width when inactive */
+    height: 20px; /* Even smaller height when inactive */
+    top: 10px; /* Adjust top position to center the smaller slider */
 }
 
-.toggle-label {
+.toggle-wrapper label {
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #666;
+    transition: color 0.3s ease;
+    padding: 8px 0;
+    user-select: none;
     position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px; /* Fixed width for each label */
 }
 
-.toggle-slider {
+.toggle-wrapper .slider {
     position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 117, 187, 0.2);
-    transition: .4s;
-    border-radius: 24px;
-}
-
-.toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+    width: 72px;
+    height: 32px;
+    top: 4px;
+    left: 44px; /* center */
+    background-color: #28a745; /* Dalo green color */
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.toggle-input:checked + .toggle-label .toggle-slider {
-    background-color: #0075BB;
+.toggle-wrapper.active-left .slider {
+    left: 4px;
+    background-color: #28a745; /* Dalo green color */
+    width: 72px; /* Full width when active */
+    height: 32px; /* Full height when active */
+    top: 4px; /* Reset top position when active */
 }
 
-.toggle-input:checked + .toggle-label .toggle-slider:before {
-    transform: translateX(26px);
+.toggle-wrapper.active-right .slider {
+    left: 84px;
+    background-color: #dc3545; /* Decline red color */
+    width: 72px; /* Full width when active */
+    height: 32px; /* Full height when active */
+    top: 4px; /* Reset top position when active */
+}
+
+/* Force white text for active states */
+.toggle-wrapper.active-left label:first-child,
+.toggle-wrapper.active-right label:last-child,
+.toggle-wrapper.active-left label:first-child:hover,
+.toggle-wrapper.active-right label:last-child:hover {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+/* Override any other color styles */
+.toggle-wrapper label[onclick*="left"],
+.toggle-wrapper label[onclick*="right"] {
+    color: #666;
+}
+
+.toggle-wrapper.active-left label[onclick*="left"],
+.toggle-wrapper.active-right label[onclick*="right"] {
+    color: #ffffff !important;
+}
+
+.toggle-wrapper:hover {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-wrapper label:hover {
+    color: #333;
+}
+
+/* Add a subtle animation for the slider */
+@keyframes sliderPulse {
+    0% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.toggle-wrapper .slider {
+    animation: sliderPulse 2s infinite;
+}
+
+/* Rule to override display: none for toggles in Edit Event Modal */
+#editEventModal .toggle-wrapper {
+    display: flex !important;
 }
 
 h1 {
@@ -1017,10 +1207,6 @@ h3 {
 .tab-button {
     font-size: 1rem;
     font-weight: 500;
-}
-
-.empty-message {
-  text-align: center;
 }
 
 .attendee-name,
@@ -1110,4 +1296,378 @@ h3 {
 
 .checkin-guest.not-attended .guest-info img {
     filter: brightness(0) invert(1);
+}
+
+.search-container {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    position: relative;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 2.5rem;
+    border: 1px solid rgba(0, 117, 187, 0.2);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #0075BB;
+    box-shadow: 0 0 0 2px rgba(0, 117, 187, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.clear-search:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.download-button-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.download-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    text-transform: none;
+}
+
+.download-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.download-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.checkin-list {
+    margin-bottom: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.attendee-toggle {
+    display: flex;
+    border: 2px solid #e0e0e0;
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    width: 120px;
+    height: 36px;
+    align-items: stretch;
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+}
+
+.attendee-toggle::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.attendee-toggle.dalo-active {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.attendee-toggle.decline-active {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.attendee-toggle.dalo-active::before {
+    left: calc(100% - 34px);
+}
+
+.attendee-toggle.decline-active::before {
+    left: 2px;
+}
+
+.toggle-btn {
+    flex-grow: 1;
+    flex-basis: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #666;
+    padding: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+
+.toggle-btn.dalo {
+    color: #666;
+}
+
+.toggle-btn.decline {
+    color: #666;
+}
+
+.attendee-toggle.dalo-active .toggle-btn.dalo {
+    color: white;
+}
+
+.attendee-toggle.dalo-active .toggle-btn.decline {
+    opacity: 0;
+}
+
+.attendee-toggle.decline-active .toggle-btn.dalo {
+    opacity: 0;
+}
+
+.attendee-toggle.decline-active .toggle-btn.decline {
+    color: white;
+}
+
+/* Remove previous toggle-slider styles that are no longer needed */
+.toggle-slider {
+    display: none;
+}
+
+.delete-event-box {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete-event-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-event-btn:hover {
+    background: rgba(255, 68, 68, 0.2);
+    border-color: rgba(255, 68, 68, 0.3);
+}
+
+.delete-event-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+}
+
+.delete-event-btn span {
+    font-weight: 500;
+}
+
+.delete-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    max-width: 400px;
+    width: 90%;
+    display: none;
+}
+
+.delete-popup.active {
+    display: block;
+}
+
+.delete-popup h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.delete-popup p {
+    margin: 0 0 1.5rem 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.delete-popup-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.delete-popup-buttons button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-popup-buttons .confirm-btn {
+    background: #c82333;
+    color: white;
+}
+
+.delete-popup-buttons .confirm-btn:hover {
+    background: #a71d2a;
+}
+
+.delete-popup-buttons .cancel-btn {
+    background: #f1f1f5;
+    color: #666;
+}
+
+.delete-popup-buttons .cancel-btn:hover {
+    background: #e1e1e5;
+}
+
+.delete-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+}
+
+.delete-popup-overlay.active {
+    display: block;
+}
+
+.delete-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 68, 68, 0.12);
+    border: 1.5px solid #ff4444;
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    color: #ff4444;
+    box-shadow: 0 1px 4px rgba(255, 68, 68, 0.07);
+}
+
+.delete-box:hover {
+    background: #ff4444;
+    color: #fff;
+    border-color: #ff2222;
+}
+
+.delete-box svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 1.5rem;
+}
+
+.status-section {
+    margin-bottom: 1rem;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.status-section:first-of-type {
+    display: none;
+}
+
+.status-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
 }
