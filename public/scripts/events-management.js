@@ -1024,14 +1024,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         let csv = Papa.unparse({ data: args.data, fields: columns})
                         
-                        let blob = new Blob([csv]);
+                        let blob = new Blob([csv], { type: "text/csv" });
                         
                         if (window.navigator.msSaveOrOpenBlob) {
                             window.navigator.msSaveBlob(blob, args.filename);
                         }
                         else {
                             const a = window.document.createElement("a");
-                            a.href = window.URL.createObjectURL(blob, {type: "text/plain"});
+                            a.href = window.URL.createObjectURL(blob);
                             a.download = filename;
                             document.body.appendChild(a);
                             a.click();  
