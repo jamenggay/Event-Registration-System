@@ -46,14 +46,14 @@
       <div class="profile-container">
 
       <div class="profile-icon" onclick="toggleDropdown()">
-        <img src="/assets/icons/profile-icon.jpeg" alt="Profile">
+        <img src="" id ="profile-picture" alt="Profile">
       </div>
 
       <div class="dropdown-menu" id="dropdown">
         <div class="dropdown-pointer"></div>
         <div class="dropdown-content">
           <a href="/user-profile">View Profile</a>
-          <a href="/">Sign Out</a>
+          <a href="/logout" onclick="logout()">Sign Out</a>
         </div>
       </div>
     </div>
@@ -83,7 +83,5 @@
       }
     });
   </script>
-
-</script>
 
 </header>
