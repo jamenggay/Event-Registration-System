@@ -404,41 +404,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         const optionsDate = { month: 'long', day: 'numeric', timeZone: 'UTC' };
         const optionsDay  = { weekday: 'long', timeZone: 'UTC' };
         const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
-
-        const currentYear = new Date().getFullYear();
-        const yearPassed = endYear < currentYear;
         
-        let formattedDate;
-
-        if (yearPassed) {
-            if (event.sameDay == 'True') {
-                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear}`;
-            } 
-            else if (event.sameMonth == 'True') {
-                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}, ${startYear}`;
-            } 
-            else if (event.sameYear == 'True') {
-                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}, ${startYear}`;
-            } 
-            else {
-                formattedDate = `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`;
-            }
-        }
-        else if (event.sameDay == 'True') {
-            formattedDate = startObj.toLocaleString('en-US', optionsDate);
-        } 
-        else if (event.sameMonth == 'True') {
-            formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'UTC' })}`;
-        } 
-        else if (event.sameYear == 'True') {
-            formattedDate = `${startObj.toLocaleString('en-US', optionsDate)} - ${endObj.toLocaleString('en-US', optionsDate)}`;
-        } 
-        else {
-            formattedDate = `${startObj.toLocaleString('en-US', optionsDate)}, ${startYear} - ${endObj.toLocaleString('en-US', optionsDate)}, ${endYear}`;
-        }
-
-        const formattedDay = event.sameDay == 'True' ? startObj.toLocaleString('en-US', optionsDay)
-                            : `${startObj.toLocaleString('en-US', optionsDay)} - ${endObj.toLocaleString('en-US', optionsDay)}`
+        const formattedDate = startObj.toLocaleString('en-US', optionsDate);
+        const formattedDay = startObj.toLocaleString('en-US', optionsDay)
 
         return `  
                 <div class="event-group" data-date="${event.startDateTime}">
