@@ -870,7 +870,7 @@ wss.on('connection', async (ws, req) => {
             try {
                 const result = await pool.request()
                     .input('eventID', sql.Int, eventID)
-                    .query(`SELECT aT.attendanceID, aT.eventID, uT.userID, uT.fullName
+                    .query(`SELECT aT.attendanceID, aT.eventID, uT.userID, uT.fullName, aT.checkedInAt
                             FROM attendeeTable aT
                             JOIN userTable uT ON aT.userID = uT.userID
                             WHERE aT.eventID = @eventID
@@ -881,6 +881,7 @@ wss.on('connection', async (ws, req) => {
                                                                 eventID : attendee.eventID,
                                                                 userID : attendee.userID,
                                                                 fullname : attendee.fullName,
+                                                                checkedInAt : attendee.checkedInAt
                                                             }))
 
                 console.log("Attendees extraction successful")
@@ -995,6 +996,24 @@ app.put("/event/:eventID", async (req, res) => {
 });
 
 // event management page
+app.delete("/delete-event", async (req, res) => {
+    const { eventID } = req.body
+
+    try {
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
+
+        console.log("Event deletion success")
+        res.status(200).json({ message : 'Event deletion success' })
+    }
+    catch (e) {
+        console.log("Event deletion failed: ", e)
+        res.status(500).json({ message : 'Event deletion failed', error : e})
+    }
+});
+
+// event management page
 app.patch("/registrant", async (req, res) => {
     const { eventID, userID, status, approvedAt } = req.body
 
@@ -1104,24 +1123,6 @@ app.delete("/checkin-attendee", async (req, res) => {
     catch (e) {
         console.log("Attendee details extraction failed: ", e)
         res.status(500).json({ message: 'Attendee details extraction failed', error: e })
-    }
-});
-
-// event management page
-app.delete("/delete-event", async (req, res) => {
-    const { eventID } = req.body
-
-    try {
-        await pool.request()
-            .input('eventID', sql.Int, eventID)
-            .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
-
-        console.log("Event deletion success")
-        res.status(200).json({ message : 'Event deletion success' })
-    }
-    catch (e) {
-        console.log("Event deletion failed: ", e)
-        res.status(500).json({ message : 'Event deletion failed', error : e})
     }
 });
 

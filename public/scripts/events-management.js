@@ -1013,7 +1013,40 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     });
-                });             
+                }); 
+                
+                const downloadButton = checkInContainer.querySelector('.download-button') 
+
+                downloadButton.addEventListener('click', async () => {
+                    const downloadCSV = (args) => {  
+                        let filename = args.filename
+                        let columns = args.columns
+
+                        let csv = Papa.unparse({ data: args.data, fields: columns})
+                        
+                        let blob = new Blob([csv], { type: "text/csv" });
+                        
+                        if (window.navigator.msSaveOrOpenBlob) {
+                            window.navigator.msSaveBlob(blob, args.filename);
+                        }
+                        else {
+                            const a = window.document.createElement("a");
+                            a.href = window.URL.createObjectURL(blob);
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();  
+                            document.body.removeChild(a);
+                        }
+                    }
+
+                    let updatedAttendeesData = attendeesData.map(attendee => ({
+                                                    "Attendance ID" : attendee.attendanceID,
+                                                    "Full Name" : attendee.fullname,
+                                                    "Checked In At" : new Date(attendee.checkedInAt).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone : 'UTC'})
+                                                }))
+
+                    downloadCSV({ filename: `${eventData.eventName} Attendance.csv`, data: updatedAttendeesData, columns: ["Attendance ID", "Full Name", "Checked In At"]});
+                })
             } 
             catch (error) {
                 console.error('Error displaying check-in list:', error);
