@@ -603,6 +603,47 @@ textarea {
   display: block;
 }
 
+.rating__stars.rated {
+  display: flex;
+  padding-bottom: 0.375em;
+  position: relative;
+}
+
+.rating__stars.not-rated {
+  display: none;
+}
+
+.rating__star {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.rating__star-fill {
+  transform: scale(0);
+}
+
+.rating__star.checked .rating__star-fill{
+  transform: scale(1);
+  fill: hsl(38,90%,55%);
+}
+
+.rating__star-stroke {
+  stroke: hsl(223,10%,80%);
+}
+
+.rating__label {
+  padding: 0.125em;
+}
+
+.rating__input {
+  position: absolute;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 .divider {
   height: 2px;
   background: linear-gradient(
