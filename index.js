@@ -521,7 +521,7 @@ app.get("/user-events-created", async (req, res) => {
                         .query(`SELECT 
                                     eT.eventID, eT.eventName, eT.description, eT.location, eT.startDateTime, eT.endDateTime,
                                     eT.featureImage, eT.requireApproval, eT.capacity, eT.feedbackLink, eT.lastUpdated,
-                                    eT.category, eT.allowWaitlist, eT.themeIndex, AVG(fT.rating) AS ratings,
+                                    eT.category, eT.allowWaitlist, eT.themeIndex, AVG(CAST(fT.rating AS DECIMAL(10,2))) AS ratings,
                                     IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
                                     IIF(MONTH(eT.startDateTime) = MONTH(eT.endDateTime) AND YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameMonth,
                                     IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear 
