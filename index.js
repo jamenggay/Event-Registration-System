@@ -13,6 +13,7 @@ import { WebSocketServer } from 'ws';
 import http from 'http';
 import converter from "json-2-csv";
 import { sourceMapsEnabled } from "process";
+import { register } from "module";
 
 //potek isahang import lang pala yung pool tsaka sql para magconnect kaines
 
@@ -538,7 +539,7 @@ app.get("/user-events-created", async (req, res) => {
                         .query(`SELECT 
                                     eT.eventID, eT.eventName, eT.description, eT.location, eT.startDateTime, eT.endDateTime,
                                     eT.featureImage, eT.requireApproval, eT.capacity, eT.feedbackLink, eT.lastUpdated,
-                                    eT.category, eT.allowWaitlist, eT.themeIndex, AVG(fT.rating) AS ratings,
+                                    eT.category, eT.allowWaitlist, eT.themeIndex, AVG(CAST(fT.rating AS DECIMAL(10,2))) AS ratings,
                                     IIF(CAST(eT.startDateTime AS DATE) = CAST(eT.endDateTime AS DATE), 'True', 'False') AS sameDay,
                                     IIF(MONTH(eT.startDateTime) = MONTH(eT.endDateTime) AND YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameMonth,
                                     IIF(YEAR(eT.startDateTime) = YEAR(eT.endDateTime), 'True', 'False') AS sameYear 
@@ -766,7 +767,8 @@ app.get("/event/:eventID", async (req, res) => {
         }
     }
     catch (e) {
-
+        console.log("User event created details extraction failed: ", e)
+        res.status(500).send.json({ message : 'User event created details extraction failed', error : e })
     }
 });
 
@@ -852,7 +854,7 @@ wss.on('connection', async (ws, req) => {
                                                                 registrationID : guest.registrationID,
                                                                 userID : guest.userID,
                                                                 fullname : guest.fullName,
-                                                                profilePic : guest.profilePic,
+                                                                profilePic : guest.profilePic || null,
                                                                 status : guest.status,
                                                                 eventID : guest.eventID
                                                             }))
