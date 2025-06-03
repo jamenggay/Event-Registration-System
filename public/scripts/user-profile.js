@@ -408,6 +408,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         const formattedDate = startObj.toLocaleString('en-US', optionsDate);
         const formattedDay = startObj.toLocaleString('en-US', optionsDay)
 
+        let rateStatus = null
+
+        if (event.ratings == null) {
+            rateStatus = 'not-rated'
+        }
+        else if (event.ratings != 0) {
+            rateStatus = 'rated'
+        } 
+
+        const roundedRatings = event.ratings != null ? Math.round(event.ratings) : 0;
+
         return `  
                 <div class="event-group" data-date="${event.startDateTime}">
                     <div class="event-date">
@@ -424,6 +435,33 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 </div>
                                 <div class="event-meta">
                                     <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
+                                </div>
+                                
+                                <div class="rating__stars ${rateStatus}">
+                                    ${[1, 2, 3, 4, 5].map(i => `
+                                        <input 
+                                            type="radio" 
+                                            class="rating__input rating__input-${i}" 
+                                            id="event-rating-${index}-${i}" 
+                                            name="rating-${index}" 
+                                            value="${i}"
+                                            ${i === roundedRatings ? 'checked' : ''}
+                                        >
+                                        
+                                        <label class="rating__label" for="event-rating-${index}-${i}">
+                                            <svg class="rating__star ${i <= roundedRatings ? 'checked' : ''}" viewBox="0 0 24 24">
+                                            <path class="rating__star-fill" 
+                                                d="M12 .587l3.668 7.431L24 9.748l-6 
+                                                5.848 1.416 8.262L12 19.771l-7.416 4.087L6 
+                                                15.596 0 9.748l8.332-1.73z"/>
+                                            <path class="rating__star-stroke" 
+                                                d="M12 .587l3.668 7.431L24 
+                                                9.748l-6 5.848 1.416 8.262L12 
+                                                19.771l-7.416 4.087L6 15.596 0 
+                                                9.748l8.332-1.73z" fill="none" stroke-width="2"/>
+                                            </svg>
+                                        </label>
+                                    `).join('')}
                                 </div>
                             </div>
 
