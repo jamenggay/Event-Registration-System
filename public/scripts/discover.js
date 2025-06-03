@@ -1,17 +1,46 @@
 //BACKEND SCRIPTSSS
 import { toastData, showToast } from "./alert-toast.js";
 
+
+function showCarousel() {
+  const carousel = document.getElementById("carousel-section");
+  const hoverCards = document.getElementById("hover-cards-section");
+
+  carousel.style.display = "block";
+  hoverCards.classList.remove("active");
+
+  const cards = hoverCards.querySelectorAll(".card-wrap");
+  cards.forEach((card) => {
+    card.style.display = "block";
+  });
+
+  carousel?.scrollIntoView({ behavior: "smooth" });
+}
+
+window.showCarousel = showCarousel;
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const eventList = document.getElementById("events-list");
-  const thumbnail = document.getElementById("next-event")
+  const carousellTrack = document.getElementById("carousell-trackID");
+  const eventDetails = document.getElementById("event-details")
   const app = document.getElementById("app");
   const overlay = document.getElementById("popupOverlay");
+  const learMoreBtn = document.getElementById("LearnMore-btn");
 
 
   try {
     const res1 = await fetch('/event-details');
     const eventsData = await res1.json();
     const events = eventsData.events;
+
+    const eventsCarousel = events.map(event => ({
+      name: event.eventName,
+      category: event.category,
+      eventID: event.eventID
+    }));
+
+
+
+
     const createdEvents = eventsData.createdEvents;
 
     const res2 = await fetch('/api/formatStartDate');
@@ -34,6 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     overlay.appendChild(article);
 
 
+
     const eventStatusMap = {};
     registeredData.registrations.forEach(reg => {
       eventStatusMap[reg.eventID] = reg.status;
@@ -48,9 +78,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       const div1 = document.createElement('div');
       const div2 = document.createElement('div');
       const div3 = document.createElement('div');
-      div1.className = "item";
+      div1.className = "carousell-card";
       div2.className = "item";
       div3.className = "popupContainer";
+
+      // learMoreBtn.event-data == [index];
+
+      div1.innerHTML = `
+      <img src="${event.featureImage}" alt="${event.category} Event">`;
+
+      carousellTrack.appendChild(div1);
+
 
 
 
@@ -77,51 +115,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         : `<span class="event-date">${startDateTime[index].formattedDate} - ${endDateTime[index].formattedDate}</span>`;
 
 
-      if (buttonText == 'Manage Event') {
-        div1.innerHTML = `
-    
-        <img src="${event.featureImage}">
-        <div class="event-content">
-        ${eventDateHTML}
-          <h2 class="event-title">${event.eventName}</h2>
-          <p class="event-description">${event.description}</p>
-          <p class="event-location">${event.location}</p>
-          <button class="register-button" onclick="window.location.href='/event/${event.eventID}'" data-event-id="${event.eventID}">
-      ${buttonText}
-    </button>
 
-        </div>`;
+// ------------------------------------
+      learMoreBtn.addEventListener('click', () => {
+        const event = events[currentIndex];
+        const isSameDay = sameDate[currentIndex].SameDay === 'True';
+        const registrationStatus = eventStatusMap[event.eventID];
+        const isUserCreated = createdEvents.some(createdEvent => createdEvent.eventID === event.eventID);
+        let buttonText = isUserCreated ? 'Manage Event' :
+          registrationStatus === 'Waitlisted' ? 'Waitlisted' :
+            (registrationStatus === 'Pending' || registrationStatus === 'Approved') ? 'Registered' : 'Register';
 
-        eventList.appendChild(div1);
+        const eventDateHTML = isSameDay
+          ? `<span class="event-date">${startDateTime[currentIndex].formattedDate} - ${endTime[currentIndex].endTime}</span>`
+          : `<span class="event-date">${startDateTime[currentIndex].formattedDate} - ${endDateTime[currentIndex].formattedDate}</span>`;
 
-      }
+        article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
 
-      else {
-        div1.innerHTML = `
-    
-        <img src="${event.featureImage}">
-        <div class="event-content">
-        ${eventDateHTML}
-          <h2 class="event-title">${event.eventName}</h2>
-          <p class="event-description">${event.description}</p>
-          <p class="event-location">${event.location}</p>
-          <button class="register-button" data-event-id="${event.eventID}">
-      ${buttonText}
-    </button>
+        article.innerHTML = `
+    <button class="close-btn" onclick="closePopup()">&times;</button>
+    <div class="popup-event-content">
+      ${eventDateHTML}
+      <div class="popup-event-title">${event.eventName}</div>
+      <div class="popup-event-category">${event.category}</div>
+      <div class="popup-event-description">${event.description}</div>
+      <div class="popup-event-location">Location: <i>${event.location}</i></div>
+      <button class="popup-register-button" ${isUserCreated ? `onclick="window.location.href='/event/${event.eventID}'"` : ''} data-event-id="${event.eventID}">
+        ${buttonText}
+      </button>
+    </div>
+  `;
 
-        </div>`;
-
-        eventList.appendChild(div1);
-
-
-
-        const button = div1.querySelector('.register-button');
-        button.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted' || buttonText === 'Your Event';
-
-
-        
-        if (!registrationStatus) {
-          button.addEventListener('click', () => {
+        if (!isUserCreated && !registrationStatus) {
+          const popupRegBtn = article.querySelector('.popup-register-button');
+          popupRegBtn.addEventListener('click', () => {
             const confirmed = confirm("Are you sure you want to register for this event?");
             if (!confirmed) return;
 
@@ -134,44 +161,33 @@ document.addEventListener("DOMContentLoaded", async () => {
               .then(data => {
                 if (!data.success) {
                   toastData.danger.title = "Registration Failed!";
-                  toastData.danger.message = data.message; //show backend error
-                  
+                  toastData.danger.message = data.message;
                   showToast('danger');
                   return;
                 }
 
-                button.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
-                button.disabled = true;
+                popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
+                popupRegBtn.disabled = true;
 
-                if (button.textContent == 'Registered'){
-                  toastData.success.message = data.message; //show backend error
-                showToast('success');
-                  return;
-                }
-                else if (button.textContent == 'Waitlisted'){
+                if (data.status === 'Waitlisted') {
                   toastData.info.title = "You're on Waitlist!";
-                  toastData.info.message = data.message; //show backend error
+                  toastData.info.message = data.message;
                   showToast('info');
-                  return;
+                } else {
+                  toastData.success.message = data.message;
+                  showToast('success');
                 }
-                
-              
               })
-              .catch(err => {
-                console.error('Registration error:', err);
-              });
-
+              .catch(err => console.error('Registration error:', err));
           });
         }
 
-      }
+        openPopup();
+      });
 
 
-      div2.innerHTML =
-        `<img src="${event.featureImage}">`;
 
-      thumbnail.appendChild(div2);
-
+      //  CATEGORY
       div3.innerHTML = `
       <div class="card-wrap" data-event-index="${index}" data-category="${event.category}"
         data-image="${event.featureImage}">
@@ -237,27 +253,27 @@ document.addEventListener("DOMContentLoaded", async () => {
                 .then(res => res.json())
                 .then(data => {
                   if (!data.success) {
-                  toastData.danger.title = "Registration Failed!";
-                  toastData.danger.message = data.message; //show backend error
-                  
-                  showToast('danger');
-                  return;
+                    toastData.danger.title = "Registration Failed!";
+                    toastData.danger.message = data.message; //show backend error
+
+                    showToast('danger');
+                    return;
                   }
                   popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
                   popupRegBtn.disabled = true;
 
-                  if (button.textContent == 'Registered'){
-                  toastData.success.message = data.message; //show backend error
-                showToast('success');
-                  return;
-                }
-                else if (button.textContent == 'Waitlisted'){
-                  toastData.info.title = "You're on Waitlist!";
-                  toastData.info.message = data.message; //show backend error
-                  showToast('info');
-                  return;
-                }
-                  
+                  if (popupRegBtn.textContent == 'Registered') {
+                    toastData.success.message = data.message; //show backend error
+                    showToast('success');
+                    return;
+                  }
+                  else if (popupRegBtn.textContent == 'Waitlisted') {
+                    toastData.info.title = "You're on Waitlist!";
+                    toastData.info.message = data.message; //show backend error
+                    showToast('info');
+                    return;
+                  }
+
                 })
                 .catch(err => {
                   console.error('Registration error:', err);
@@ -275,96 +291,161 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     });
 
+
+
+    function initializeCarousel() {
+      const cards = document.querySelectorAll(".carousell-card");
+      const eventName = document.querySelector(".carousel-event-name");
+      const eventCategory = document.querySelector(".carousel-event-category");
+      const leftArrow = document.querySelector(".nav-arrow.left");
+      const rightArrow = document.querySelector(".nav-arrow.right");
+      const carouselWrapper = document.querySelector(".carousel-wrapper");
+
+
+      let currentIndex = 0;
+      let isAnimating = false;
+      let autoSlideInterval = null;
+      const autoSlideDelay = 3000;
+
+      function updateCarousel(newIndex) {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        currentIndex = (newIndex + cards.length) % cards.length;
+
+        window.currentIndex = currentIndex;
+
+        cards.forEach((card, i) => {
+          const offset = (i - currentIndex + cards.length) % cards.length;
+
+          card.classList.remove(
+            "center",
+            "left-1",
+            "left-2",
+            "right-1",
+            "right-2",
+            "hidden"
+          );
+
+          if (offset === 0) {
+            card.classList.add("center");
+          } else if (offset === 1) {
+            card.classList.add("right-1");
+          } else if (offset === 2) {
+            card.classList.add("right-2");
+          } else if (offset === cards.length - 1) {
+            card.classList.add("left-1");
+          } else if (offset === cards.length - 2) {
+            card.classList.add("left-2");
+          } else {
+            card.classList.add("hidden");
+          }
+        });
+
+        eventName.style.opacity = "0";
+        eventCategory.style.opacity = "0";
+
+        setTimeout(() => {
+          if (eventsCarousel[currentIndex]) {
+            eventName.textContent = eventsCarousel[currentIndex].name;
+            eventCategory.textContent = eventsCarousel[currentIndex].category;
+            learMoreBtn.id = eventsCarousel[currentIndex].eventID;
+
+          }
+          eventName.style.opacity = "1";
+          eventCategory.style.opacity = "1";
+        }, 300);
+
+        setTimeout(() => {
+          isAnimating = false;
+        }, 800);
+      }
+
+      function startAutoSlide() {
+        if (autoSlideInterval) return;
+        autoSlideInterval = setInterval(() => {
+          updateCarousel(currentIndex + 1);
+        }, autoSlideDelay);
+      }
+
+      function stopAutoSlide() {
+        if (autoSlideInterval) {
+          clearInterval(autoSlideInterval);
+          autoSlideInterval = null;
+        }
+      }
+
+      if (carouselWrapper) {
+        carouselWrapper.addEventListener("mouseenter", stopAutoSlide);
+        carouselWrapper.addEventListener("mouseleave", startAutoSlide);
+      }
+
+      if (leftArrow) {
+        leftArrow.addEventListener("click", () => {
+          stopAutoSlide();
+          updateCarousel(currentIndex - 1);
+          setTimeout(startAutoSlide, 1000);
+        });
+      }
+
+      if (rightArrow) {
+        rightArrow.addEventListener("click", () => {
+          stopAutoSlide();
+          updateCarousel(currentIndex + 1);
+          setTimeout(startAutoSlide, 1000);
+        });
+      }
+
+      cards.forEach((card, i) => {
+        card.addEventListener("click", () => {
+          stopAutoSlide();
+          updateCarousel(i);
+          setTimeout(startAutoSlide, 1000);
+        });
+      });
+
+
+      //touch/swipe navigation hehe
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      document.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          stopAutoSlide();
+          if (diff > 0) {
+            updateCarousel(currentIndex + 1);
+          } else {
+            updateCarousel(currentIndex - 1);
+          }
+          setTimeout(startAutoSlide, 1000);
+        }
+      }
+
+      updateCarousel(0);
+      startAutoSlide();
+    }
+
+
+    initializeCarousel();
+
+
   }
 
   catch (error) {
     console.error('Error fetching data ', error);
   }
-
-
-  //FRONTEND SCRIPT
-  const wordElement = document.getElementById("dynamic-word");
-  let isExperience = true;
-
-  setInterval(() => {
-    isExperience = !isExperience;
-    wordElement.textContent = isExperience ? " Experience" : " Event";
-    wordElement.className = isExperience ? "experience" : "event";
-    wordElement.id = "dynamic-word";
-  }, 2000);
-
-  //--------------------------
-  let nextDom = document.getElementById("next");
-  let prevDom = document.getElementById("prev");
-
-  let carouselDom = document.querySelector(".carousel");
-  let SliderDom = carouselDom.querySelector(".carousel .list");
-  let thumbnailBorderDom = document.querySelector(".carousel .thumbnail");
-  let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll(".carousel .thumbnail .item");
-
-  thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
-
-  let timeRunning = 3000;
-  let timeAutoNext = 7000;
-  let runTimeOut;
-  let runNextAuto = setTimeout(() => nextDom.click(), timeAutoNext);
-
-  function showThumbnail() {
-    thumbnailBorderDom.style.opacity = "1";
-    thumbnailBorderDom.style.pointerEvents = "auto";
-  }
-
-  function hideThumbnail() {
-    thumbnailBorderDom.style.opacity = "0";
-    thumbnailBorderDom.style.pointerEvents = "none";
-  }
-
-  function showSlider(type) {
-    let SliderItemsDom = SliderDom.querySelectorAll(".carousel .list .item");
-    let thumbnailItemsDom = document.querySelectorAll(".carousel .thumbnail .item");
-
-    if (type === "next") {
-      SliderDom.appendChild(SliderItemsDom[0]);
-      thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
-      carouselDom.classList.add("next");
-    } else {
-      SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
-      thumbnailBorderDom.prepend(thumbnailItemsDom[thumbnailItemsDom.length - 1]);
-      carouselDom.classList.add("prev");
-    }
-
-    clearTimeout(runTimeOut);
-    runTimeOut = setTimeout(() => {
-      carouselDom.classList.remove("next", "prev");
-    }, timeRunning);
-
-    clearTimeout(runNextAuto);
-    runNextAuto = setTimeout(() => nextDom.click(), timeAutoNext);
-  }
-
-  nextDom.onclick = () => {
-    showSlider("next");
-    showThumbnail();
-  };
-
-  prevDom.onclick = () => {
-    showSlider("prev");
-    showThumbnail();
-  };
-
-  carouselDom.addEventListener("mouseenter", () => {
-    clearTimeout(runNextAuto);
-    hideThumbnail();
-  });
-
-  carouselDom.addEventListener("mouseleave", () => {
-    showThumbnail();
-    runNextAuto = setTimeout(() => nextDom.click(), timeAutoNext);
-  });
-
-  [nextDom, prevDom].forEach((btn) => {
-    btn.addEventListener("mouseenter", showThumbnail);
-  });
 
   function attachCardHoverListeners() {
     document.querySelectorAll(".card-wrap").forEach((cardWrap) => {
@@ -424,34 +505,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
+
+
 });
 
-function showCarousel() {
-  const carousel = document.getElementById("carousel-section");
-  const hoverCards = document.getElementById("hover-cards-section");
-
-  carousel.style.display = "block";
-  hoverCards.classList.remove("active");
-
-  const cards = hoverCards.querySelectorAll(".card-wrap");
-  cards.forEach((card) => {
-    card.style.display = "block";
-  });
-
-  carousel?.scrollIntoView({ behavior: "smooth" });
-}
-
-const overlay = document.getElementById('popupOverlay');
+const overlay = document.getElementById("popupOverlay");
 
 function openPopup() {
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
+window.closePopup = openPopup;
 
 function closePopup() {
   overlay.classList.remove('active');
   document.body.style.overflow = '';
 }
+
+window.closePopup = closePopup;
 
 overlay.addEventListener('click', e => {
   if (e.target === overlay) closePopup();
@@ -462,3 +533,5 @@ document.addEventListener('keydown', e => {
     closePopup();
   }
 });
+
+
