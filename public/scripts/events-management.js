@@ -844,13 +844,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
 
-                    const isAttending = currentAttendees.some(attendee => attendee.userID === guest.userID); // Match by userID for reliability
-                    let checkInToggleState = 'active-right'; // Default to neutral or "not attended" visual
+                    const isAttending = currentAttendees.some(attendee => attendee.userID === guest.userID); 
+                    let checkInToggleState = 'active-right'; 
                     if (isAttending) {
-                        checkInToggleState = 'active-left'; // "Attended" is on the left
-                    } else {
-                        checkInToggleState = 'active-right'; // "Not Attended" is on the right (or choose 'active-neutral')
-                    }
+                        checkInToggleState = 'active-left';
+                    } 
 
                     guestElement.innerHTML = `
                         <div class="guest-info">
@@ -867,75 +865,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     checkinList.appendChild(guestElement);
 
-                    // // Add click event listeners to the toggle buttons
-                    // const checkbox = guestElement.querySelector('.checkin-onoffswitch-checkbox');
-
-                    // checkbox.addEventListener('change', async function(e) {
-                    //     // Toggle between states
-                    //     if (this.checked) {                            
-                    //         const attendanceData = {
-                    //             eventID : eventData.eventID,
-                    //             userID : guest.userID,
-                    //             checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
-                    //         }          
-
-                    //         try {
-                    //             const response = await fetch("/checkin-attendee", {
-                    //                 method : 'POST',
-                    //                 headers : { 'Content-Type' : 'application/json' },
-                    //                 body : JSON.stringify(attendanceData)
-                    //             })
-
-                    //             socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                    //             socket.send(JSON.stringify({ type : 'getAttendeesData' }))
-
-                    //             if (response.ok) {
-                    //                 const result = await response.json()
-                    //                 console.log("Backend Success: ", result)
-                    //             }
-                    //             else {
-                    //                 const error = await response.json()
-                    //                 console.log("Backend Failed: ", error)
-                    //             }
-                    //         }
-                    //         catch (e) {
-                    //             console.log("Client Error: ", e)
-                    //         }
-                    //     } 
-                    //     else {
-                    //         const attendanceData = {
-                    //             eventID : eventData.eventID,
-                    //             userID : guest.userID,
-                    //         }
-
-                    //         try {
-                    //             const response = await fetch("/checkin-attendee", {
-                    //                 method : 'DELETE',
-                    //                 headers : { 'Content-Type' : 'application/json' },
-                    //                 body : JSON.stringify(attendanceData)
-                    //             })
-
-                    //             socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                    //             socket.send(JSON.stringify({ type : 'getAttendeesData' }))
-
-                    //             if (response.ok) {
-                    //                 const result = await response.json()
-                    //                 console.log("Backend Success: ", result)
-                    //             }
-                    //             else if (response.status == 404) {
-                    //                 const result = await response.json()
-                    //                 console.log("Backend Message: ", result)
-                    //             }
-                    //             else {
-                    //                 const error = await response.json()
-                    //                 console.log("Backend Failed: ", error)
-                    //             }
-                    //         }
-                    //         catch (e) {
-                    //             console.log("Client Error: ", e)
-                    //         }
-                    //     }
-                    // });
                 });
 
                 // Add download button functionality
@@ -997,13 +926,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
              toggleWrapper.classList.remove('active-neutral', 'active-left', 'active-right');
     if (isNowAttending) {
-        toggleWrapper.classList.add('active-left'); // "Attended"
+        toggleWrapper.classList.add('active-left'); // Attended
     } else {
-        toggleWrapper.classList.add('active-right'); // "Not Attended" 
+        toggleWrapper.classList.add('active-right'); // Not Attended 
     }
 
         console.log(`Searching for userID: ${userID} (type: ${typeof userID}) in approvedGuestsData.`);
-    if (approvedGuestsData && approvedGuestsData.length > 0 && approvedGuestsData[0].hasOwnProperty('userID')) { // Check if property exists
+    if (approvedGuestsData && approvedGuestsData.length > 0 && approvedGuestsData[0].hasOwnProperty('userID')) { 
         console.log(`First guest in approvedGuestsData has userID: ${approvedGuestsData[0].userID} (type: ${typeof approvedGuestsData[0].userID})`);
     } else if (approvedGuestsData && approvedGuestsData.length > 0) {
         console.warn("First guest in approvedGuestsData does not have a 'userID' property. Object:", approvedGuestsData[0]);
@@ -1011,7 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("approvedGuestsData is empty or undefined.");
     }
 
-     const guestForEvent = approvedGuestsData.find(g => String(g.userID) === String(userID)); // Or find in registrationData if more appropriate
+     const guestForEvent = approvedGuestsData.find(g => String(g.userID) === String(userID));
     
      if (!guestForEvent) {
         console.error("Guest not found in approvedGuestsData for check-in (userID):", userID);
@@ -1024,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // CHECK IN
         const attendanceData = {
             eventID: eventData.eventID,
-            userID: userID, // Use userID passed to the function
+            userID: userID, 
             checkedInAt: new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
         };
 
@@ -1041,10 +970,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Client Error (Check-in): ", e);
         }
     } else {
-        // CHECK OUT (Remove from attendees)
+      
         const attendanceData = {
             eventID: eventData.eventID,
-            userID: userID // Use userID passed to the function
+            userID: userID 
         };
         try {
             const response = await fetch("/checkin-attendee", {
@@ -1061,46 +990,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Refresh relevant data
-    socket.send(JSON.stringify({ type: 'getApprovedGuestsData' })); // Approved list might not change, but good to be safe
-    socket.send(JSON.stringify({ type: 'getAttendeesData' }));    // Attendees list definitely changes
+    socket.send(JSON.stringify({ type: 'getApprovedGuestsData' })); 
+    socket.send(JSON.stringify({ type: 'getAttendeesData' }));   
 };
 
             displayEventData(eventData);
             displayGuestList(registrationData);
             displayCheckInList(approvedGuestsData);
 
-            // Guest Toggle Switch Functionality
-            // function initializeGuestToggles() {
-            //     const toggleWrappers = document.querySelectorAll('.guest-toggle-wrapper');
-
-            //     toggleWrappers.forEach(wrapper => {
-            //         const leftLabel = wrapper.querySelector('label:first-child');
-            //         const rightLabel = wrapper.querySelector('label:last-child');
-
-            //         // Set initial state to neutral
-            //         wrapper.classList.add('active-neutral');
-
-            //         leftLabel.addEventListener('click', () => {
-            //             wrapper.classList.remove('active-neutral', 'active-right');
-            //             wrapper.classList.add('active-left');
-            //         });
-
-            //         rightLabel.addEventListener('click', () => {
-            //             wrapper.classList.remove('active-neutral', 'active-left');
-            //             wrapper.classList.add('active-right');
-            //         });
-
-            //         // Add click outside handler to reset to neutral
-            //         document.addEventListener('click', (e) => {
-            //             if (!wrapper.contains(e.target)) {
-            //                 wrapper.classList.remove('active-left', 'active-right');
-            //                 wrapper.classList.add('active-neutral');
-            //             }
-            //         });
-            //     });
-            // }
-
-            // Call the initialization function when the DOM is loaded
-            // initializeGuestToggles();
+            
         }
     });
