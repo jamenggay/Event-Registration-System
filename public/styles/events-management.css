@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Vibur&display=swap');
-/* commits */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -426,51 +426,9 @@ body::before {
     }
 }
 
-.event-status {
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background-color: white;
-    border: 2px solid;
-    width: 120px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    margin: 0 auto;
-}
-
-.event-status.going {
-    color: #28a745;
-    border-color: #28a745;
-    background-color: white;
-}
-
-.event-status.declined {
-    color: #dc3545;
-    border-color: #dc3545;
-    background-color: white;
-}
-
-.event-status.pending {
-    color: #ffa500;
-    border-color: #ffa500;
-    background-color: white;
-}
-
-.event-status.waitlisted {
-    color: #666;
-    border-color: #666;
-    background-color: white;
-}
-
 .attendee-container {
     display: grid;
-    grid-template-columns: 1fr 120px 1fr;
+    grid-template-columns: 1fr 120px;
     align-items: center;
     background: rgba(255, 255, 255, 0.6);
     padding: 0.75rem 1rem;
@@ -489,14 +447,6 @@ body::before {
     gap: 0.75rem;
 }
 
-.attendee-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 120px;
-    margin: 0 auto;
-}
-
 .attendee-actions {
     display: flex;
     justify-content: flex-end;
@@ -505,8 +455,11 @@ body::before {
 }
 
 .waitlisted-container .attendee-container {
-    grid-template-columns: 1fr 120px;
+    grid-template-columns: 1fr 160px;
     padding: 0.75rem 1rem;
+    display: grid;
+    align-items: center;
+    gap: 1rem;
 }
 
 .waitlisted-container .attendee-info {
@@ -515,29 +468,16 @@ body::before {
     gap: 0.75rem;
 }
 
-.waitlisted-container .attendee-status {
-    margin-left: auto;
-    margin-right: 0;
+.waitlisted-container .attendee-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 160px;
 }
 
-.going-container .event-status {
-    color: #28a745;
-    border-color: #28a745;
-}
-
-.declined-container .event-status {
-    color: #dc3545;
-    border-color: #dc3545;
-}
-
-.pending-container .event-status {
-    color: #ffa500;
-    border-color: #ffa500;
-}
-
-.waitlisted-container .event-status {
-    color: #666;
-    border-color: #666;
+.waitlisted-container .guest-toggle-wrapper {
+    margin: 0;
+    flex-shrink: 0;
 }
 
 .accept {
@@ -1739,3 +1679,132 @@ h3 {
 #editEventModal .toggle-slider {
      display: block !important; /* Ensure slider is not hidden */
 }
+
+/* Guest Tab Toggle Switch */
+.guest-toggle-wrapper {
+    position: relative;
+    width: 160px;
+    height: 36px;
+    background: #f5f5f5;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.guest-toggle-wrapper label {
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #666;
+    transition: color 0.3s ease;
+    padding: 8px 0;
+    user-select: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    margin: 0;
+    height: 100%;
+}
+
+.guest-toggle-wrapper .slider {
+    position: absolute;
+    width: 72px;
+    height: 28px;
+    top: 4px;
+    left: 4px;
+    background-color: #28a745;
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.guest-toggle-wrapper.active-neutral .slider {
+    background-color: white;
+    left: 60px;
+    width: 32px;
+    height: 28px;
+    top: 4px;
+}
+
+.guest-toggle-wrapper.active-right .slider {
+    left: 84px;
+    background-color: #dc3545;
+    color: #ffffff !important;
+    width: 72px;
+    height: 28px;
+    top: 4px;
+}
+
+.guest-toggle-wrapper.active-left .slider {
+    left: 4px;
+    background-color: #28a745;
+    color: #ffffff !important;
+    width: 72px;
+    height: 28px;
+    top: 4px;
+}
+
+.guest-toggle-wrapper.active-left .dalo-label,
+.guest-toggle-wrapper.active-right .decline-label {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+.guest-toggle-wrapper.active-neutral .dalo-label,
+.guest-toggle-wrapper.active-neutral .decline-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.guest-toggle-wrapper.active-left .decline-label,
+.guest-toggle-wrapper.active-right .dalo-label {
+    color: #666;
+    font-weight: 500;
+}
+
+
+.guest-toggle-wrapper.active-left .attended-label, 
+.guest-toggle-wrapper.active-right .not-attended-label { 
+    color: #ffffff !important; 
+    font-weight: 700; 
+}
+
+
+.guest-toggle-wrapper.active-left .not-attended-label, 
+.guest-toggle-wrapper.active-right .attended-label {  
+    color: #666;
+    font-weight: 500; 
+}
+
+
+.guest-toggle-wrapper.active-neutral .attended-label,
+.guest-toggle-wrapper.active-neutral .not-attended-label {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Override for guest tab specific styles */
+.guest-tab .guest-toggle-wrapper {
+    display: flex !important;
+}
+
+.guest-tab .guest-toggle-wrapper label {
+    display: flex !important;
+}
+
+.guest-tab .guest-toggle-wrapper .slider {
+    display: block !important;
+}
+

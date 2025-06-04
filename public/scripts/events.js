@@ -5,11 +5,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let eventsData = null;
   let pastEvents;
+  let userRatings = [];
 
   try {
 
     const res = await fetch('/api/past-events');
     pastEvents = await res.json();
+
+    
 
     const response = await fetch("/events-registered", {
       method: "GET",
@@ -26,6 +29,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (e) {
     console.log("Client Error: ", e);
   }
+
+
+  
+
+
+ fetch("/get-rating")
+   .then(response => response.json())
+  .then(data => {
+    if (Array.isArray(data.rating)) {
+      userRatings = data.rating;
+   
+    } else {
+      console.error("Expected data.rating to be an array, got:", data.rating);
+    }
+  });
+
+
+function getUserRatingForEvent(eventID) {
+  const ratingEntry = userRatings.find(r => r.eventID === eventID);
+
+  return ratingEntry ? ratingEntry.rating : 0;
+  
+}
+
+
+
 
   const eventSection = document.querySelector(".event-section");
   const eventsContainer = document.createElement("div");
@@ -108,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       //   const end = event.formattedEndDateTime.split(",")[0];
       //   formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
       // }
- 
+
       let formattedDay;
 
       if (event.sameDay == "True") {
@@ -120,7 +149,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           weekday: "long",
           timeZone: "UTC",
         });
-       
+
         formattedDay = `${startDay}`;
       }
 
@@ -217,9 +246,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let formattedDate;
 
-      if(event.sameDay == "True"){
-         const startDay = event.formattedStartDateTime.split(",")[0];
-         formattedDate = `${startDay}`
+      if (event.sameDay == "True") {
+        const startDay = event.formattedStartDateTime.split(",")[0];
+        formattedDate = `${startDay}`
       }
       else if (event.sameMonth == "True") {
         const startDay = event.formattedStartDateTime.split(",")[0];
@@ -240,9 +269,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
         formattedDate = `${start} - ${end}`;
       }
-
+ 
       const isPast = pastEvents.some(pastEvent => pastEvent.eventID === event.eventID);
       if (isPast) {
+
+        const currentRating = getUserRatingForEvent(event.eventID);
+
+
         overlay.innerHTML = `
         <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
           <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
@@ -263,13 +296,200 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </a>
               </div>
               
+              <form class="rating" id="eventRating"  >
+                <div class="rating__stars">
+                  <input class="rating__input rating__input-1" id="event-rating-1" type="radio" name="rating" value="1" ${currentRating == 1 ? "checked" : ""} />
+                  <input class="rating__input rating__input-2" id="event-rating-2" type="radio" name="rating" value="2" ${currentRating == 2 ? "checked" : ""} />
+                  <input class="rating__input rating__input-3" id="event-rating-3" type="radio" name="rating" value="3" ${currentRating == 3 ? "checked" : ""} />
+                  <input class="rating__input rating__input-4" id="event-rating-4" type="radio" name="rating" value="4" ${currentRating == 4 ? "checked" : ""} />
+                  <input class="rating__input rating__input-5" id="event-rating-5" type="radio" name="rating" value="5" ${currentRating == 5 ? "checked" : ""} />
+                  <label class="rating__label" for="event-rating-1">
+                    <svg class="rating__star" viewBox="0 0 24 24">
+                      <path class="rating__star-fill" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z"/>
+                      <path class="rating__star-stroke" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z" fill="none" stroke-width="2"/>
+                    </svg>
+                  </label>
+                  <label class="rating__label" for="event-rating-2">
+                    <svg class="rating__star" viewBox="0 0 24 24">
+                      <path class="rating__star-fill" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z"/>
+                      <path class="rating__star-stroke" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z" fill="none" stroke-width="2"/>
+                    </svg>
+                  </label>
+                  <label class="rating__label" for="event-rating-3">
+                    <svg class="rating__star" viewBox="0 0 24 24">
+                      <path class="rating__star-fill" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z"/>
+                      <path class="rating__star-stroke" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z" fill="none" stroke-width="2"/>
+                    </svg>
+                  </label>
+                  <label class="rating__label" for="event-rating-4">
+                    <svg class="rating__star" viewBox="0 0 24 24">
+                      <path class="rating__star-fill" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z"/>
+                      <path class="rating__star-stroke" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z" fill="none" stroke-width="2"/>
+                    </svg>
+                  </label>
+                  <label class="rating__label" for="event-rating-5">
+                    <svg class="rating__star" viewBox="0 0 24 24">
+                      <path class="rating__star-fill" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z"/>
+                      <path class="rating__star-stroke" d="M12 .587l3.668 7.431L24 9.748l-6 5.848 1.416 8.262L12 19.771l-7.416 4.087L6 15.596 0 9.748l8.332-1.73z" fill="none" stroke-width="2"/>
+                    </svg>
+                  </label>
+                </div>
+              </form>
+
             </div>
           </div>
         </article>
       `;
-     
+
+
+        const form = document.getElementById("eventRating");
+  const eventID = form.dataset.eventId;
+
+  // Fetch existing rating
+ 
+
+        document.getElementById("event-rating-1").addEventListener("click", async (e) => {
+
+          const data = {
+            eventID: event.eventID,
+            rating: document.getElementById("event-rating-1").value
+          };
+
+          const response = await fetch('/store-rating', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+
+
+          let result = await response.json();
+
+          if (result.success) {
+            toastData.info.title = 'Notice:';
+            toastData.info.message = 'You rate this event 1 star.';
+            showToast('info');
+          }
+          else {
+            toastData.danger.message = 'Event rating failed.';
+            showToast('danger');
+          }
+
+          console.log("event-rating-1 clicked!");
+        });
+
+        document.getElementById("event-rating-2").addEventListener("click", async (e) => {
+
+          const data = {
+            eventID: event.eventID,
+            rating: document.getElementById("event-rating-2").value
+          };
+
+          const response = await fetch('/store-rating', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          let result = await response.json();
+
+          if (result.success) {
+            toastData.info.title = 'Notice:';
+            toastData.info.message = 'You rate this event 2 star.';
+            showToast('info');
+          }
+          else {
+            toastData.danger.message = 'Event rating failed.';
+            showToast('danger');
+          }
+
+          console.log("event-rating-2 clicked!");
+        });
+
+        document.getElementById("event-rating-3").addEventListener("click", async (e) => {
+          const data = {
+            eventID: event.eventID,
+            rating: document.getElementById("event-rating-3").value
+          };
+
+          const response = await fetch('/store-rating', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          let result = await response.json();
+
+          if (result.success) {
+            toastData.info.title = 'Notice:';
+            toastData.info.message = 'You rate this event 3 star.';
+            showToast('info');
+          }
+          else {
+            toastData.danger.message = 'Event rating failed.';
+            showToast('danger');
+          }
+
+          console.log("event-rating-3 clicked!");
+        });
+
+        document.getElementById("event-rating-4").addEventListener("click", async (e) => {
+          const data = {
+            eventID: event.eventID,
+            rating: document.getElementById("event-rating-4").value
+          };
+
+          const response = await fetch('/store-rating', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          let result = await response.json();
+
+          if (result.success) {
+            toastData.info.title = 'Notice:';
+            toastData.info.message = 'You rate this event 4 star.';
+            showToast('info');
+          }
+          else {
+            toastData.danger.message = 'Event rating failed.';
+            showToast('danger');
+          }
+
+          console.log("event-rating-4 clicked!");
+        });
+
+        document.getElementById("event-rating-5").addEventListener("click", async (e) => {
+          const data = {
+            eventID: event.eventID,
+            rating: document.getElementById("event-rating-5").value
+          };
+
+          const response = await fetch('/store-rating', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          let result = await response.json();
+
+          if (result.success) {
+            toastData.info.title = 'Notice:';
+            toastData.info.message = 'You rate this event 5 star.';
+            showToast('info');
+          }
+          else {
+            toastData.danger.message = 'Event rating failed.';
+            showToast('danger');
+          }
+
+          console.log("event-rating-5 clicked!");
+        });
+
+
       }
-      else{
+      else {
         overlay.innerHTML = `
         <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
           <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
@@ -301,11 +521,11 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
         </article>
       `;
-      
+
 
       }
-      
-  openPopup();
+
+      openPopup();
       overlay.querySelector(".cancel-box").addEventListener("click", (e) => {
         e.stopPropagation();
         overlay.querySelector(".cancel-popup").classList.add("active");

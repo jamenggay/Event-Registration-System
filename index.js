@@ -215,10 +215,90 @@ app.post("/create-events", async (req, res) => {
 
         console.log('Event creation successful')
         return res.status(201).json({ message: "Event creation successful" })
+
+
     }
     catch (e) {
         console.log("Event Creation Failed: ", e)
         return res.status(500).json({ message: "Event creation failed", error: e })
+    }
+});
+
+//events page store event rating
+
+app.post("/store-rating", async (req, res) => {
+    const userID = req.session.user.id;
+    const { eventID, rating } = req.body;
+
+    try{
+        const result = await pool.request()
+        .input("userID", sql.Int, userID)
+        .input("eventID", sql.Int, eventID)
+        .query(`SELECT 
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM feedbackTable 
+                    WHERE eventID = @eventID AND userID = @userID
+                ) THEN 'true'
+                 ELSE 'false'
+            END AS HasRating;
+`)  
+    const exist = result.recordset[0].HasRating;
+    
+    console.log (exist);
+
+    if(exist == 'false'){
+        await pool.request()
+            .input("userID", sql.Int, userID)
+            .input("eventID", sql.Int, eventID)
+            .input("rating", sql.Int, rating)
+            .query(`INSERT INTO feedbackTable (eventID, userID, rating) 
+                VALUES (@eventID, @userID, @rating)`)
+
+        res.json({success: true});
+    }
+    else {
+        await pool.request()
+            .input("userID", sql.Int, userID)
+            .input("eventID", sql.Int, eventID)
+            .input("rating", sql.Int, rating)
+            .query(`UPDATE feedbackTable
+                SET rating = @rating
+                WHERE eventID = @eventID AND userID = @userID`)
+        
+        
+
+       
+
+        res.json({success: true});
+
+    }
+
+        }
+    catch(err){
+        console.error(err);
+        res.status(500).json({message: 'Error rating event'});
+    }
+})
+
+//fetching rating
+app.get("/get-rating", async (req, res) => {
+    const userID = req.session.user.id;
+   
+
+    try {
+        const result = await pool.request()
+            .input("userID", sql.Int, userID)
+            .query(`SELECT * FROM feedbackTable
+                    WHERE userID = @userID`);
+
+      
+            res.json({ success: true, rating: result.recordset });
+       
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Error fetching rating' });
     }
 });
 
@@ -313,7 +393,7 @@ app.get("/discover", (req, res) => {
 
 });
 
-// register button
+// register button inn discover
 app.post("/register-event", async (req, res) => {
     const userID = req.session.user.id;
     const { eventID, requireApproval} = req.body

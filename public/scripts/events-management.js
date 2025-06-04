@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.addEventListener('open', () => {
         socket.send(JSON.stringify({ type: 'getEventData' }));
         socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-        socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+        socket.send(JSON.stringify({ type: 'getApprovedGuestsData' }))
+        socket.send(JSON.stringify({ type: 'getAttendeesData' }))
 
         socket.addEventListener('message', event => {
             let data = JSON.parse(event.data)
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.status == 200) {
                     console.log("Client Registrants Details: ", data.registrationData)
                     hasRegistrationData = true;
-                    
+
                     let pendingGuests = data.registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
                     pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
 
@@ -51,29 +51,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else if (data.status == 500) {
                     console.log("Backend Failed: ", data.message, data.error)
-                }               
+                }
             }
             else if (data.type == 'approvedGuestsData') {
-                 if (data.status == 200) {
+                if (data.status == 200) {
                     console.log("Client Approved Guests Details: ", data.approvedGuestsData)
-                    hasApprovedGuestsData = true;                       
+                    hasApprovedGuestsData = true;
                     approvedGuestsData = data.approvedGuestsData
                 }
                 else if (data.status == 500) {
                     console.log("Backend Failed: ", data.message, data.error)
-                }                   
+                }
             }
             else if (data.type == 'attendeesData') {
-                 if (data.status == 200) {
+                if (data.status == 200) {
                     console.log("Client Attendees Details: ", data.attendeesData)
-                    hasAttendeesData = true;                       
+                    hasAttendeesData = true;
                     attendeesData = data.attendeesData
                 }
                 else if (data.status == 500) {
                     console.log("Backend Failed: ", data.message, data.error)
-                }                   
+                }
             }
-             
+
             flagData()
         })
     })
@@ -100,11 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.dataset.tab;
-                
+
                 // Remove active class from all buttons and panes
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabPanes.forEach(pane => pane.classList.remove('active'));
-                
+
                 // Add active class to clicked button and corresponding pane
                 button.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     minute: 'numeric',
                     hour12: true
                 });
-            } 
+            }
             catch (error) {
                 console.error('Error formatting date:', error);
                 return 'Invalid date';
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     date: dateTimeObj.toISOString().split('T')[0],
                     time: dateTimeObj.toTimeString().slice(0, 5)
                 };
-            } 
+            }
             catch (error) {
                 console.error('Error parsing date:', error);
                 return { date: '', time: '' };
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const eventImage = document.getElementById('eventImage');
                     eventImage.src = eventData.featureImage;
 
-                    eventImage.onerror =  function() {
+                    eventImage.onerror = function () {
                         this.onerror = null; // prevent infinite loop if fallback fails
                         this.src = "../assets/icons/profile-icon.jpeg";
                     };
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const capacityText = document.querySelector('.capacity-text');
                 const waitlistStatus = document.querySelector('.waitlist-status');
-            
+
                 if (eventData.capacity == 0) {
                     capacityText.textContent = ``;
                     waitlistStatus.textContent =
@@ -217,10 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else if (eventData.capacity) {
                     capacityText.textContent = `${eventData.capacity}`;
-                    waitlistStatus.textContent = 
+                    waitlistStatus.textContent =
                         `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
                 }
-            } 
+            }
             catch (error) {
                 console.error('Error displaying event data:', error);
             }
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('category').value = currentEventData.category || '';
                 document.getElementById('feedbackLink').value = currentEventData.feedbackLink || '';
                 document.getElementById('max_capacity').value = currentEventData.capacity || '';
-                
+
                 document.getElementById('require_approval').checked = currentEventData.requireApproval
                 document.getElementById('over_capacity_waitlist').checked = currentEventData.waitlist
 
@@ -263,22 +263,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error populating modal form:', error);
             }
         };
-    
+
         const saveChangesButton = document.getElementById('save-changes-btn');
-        
-        const eventFormFields = [ 
-            {   new : document.getElementById('eventName'),     original : eventData.eventName },
-            {   new : document.getElementById('startDate'),     original : new Date(eventData.startDateTime).toISOString().split('T')[0] },      
-            {   new : document.getElementById('startTime'),     original : new Date(eventData.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
-            {   new : document.getElementById('endDate'),       original : new Date(eventData.endDateTime).toISOString().split('T')[0] },        
-            {   new : document.getElementById('endTime'),       original : new Date(eventData.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
-            {   new : document.getElementById('location'),      original : eventData.location },
-            {   new : document.getElementById('description'),   original : eventData.description },
-            {   new : document.getElementById('category'),      original : eventData.category },
-            {   new : document.getElementById('feedbackLink'),  original : eventData.feedbackLink },
-            {   new : document.getElementById('max_capacity'),  original : eventData.capacity },
-            {   new : document.getElementById('require_approval'), original : eventData.requireApproval === 'Yes' ? true : false, isCheckbox : true },
-            {   new : document.getElementById('over_capacity_waitlist'), original : eventData.allowWaitlist === 'Yes' ? true : false, isCheckbox : true }
+
+        const eventFormFields = [
+            { new: document.getElementById('eventName'), original: eventData.eventName },
+            { new: document.getElementById('startDate'), original: new Date(eventData.startDateTime).toISOString().split('T')[0] },
+            { new: document.getElementById('startTime'), original: new Date(eventData.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+            { new: document.getElementById('endDate'), original: new Date(eventData.endDateTime).toISOString().split('T')[0] },
+            { new: document.getElementById('endTime'), original: new Date(eventData.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+            { new: document.getElementById('location'), original: eventData.location },
+            { new: document.getElementById('description'), original: eventData.description },
+            { new: document.getElementById('category'), original: eventData.category },
+            { new: document.getElementById('feedbackLink'), original: eventData.feedbackLink },
+            { new: document.getElementById('max_capacity'), original: eventData.capacity },
+            { new: document.getElementById('require_approval'), original: eventData.requireApproval === 'Yes' ? true : false, isCheckbox: true },
+            { new: document.getElementById('over_capacity_waitlist'), original: eventData.allowWaitlist === 'Yes' ? true : false, isCheckbox: true }
         ]
 
         eventFormFields.forEach(data => {
@@ -286,9 +286,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             data.new.addEventListener(eventType, () => {
                 // use String() to convert non-string values 
-                const hasChanges = eventFormFields.some(item => { 
+                const hasChanges = eventFormFields.some(item => {
                     const currentValue = item.isCheckbox === true ? item.new.checked : item.new.value
-                    return String(currentValue) !== String(item.original) 
+                    return String(currentValue) !== String(item.original)
                 })
 
                 saveChangesButton.disabled = !hasChanges
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const startDateTime = parseDateTime(document.querySelector('.start-datetime').textContent);
                 const endDateTime = parseDateTime(document.querySelector('.end-datetime').textContent);
-                
+
                 return {
                     eventName: document.querySelector('.event_name').textContent,
                     startDate: startDateTime.date,
@@ -379,9 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteModalConfirmBtn.addEventListener('click', async () => {
             try {
                 const response = await fetch('/delete-event', {
-                    method : 'DELETE',
-                    headers : { 'Content-Type' : 'application/json' },
-                    body : JSON.stringify({ eventID : eventData.eventID })
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eventID: eventData.eventID })
                 })
 
                 if (response.ok) {
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const error = await response.json()
                     console.log("Backend Sucess: ", error)
                 }
-            } 
+            }
             catch (error) {
                 console.error('Client Error:', error);
                 alert('Failed to delete event. Please try again.');
@@ -418,14 +418,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let imageFileName = null
         let imageFileExtension = null
 
-        uploadButton.addEventListener('click', () => 
+        uploadButton.addEventListener('click', () =>
             eventImage.click()
         );
 
         eventImage.addEventListener('change', async (e) => {
             try {
                 const file = e.target.files[0];
-                
+
                 if (file) {
                     const getBase64 = file => new Promise(async (resolve, reject) => {
                         const reader = new FileReader();
@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageFileExtension = file.name.split('.').pop().toLowerCase()
                 }
                 saveChangesButton.disabled = false
-            } 
+            }
             catch (error) {
                 console.error('Error handling image upload:', error);
             }
@@ -461,38 +461,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const startDate = document.getElementById('startDate').value
             const startTime = document.getElementById('startTime').value
-            const endDate   = document.getElementById('endDate').value
-            const endTime   = document.getElementById('endTime').value
+            const endDate = document.getElementById('endDate').value
+            const endTime = document.getElementById('endTime').value
 
-            const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
-            const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
+            const startDateTime = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
+            const endDateTime = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
             const requireApproval = document.getElementById('require_approval').checked ? 'Yes' : 'No'
-            const waitlistToggle  = document.getElementById('over_capacity_waitlist').checked ? 'Yes' : 'No'
-            const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
-            
+            const waitlistToggle = document.getElementById('over_capacity_waitlist').checked ? 'Yes' : 'No'
+            const lastUpdated = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+
             const updatedEventData = {
-                eventID             : eventData.eventID,
-                base64FeatureImage  : featureImage,
-                imageFileName       : imageFileName,
-                imageFileExtension  : imageFileExtension,
-                dbImagePath     : eventData.featureImage,
-                eventName       : document.getElementById('eventName').value,
-                startDateTime   : startDateTime,
-                endDateTime     : endDateTime,
-                location        : document.getElementById('location').value,
-                description     : document.getElementById('description').value,
-                category        : document.getElementById('category').value,
-                feedbackLink    : document.getElementById('feedbackLink').value,
-                requireApproval : requireApproval,
-                capacity        : document.getElementById('max_capacity').value || 0,
-                allowWaitlist   : waitlistToggle,
-                lastUpdated     : lastUpdated
+                eventID: eventData.eventID,
+                base64FeatureImage: featureImage,
+                imageFileName: imageFileName,
+                imageFileExtension: imageFileExtension,
+                dbImagePath: eventData.featureImage,
+                eventName: document.getElementById('eventName').value,
+                startDateTime: startDateTime,
+                endDateTime: endDateTime,
+                location: document.getElementById('location').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                feedbackLink: document.getElementById('feedbackLink').value,
+                requireApproval: requireApproval,
+                capacity: document.getElementById('max_capacity').value || 0,
+                allowWaitlist: waitlistToggle,
+                lastUpdated: lastUpdated
             }
 
             try {
                 const response = await fetch(`/event/${eventData.eventID}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type' : 'application/json' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedEventData)
                 })
 
@@ -507,8 +507,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 else {
                     const error = await response.json()
                     console.log("Backend Failed: ", error)
-                }                
-            } 
+                }
+            }
             catch (error) {
                 console.log("Client Error: ", error)
             }
@@ -534,13 +534,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             guests.forEach(guest => {
                 const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
-                
+
                 // Check if the name starts with the search term (prefix matching)
                 const matchFound = guestName.startsWith(searchTerm);
-                
+
                 // Apply smooth transition for showing/hiding
                 guest.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
+
                 if (matchFound) {
                     guest.style.display = '';
                     guest.style.opacity = '1';
@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearButton.className = 'clear-search';
             clearButton.innerHTML = '&times;';
             clearButton.style.display = 'none';
-            
+
             input.parentNode.style.position = 'relative';
             input.parentNode.appendChild(clearButton);
 
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.value = '';
                 input.focus();
                 clearButton.style.display = 'none';
-                
+
                 // Reset all guests in the current tab
                 const container = input.closest('.tab-pane');
                 const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (guestSearchInput) addClearSearchButton(guestSearchInput);
         if (checkinSearchInput) addClearSearchButton(checkinSearchInput);
 
-        
+
         // Guest Tab Handling
 
         // Function to display guest list
@@ -658,34 +658,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const statusContainer = guestListContainer.querySelector('.status-container:not(.waitlisted-container)');
                 const waitlistedContainer = guestListContainer.querySelector('.waitlisted-container');
 
-                guests.forEach(guest => {
+                // Sort guests by registration ID (newest first)
+                const sortedGuests = [...guests].sort((a, b) => b.registrationID - a.registrationID);
+
+                sortedGuests.forEach(guest => {
                     const guestElement = document.createElement('div');
                     guestElement.className = 'attendee-container';
                     const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
-                    
-                    // Map the status to the appropriate class and display text
-                    let statusClass = '';
-                    let statusText = '';
-                    switch(guest.status.toLowerCase()) {
-                        case 'approved':
-                            statusClass = 'going';
-                            statusText = 'Going';
-                            break;
-                        case 'declined':
-                            statusClass = 'declined';
-                            statusText = 'Declined';
-                            break;
-                        case 'pending':
-                            statusClass = 'pending';
-                            statusText = 'Pending';
-                            break;
-                        case 'waitlisted':
-                            statusClass = 'waitlisted';
-                            statusText = 'Waitlisted';
-                            break;
-                        default:
-                            statusClass = 'pending';
-                            statusText = 'Pending';
+
+                    // Determine initial toggle state based on guest status
+                    let initialToggleState = 'active-neutral';
+                    if (guest.status.toLowerCase() === 'approved') {
+                        initialToggleState = 'active-left';
+                    } else if (guest.status.toLowerCase() === 'declined') {
+                        initialToggleState = 'active-right';
                     }
 
                     // Create different HTML based on status
@@ -698,96 +684,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <span class="attendee-name">${guest.fullname}</span>
                                 </div>
                                 <div class="attendee-actions">
-                                    <div class="onoffswitch">
-                                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoffswitch-${guest.registrationID}" 
-                                        ${guest.status.toLowerCase() !== 'declined' ? 'checked' : ''}>
-                                        <label class="onoffswitch-label" for="onoffswitch-${guest.registrationID}">
-                                            <span class="onoffswitch-inner"></span>
-                                            <span class="onoffswitch-switch"></span>
-                                        </label>
+                                    <div class="guest-toggle-wrapper ${initialToggleState}" data-registration-id="${guest.registrationID}">
+                                        <label class="dalo-label" onclick="handleToggleClick(this, '${guest.registrationID}', 'approved')">Dalo</label>
+                                        <label class="decline-label" onclick="handleToggleClick(this, '${guest.registrationID}', 'declined')">Decline</label>
+                                        <div class="slider"></div>
                                     </div>
                                 </div>
                             `;
                             waitlistedContainer.appendChild(guestElement);
-
-                            // Add click event listeners to the toggle buttons
-                            const checkbox = guestElement.querySelector('.onoffswitch-checkbox');
-                            
-                            checkbox.addEventListener('change', async function(e) {
-                                // Toggle between states
-                                if (this.checked) {
-                                    newStatus = 'Approved';
-
-                                    const guestData = {
-                                        eventID : guest.eventID,
-                                        userID : guest.userID,
-                                        status : newStatus
-                                    }
-                                    
-                                    try {
-                                        const response = await fetch(`/registrant`, {
-                                            method : 'PATCH',
-                                            headers : { 'Content-Type' : 'application/json' },
-                                            body : JSON.stringify(guestData)
-                                        })
-
-                                        socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                                        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                                        if (response.ok) {
-                                            const result = await response.json()
-                                            console.log("Backend Success: ", result)
-                                            alert('Guest Accepted!')
-                                        }
-                                        else {
-                                            const error = await response.json()
-                                            console.log("Backend Failed: ", error)
-                                        }
-                                    }
-                                    catch (e) {
-                                        console.log("Client Error: ", e)
-                                    }
-                                    
-                                } else {
-                                    newStatus = 'Declined';
-
-                                    const guestData = {
-                                        eventID : guest.eventID,
-                                        userID : guest.userID,
-                                        status : newStatus
-                                    }
-
-                                    try {
-                                        const response = await fetch(`/registrant`, {
-                                            method : 'PATCH',
-                                            headers : { 'Content-Type' : 'application/json' },
-                                            body : JSON.stringify(guestData)
-                                        })
-
-                                        socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                                        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                                        if (response.ok) {
-                                            const result = await response.json()
-                                            console.log("Backend Success: ", result)
-                                            alert('Guest Declined!')
-                                        }
-                                        else {
-                                            const error = await response.json()
-                                            console.log("Backend Failed: ", error)
-                                        }
-                                    }
-                                    catch (e) {
-                                        console.log("Client Error: ", e)
-                                    }
-                                }
-                                
-                                // Optionally, re-filter the list if there's a search term
-                                const currentSearchTerm = guestSearchInput.value;
-                                if (currentSearchTerm) {
-                                    filterGuests(currentSearchTerm, document.getElementById('guest'));
-                                }
-                            });
                         }
                     } else {
                         guestElement.innerHTML = `
@@ -795,107 +699,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
                                 <span class="attendee-name">${guest.fullname}</span>
                             </div>
-                            <div class="attendee-status">
-                                <span class="event-status ${statusClass}">${statusText}</span>
-                            </div>
                             <div class="attendee-actions">
-                                <div class="onoffswitch">
-                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoffswitch-${guest.registrationID}" ${guest.status.toLowerCase() !== 'declined' ? 'checked' : ''}>
-                                    <label class="onoffswitch-label" for="onoffswitch-${guest.registrationID}">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
+                                <div class="guest-toggle-wrapper ${initialToggleState}" data-registration-id="${guest.registrationID}">
+                                    <label class="dalo-label" onclick="handleToggleClick(this, '${guest.registrationID}', 'approved')">Dalo</label>
+                                    <label class="decline-label" onclick="handleToggleClick(this, '${guest.registrationID}', 'declined')">Decline</label>
+                                    <div class="slider"></div>
                                 </div>
                             </div>
                         `;
                         statusContainer.appendChild(guestElement);
-
-                        // Add click event listeners to the toggle buttons
-                        const checkbox = guestElement.querySelector('.onoffswitch-checkbox');
-                        
-                        checkbox.addEventListener('change', async function(e) {
-                            const container = this.closest('.attendee-container');
-                            const statusElement = container.querySelector('.event-status');
-
-                            // Toggle between states
-                            if (this.checked) {
-                                statusElement.textContent = 'Going';
-                                statusElement.className = 'event-status going';
-                                newStatus = 'Approved';
-
-                                const guestData = {
-                                    eventID : guest.eventID,
-                                    userID : guest.userID,
-                                    status : newStatus,
-                                    approvedAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000)),
-                                }
-
-                                try {
-                                    const response = await fetch(`/registrant`, {
-                                        method : 'PATCH',
-                                        headers : { 'Content-Type' : 'application/json' },
-                                        body : JSON.stringify(guestData)
-                                    })
-
-                                    socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                                    socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-
-                                    if (response.ok) {
-                                        const result = await response.json()
-                                        console.log("Backend Success: ", result)
-                                        alert('Guest Accepted!')
-                                    }
-                                    else {
-                                        const error = await response.json()
-                                        console.log("Backend Failed: ", error)
-                                    }
-                                }
-                                catch (e) {
-                                    console.log("Client Error: ", e)
-                                }                                
-                            } else {
-                                statusElement.textContent = 'Declined';
-                                statusElement.className = 'event-status declined';
-                                newStatus = 'Declined';
-
-                                const guestData = {
-                                    eventID : guest.eventID,
-                                    userID : guest.userID,
-                                    status : newStatus
-                                }
-
-                                try {
-                                    const response = await fetch(`/registrant`, {
-                                        method : 'PATCH',
-                                        headers : { 'Content-Type' : 'application/json' },
-                                        body : JSON.stringify(guestData)
-                                    })
-
-                                    socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                                    socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                                    socket.send(JSON.stringify({ type : 'getAttendeesData' }))
-
-                                    if (response.ok) {
-                                        const result = await response.json()
-                                        console.log("Backend Success: ", result)
-                                        alert('Guest Declined!')
-                                    }
-                                    else {
-                                        const error = await response.json()
-                                        console.log("Backend Failed: ", error)
-                                    }
-                                }
-                                catch (e) {
-                                    console.log("Client Error: ", e)
-                                }
-                            }
-                            
-                            // Optionally, re-filter the list if there's a search term
-                            const currentSearchTerm = guestSearchInput.value;
-                            if (currentSearchTerm) {
-                                filterGuests(currentSearchTerm, document.getElementById('guest'));
-                            }
-                        });
                     }
                 });
 
@@ -912,6 +724,89 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
+        // Add the handleToggleClick function to the window object so it can be called from onclick
+        window.handleToggleClick = async function (element, registrationID, newStatus) {
+
+            console.log(`handleToggleClick: regID=${registrationID},
+                newStatus=${newStatus}`);
+
+            const toggleWrapper = element.parentElement;
+
+
+            // --- Start: Crucial UI Update ---
+            if (!toggleWrapper || !toggleWrapper.classList.contains('guest-toggle-wrapper')) {
+                console.error("Could not find .guest-toggle-wrapper as parent of clicked label:", clickedLabelElement);
+                return;
+            }
+
+            // Clear any existing active state
+            toggleWrapper.classList.remove('active-neutral', 'active-left', 'active-right');
+
+            // Apply the new active state based on the click
+            if (newStatus === 'approved') {
+                toggleWrapper.classList.add('active-left');
+                console.log("Applied active-left to:", toggleWrapper); // DEBUG
+            } else if (newStatus === 'declined') {
+                toggleWrapper.classList.add('active-right');
+                console.log("Applied active-right to:", toggleWrapper); // DEBUG
+            }
+            //------------------------------
+
+            const guest = registrationData.find(g => String(g.registrationID) === String(registrationID));
+
+            if (!guest) {
+                console.error('Guest not found in registrationData for ID:', registrationID);
+
+                console.log("Current registrationData content:", JSON.stringify(registrationData, null, 2));
+                return;
+            }
+
+            const guestData = {
+                eventID: guest.eventID,
+                userID: guest.userID,
+                status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1), // 'Approved' or 'Declined'
+                approvedAt: newStatus === 'approved' ? new Date(new Date().getTime() + (8 * 60 * 60 * 1000)) : null
+            };
+
+            try {
+                const response = await fetch(`/registrant`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(guestData)
+                });
+
+                // Optimistically update local data
+                const guestIndex = registrationData.findIndex(g => g.registrationID === registrationID);
+                if (guestIndex !== -1) {
+                    registrationData[guestIndex].status = guestData.status;
+                }
+
+                // Request fresh data from server (this will eventually re-render the list)
+                socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+                socket.send(JSON.stringify({ type: 'getApprovedGuestsData' }));
+                socket.send(JSON.stringify({ type: 'getAttendeesData' }));
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log("Backend Success (Guest Status Update): ", result);
+                    // No alert here, the visual change is immediate.
+                    // The re-render from WebSocket will confirm the state.
+                } else {
+                    const error = await response.json();
+                    console.error("Backend Failed (Guest Status Update): ", error);
+                    // Optionally, revert the UI change if the backend failed critically,
+                    // though often you might let the WebSocket refresh handle the true state.
+                }
+            } catch (e) {
+                console.error("Client Error in handleToggleClick: ", e);
+            }
+
+            // Re-filter if needed
+            const guestSearchInput = document.querySelector('#guest .search-input');
+            if (guestSearchInput && guestSearchInput.value) {
+                filterGuests(guestSearchInput.value, document.getElementById('guest'));
+            }
+        };
 
         //Check In Tab Handling
 
@@ -924,114 +819,136 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const existingGuests = checkInContainer.querySelectorAll('.checkin-guest');
-                existingGuests.forEach(guest => guest.remove());
+                // Clear existing content and add title
+                checkInContainer.innerHTML = `
+                    <h1>Check In</h1>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search guests...">
+                    </div>
+                    <div class="checkin-list"></div>
+                    <div class="download-button-container">
+                        <button class="download-button" type="button">
+                            <img src="/assets/icons/download-icon.png" class="download-icon" alt="Download">
+                            Download 
+                        </button>
+                    </div>
+                `;
+
+                const checkinList = checkInContainer.querySelector('.checkin-list');
+
+                const currentAttendees = attendeesData || [];
 
                 guests.forEach(guest => {
                     const guestElement = document.createElement('div');
                     guestElement.className = 'checkin-guest';
-                    
+
                     const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
-                    
+
+                    const isAttending = currentAttendees.some(attendee => attendee.userID === guest.userID); // Match by userID for reliability
+                    let checkInToggleState = 'active-right'; // Default to neutral or "not attended" visual
+                    if (isAttending) {
+                        checkInToggleState = 'active-left'; // "Attended" is on the left
+                    } else {
+                        checkInToggleState = 'active-right'; // "Not Attended" is on the right (or choose 'active-neutral')
+                    }
+
                     guestElement.innerHTML = `
                         <div class="guest-info">
-                            <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
-                            <span class="guest-name">${guest.fullname}</span>
-                        </div>
-                        <div class="checkin-actions">
-                            <div class="checkin-onoffswitch">
-                                <input type="checkbox" name="checkin-onoffswitch" class="checkin-onoffswitch-checkbox" id="checkin-onoffswitch-${guest.registrationID}" ${attendeesData.some(attendee => attendee.fullname == guest.fullname) ? 'checked' : ''}>
-                                <label class="checkin-onoffswitch-label" for="checkin-onoffswitch-${guest.registrationID}">
-                                    <span class="checkin-onoffswitch-inner"></span>
-                                    <span class="checkin-onoffswitch-switch"></span>
-                                </label>
-                            </div>
-                        </div>
+                    <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
+                    <span class="guest-name">${guest.fullname}</span>
+                </div>
+                <div class="attendee-actions"> 
+                    <div class="guest-toggle-wrapper ${checkInToggleState}" data-user-id="${guest.userID}" data-registration-id="${guest.registrationID}"> 
+                        <label class="attended-label" onclick="handleCheckInToggle(this, '${guest.userID}', '${guest.registrationID}', true)">Dumalo</label> 
+                        <label class="not-attended-label" onclick="handleCheckInToggle(this, '${guest.userID}', '${guest.registrationID}', false)">Away</label> 
+                        <div class="slider"></div>
+                    </div>
+                </div>
                     `;
-                    checkInContainer.appendChild(guestElement);
+                    checkinList.appendChild(guestElement);
 
-                    // Add click event listeners to the toggle buttons
-                    const checkbox = guestElement.querySelector('.checkin-onoffswitch-checkbox');
-                    
-                    checkbox.addEventListener('change', async function(e) {
-                        // Toggle between states
-                        if (this.checked) {                            
-                            const attendanceData = {
-                                eventID : eventData.eventID,
-                                userID : guest.userID,
-                                checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
-                            }          
-                            
-                            try {
-                                const response = await fetch("/checkin-attendee", {
-                                    method : 'POST',
-                                    headers : { 'Content-Type' : 'application/json' },
-                                    body : JSON.stringify(attendanceData)
-                                })
+                    // // Add click event listeners to the toggle buttons
+                    // const checkbox = guestElement.querySelector('.checkin-onoffswitch-checkbox');
 
-                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                                socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+                    // checkbox.addEventListener('change', async function(e) {
+                    //     // Toggle between states
+                    //     if (this.checked) {                            
+                    //         const attendanceData = {
+                    //             eventID : eventData.eventID,
+                    //             userID : guest.userID,
+                    //             checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                    //         }          
 
-                                if (response.ok) {
-                                    const result = await response.json()
-                                    console.log("Backend Success: ", result)
-                                }
-                                else {
-                                    const error = await response.json()
-                                    console.log("Backend Failed: ", error)
-                                }
-                            }
-                            catch (e) {
-                                console.log("Client Error: ", e)
-                            }
-                        } 
-                        else {
-                            const attendanceData = {
-                                eventID : eventData.eventID,
-                                userID : guest.userID,
-                            }
+                    //         try {
+                    //             const response = await fetch("/checkin-attendee", {
+                    //                 method : 'POST',
+                    //                 headers : { 'Content-Type' : 'application/json' },
+                    //                 body : JSON.stringify(attendanceData)
+                    //             })
 
-                            try {
-                                const response = await fetch("/checkin-attendee", {
-                                    method : 'DELETE',
-                                    headers : { 'Content-Type' : 'application/json' },
-                                    body : JSON.stringify(attendanceData)
-                                })
+                    //             socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                    //             socket.send(JSON.stringify({ type : 'getAttendeesData' }))
 
-                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                                socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+                    //             if (response.ok) {
+                    //                 const result = await response.json()
+                    //                 console.log("Backend Success: ", result)
+                    //             }
+                    //             else {
+                    //                 const error = await response.json()
+                    //                 console.log("Backend Failed: ", error)
+                    //             }
+                    //         }
+                    //         catch (e) {
+                    //             console.log("Client Error: ", e)
+                    //         }
+                    //     } 
+                    //     else {
+                    //         const attendanceData = {
+                    //             eventID : eventData.eventID,
+                    //             userID : guest.userID,
+                    //         }
 
-                                if (response.ok) {
-                                    const result = await response.json()
-                                    console.log("Backend Success: ", result)
-                                }
-                                else if (response.status == 404) {
-                                    const result = await response.json()
-                                    console.log("Backend Message: ", result)
-                                }
-                                else {
-                                    const error = await response.json()
-                                    console.log("Backend Failed: ", error)
-                                }
-                            }
-                            catch (e) {
-                                console.log("Client Error: ", e)
-                            }
-                        }
-                    });
-                }); 
-                
-                const downloadButton = checkInContainer.querySelector('.download-button') 
+                    //         try {
+                    //             const response = await fetch("/checkin-attendee", {
+                    //                 method : 'DELETE',
+                    //                 headers : { 'Content-Type' : 'application/json' },
+                    //                 body : JSON.stringify(attendanceData)
+                    //             })
 
+                    //             socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                    //             socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+
+                    //             if (response.ok) {
+                    //                 const result = await response.json()
+                    //                 console.log("Backend Success: ", result)
+                    //             }
+                    //             else if (response.status == 404) {
+                    //                 const result = await response.json()
+                    //                 console.log("Backend Message: ", result)
+                    //             }
+                    //             else {
+                    //                 const error = await response.json()
+                    //                 console.log("Backend Failed: ", error)
+                    //             }
+                    //         }
+                    //         catch (e) {
+                    //             console.log("Client Error: ", e)
+                    //         }
+                    //     }
+                    // });
+                });
+
+                // Add download button functionality
+                const downloadButton = checkInContainer.querySelector('.download-button');
                 downloadButton.addEventListener('click', async () => {
-                    const downloadCSV = (args) => {  
+                    const downloadCSV = (args) => {
                         let filename = args.filename
                         let columns = args.columns
 
-                        let csv = Papa.unparse({ data: args.data, fields: columns})
-                        
+                        let csv = Papa.unparse({ data: args.data, fields: columns })
+
                         let blob = new Blob([csv], { type: "text/csv" });
-                        
+
                         if (window.navigator.msSaveOrOpenBlob) {
                             window.navigator.msSaveBlob(blob, args.filename);
                         }
@@ -1040,27 +957,150 @@ document.addEventListener('DOMContentLoaded', () => {
                             a.href = window.URL.createObjectURL(blob);
                             a.download = filename;
                             document.body.appendChild(a);
-                            a.click();  
+                            a.click();
                             document.body.removeChild(a);
                         }
                     }
 
                     let updatedAttendeesData = attendeesData.map(attendee => ({
-                                                    "Attendance ID" : attendee.attendanceID,
-                                                    "Full Name" : attendee.fullname,
-                                                    "Checked In At" : new Date(attendee.checkedInAt).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone : 'UTC'})
-                                                }))
+                        "Attendance ID": attendee.attendanceID,
+                        "Full Name": attendee.fullname,
+                        "Checked In At": new Date(attendee.checkedInAt).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'UTC' })
+                    }))
 
-                    downloadCSV({ filename: `${eventData.eventName} Attendance.csv`, data: updatedAttendeesData, columns: ["Attendance ID", "Full Name", "Checked In At"]});
-                })
-            } 
-            catch (error) {
+                    downloadCSV({ filename: `${eventData.eventName} Attendance.csv`, data: updatedAttendeesData, columns: ["Attendance ID", "Full Name", "Checked In At"] });
+                });
+
+                // Initialize search functionality
+                const newCheckinSearchInput = checkInContainer.querySelector('.search-input');
+                if (newCheckinSearchInput) {
+                    newCheckinSearchInput.addEventListener('input', debounce((e) => {
+                        filterGuests(e.target.value, checkInContainer);
+                    }, 300));
+                    addClearSearchButton(newCheckinSearchInput);
+                }
+            } catch (error) {
                 console.error('Error displaying check-in list:', error);
             }
         };
 
-        displayEventData(eventData);
-        displayGuestList(registrationData);
-        displayCheckInList(approvedGuestsData);
+        //handler for check-in toggle
+        window.handleCheckInToggle = async function (clickedLabelElement, userID, registrationID, isNowAttending) {
+                  
+            console.log(`handleCheckInToggle: userID=${userID}, regID=${registrationID}, isNowAttending=${isNowAttending}`);
+            const toggleWrapper = clickedLabelElement.parentElement;
+
+            if (!toggleWrapper || !toggleWrapper.classList.contains('guest-toggle-wrapper')) {
+                console.error("Could not find .guest-toggle-wrapper for check-in:", clickedLabelElement);
+                return;
+            }
+
+             toggleWrapper.classList.remove('active-neutral', 'active-left', 'active-right');
+    if (isNowAttending) {
+        toggleWrapper.classList.add('active-left'); // "Attended"
+    } else {
+        toggleWrapper.classList.add('active-right'); // "Not Attended" 
     }
-});
+
+        console.log(`Searching for userID: ${userID} (type: ${typeof userID}) in approvedGuestsData.`);
+    if (approvedGuestsData && approvedGuestsData.length > 0 && approvedGuestsData[0].hasOwnProperty('userID')) { // Check if property exists
+        console.log(`First guest in approvedGuestsData has userID: ${approvedGuestsData[0].userID} (type: ${typeof approvedGuestsData[0].userID})`);
+    } else if (approvedGuestsData && approvedGuestsData.length > 0) {
+        console.warn("First guest in approvedGuestsData does not have a 'userID' property. Object:", approvedGuestsData[0]);
+    } else {
+        console.warn("approvedGuestsData is empty or undefined.");
+    }
+
+     const guestForEvent = approvedGuestsData.find(g => String(g.userID) === String(userID)); // Or find in registrationData if more appropriate
+    
+     if (!guestForEvent) {
+        console.error("Guest not found in approvedGuestsData for check-in (userID):", userID);
+         console.log("Current approvedGuestsData content:", JSON.stringify(approvedGuestsData, null, 2));
+          } else {
+        console.log("Found guestForEvent:", guestForEvent);
+    }
+// ----------------
+    if (isNowAttending) {
+        // CHECK IN
+        const attendanceData = {
+            eventID: eventData.eventID,
+            userID: userID, // Use userID passed to the function
+            checkedInAt: new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+        };
+
+        // FETCHING
+        try {
+            const response = await fetch("/checkin-attendee", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(attendanceData)
+            });
+            if (response.ok) console.log("Backend Success (Check-in): ", await response.json());
+            else console.error("Backend Failed (Check-in): ", await response.json());
+        } catch (e) {
+            console.error("Client Error (Check-in): ", e);
+        }
+    } else {
+        // CHECK OUT (Remove from attendees)
+        const attendanceData = {
+            eventID: eventData.eventID,
+            userID: userID // Use userID passed to the function
+        };
+        try {
+            const response = await fetch("/checkin-attendee", {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(attendanceData)
+            });
+            if (response.ok) console.log("Backend Success (Check-out): ", await response.json());
+            else if (response.status === 404) console.log("Backend Message (Check-out - already not an attendee): ", await response.json());
+            else console.error("Backend Failed (Check-out): ", await response.json());
+        } catch (e) {
+            console.error("Client Error (Check-out): ", e);
+        }
+    }
+
+    // Refresh relevant data
+    socket.send(JSON.stringify({ type: 'getApprovedGuestsData' })); // Approved list might not change, but good to be safe
+    socket.send(JSON.stringify({ type: 'getAttendeesData' }));    // Attendees list definitely changes
+};
+
+            displayEventData(eventData);
+            displayGuestList(registrationData);
+            displayCheckInList(approvedGuestsData);
+
+            // Guest Toggle Switch Functionality
+            // function initializeGuestToggles() {
+            //     const toggleWrappers = document.querySelectorAll('.guest-toggle-wrapper');
+
+            //     toggleWrappers.forEach(wrapper => {
+            //         const leftLabel = wrapper.querySelector('label:first-child');
+            //         const rightLabel = wrapper.querySelector('label:last-child');
+
+            //         // Set initial state to neutral
+            //         wrapper.classList.add('active-neutral');
+
+            //         leftLabel.addEventListener('click', () => {
+            //             wrapper.classList.remove('active-neutral', 'active-right');
+            //             wrapper.classList.add('active-left');
+            //         });
+
+            //         rightLabel.addEventListener('click', () => {
+            //             wrapper.classList.remove('active-neutral', 'active-left');
+            //             wrapper.classList.add('active-right');
+            //         });
+
+            //         // Add click outside handler to reset to neutral
+            //         document.addEventListener('click', (e) => {
+            //             if (!wrapper.contains(e.target)) {
+            //                 wrapper.classList.remove('active-left', 'active-right');
+            //                 wrapper.classList.add('active-neutral');
+            //             }
+            //         });
+            //     });
+            // }
+
+            // Call the initialization function when the DOM is loaded
+            // initializeGuestToggles();
+        }
+    });
