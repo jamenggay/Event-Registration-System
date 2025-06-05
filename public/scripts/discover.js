@@ -64,13 +64,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-    const eventStatusMap = {};
+    let eventStatusMap = {};
     registeredData.registrations.forEach(reg => {
       eventStatusMap[reg.eventID] = reg.status;
     });
-
-
-
+    // Make eventStatusMap globally accessible
+    window.eventStatusMap = eventStatusMap;
 
 
 
@@ -92,19 +91,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-      const isSameDay = sameDate[index].SameDay === 'True';
-      const registrationStatus = eventStatusMap[event.eventID];
+      // Always get the latest registration status from window.eventStatusMap
+      const registrationStatus = window.eventStatusMap[event.eventID];
 
+      const isSameDay = sameDate[index].SameDay === 'True';
       const isUserCreated = createdEvents.some(createdEvent => createdEvent.eventID === event.eventID);
       let buttonText = 'Register';
-
       if (isUserCreated) {
         buttonText = 'Manage Event';
       }
       else {
         if (registrationStatus === 'Waitlisted') {
           buttonText = 'Waitlisted';
-        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved') {
+        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus === 'Registered') {
           buttonText = 'Registered';
         }
       }
@@ -116,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-// ------------------------------------
+      // ------------------------------------
       learMoreBtn.addEventListener('click', () => {
         const event = events[currentIndex];
         const isSameDay = sameDate[currentIndex].SameDay === 'True';
@@ -166,6 +165,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                   return;
                 }
 
+                // Update global eventStatusMap
+                window.eventStatusMap[event.eventID] = data.status;
                 popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
                 popupRegBtn.disabled = true;
 
@@ -204,6 +205,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       div3.querySelector('.card-wrap').addEventListener('click', () => {
         article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
 
+        // Always get the latest registration status from window.eventStatusMap
+        const registrationStatus = window.eventStatusMap[event.eventID];
+        let buttonText = 'Register';
+        if (isUserCreated) {
+          buttonText = 'Manage Event';
+        } else if (registrationStatus === 'Waitlisted') {
+          buttonText = 'Waitlisted';
+        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus === 'Registered') {
+          buttonText = 'Registered';
+        }
+
         if (buttonText == 'Manage Event') {
 
           article.innerHTML = `
@@ -238,9 +250,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   `;
 
           const popupRegBtn = article.querySelector('.popup-register-button');
-          popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
+          if (popupRegBtn) {
+            popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
+          }
 
-          if (!registrationStatus) {
+          if (!registrationStatus && popupRegBtn) {
             popupRegBtn.addEventListener('click', () => {
               const confirmed = confirm("Are you sure you want to register for this event?");
               if (!confirmed) return;
@@ -255,13 +269,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                   if (!data.success) {
                     toastData.danger.title = "Registration Failed!";
                     toastData.danger.message = data.message; //show backend error
-
                     showToast('danger');
                     return;
                   }
+                  // Update global eventStatusMap
+                  window.eventStatusMap[event.eventID] = data.status;
                   popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
                   popupRegBtn.disabled = true;
-
                   if (popupRegBtn.textContent == 'Registered') {
                     toastData.success.message = data.message; //show backend error
                     showToast('success');
@@ -273,7 +287,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     showToast('info');
                     return;
                   }
-
                 })
                 .catch(err => {
                   console.error('Registration error:', err);
@@ -313,10 +326,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         currentIndex = (newIndex + cards.length) % cards.length;
 
+        const totalCards = cards.length;
+
         window.currentIndex = currentIndex;
 
         cards.forEach((card, i) => {
-          const offset = (i - currentIndex + cards.length) % cards.length;
+          let offset = i - currentIndex;
+
+          if (totalCards > 2) {
+            if (offset > totalCards / 2) {
+              offset -= totalCards;
+            }
+            else if (offset < -totalCards / 2) {
+              offset += totalCards;
+            }
+          }
 
           card.classList.remove(
             "center",
@@ -327,19 +351,41 @@ document.addEventListener("DOMContentLoaded", async () => {
             "hidden"
           );
 
-          if (offset === 0) {
+
+          if (totalCards === 1) {
             card.classList.add("center");
-          } else if (offset === 1) {
+          }
+          else if (offset === 0) {
+            card.classList.add("center");
+          }
+          else if (offset === 1) {
             card.classList.add("right-1");
-          } else if (offset === 2) {
-            card.classList.add("right-2");
-          } else if (offset === cards.length - 1) {
+          }
+          else if (offset === -1) {
             card.classList.add("left-1");
-          } else if (offset === cards.length - 2) {
+          }
+          else if (offset === 2 && totalCards >= 4) {
+            card.classList.add("right-2");
+          }
+          else if (offset === -2 && totalCards >= 5) {
             card.classList.add("left-2");
-          } else {
+          }
+          else {
             card.classList.add("hidden");
           }
+          // if (offset === 0) {
+          //   card.classList.add("center");
+          // } else if (offset === 1) {
+          //   card.classList.add("right-1");
+          // } else if (offset === 2) {
+          //   card.classList.add("right-2");
+          // } else if (offset === cards.length - 1) {
+          //   card.classList.add("left-1");
+          // } else if (offset === cards.length - 2) {
+          //   card.classList.add("left-2");
+          // } else {
+          //   card.classList.add("hidden");
+          // }
         });
 
         eventName.style.opacity = "0";
@@ -349,7 +395,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (eventsCarousel[currentIndex]) {
             eventName.textContent = eventsCarousel[currentIndex].name;
             eventCategory.textContent = eventsCarousel[currentIndex].category;
-            learMoreBtn.id = eventsCarousel[currentIndex].eventID;
+            // learMoreBtn.id = eventsCarousel[currentIndex].eventID;
 
           }
           eventName.style.opacity = "1";
