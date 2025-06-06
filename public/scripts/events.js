@@ -183,6 +183,8 @@ function getUserRatingForEvent(eventID) {
 
       }
       else {
+
+        if(status)
         return `
                 <div class="event-group" data-date="${event.startDateTime}">
                   <div class="event-date">
@@ -490,7 +492,29 @@ function getUserRatingForEvent(eventID) {
 
       }
       else {
+
+      if(event.status == "Declined"){
         overlay.innerHTML = `
+        <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
+          <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+          <span class="popup-event-date">${formattedDate}</span>
+
+
+          <div class="card-content">
+            <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
+            <p class="event-description" id="eventDesc">${event.description}</p>
+            <p class="event-location">Location: ${event.location}</p>
+            <div class="card-actions">
+              <p class="${statusClass}-status">${status}</p>
+            
+            </div>
+          </div>
+        </article>
+      `;
+
+      }
+      else{
+         overlay.innerHTML = `
         <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
           <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
           <span class="popup-event-date">${formattedDate}</span>
@@ -521,7 +545,7 @@ function getUserRatingForEvent(eventID) {
               </div>
         </article>
       `;
-
+      }       
 
       }
 

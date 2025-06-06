@@ -59,13 +59,21 @@ app.get("/", (req, res) => {
 
 // home page
 app.post("/register", async (req, res) => {
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     const { email, mobileNum, fullName, userName } = req.body;
     console.log("Hash Pass: ", hashedPassword);
 
     try {
+        // Check if username already exists
+        const checkUser = await pool.request()
+            .input('userName', sql.VarChar, userName)
+            .query('SELECT * FROM userTable WHERE username = @userName');
+
+        if (checkUser.recordset.length > 0) {
+            return res.json({ success: false, message: "username already exist!" });
+        }
+
         await pool.request()
             .input('email', sql.VarChar, email)
             .input('mobileNum', sql.VarChar, mobileNum)
@@ -1196,6 +1204,17 @@ app.delete("/delete-event", async (req, res) => {
     const { eventID } = req.body
 
     try {
+        // Delete related rows in child tables first
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM attendeeTable WHERE eventID = @eventID`);
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM registrationTable WHERE eventID = @eventID`);
+        await pool.request()
+            .input('eventID', sql.Int, eventID)
+            .query(`DELETE FROM feedbackTable WHERE eventID = @eventID`);
+        // Now delete the event itself
         await pool.request()
             .input('eventID', sql.Int, eventID)
             .query(`DELETE FROM eventsTable WHERE eventID = @eventID`)
@@ -1273,7 +1292,7 @@ app.get('/api/past-events', async (req, res) => {
        .input('userID', sql.Int, userID)
        .query(`SELECT r.* FROM registrationTable r
         JOIN eventsTable e ON r.eventID = e.eventID 
-        WHERE r.userID = @userID AND e.endDateTime < GETDATE();`);
+        WHERE r.userID = @userID AND r.status = 'Approved' AND e.endDateTime < GETDATE();`);
 
         res.json(result.recordset);
         console.log("past events fetched successfully!");

@@ -1,7 +1,24 @@
- import { toastData, showToast } from "./alert-toast.js";
+import { toastData, showToast } from "./alert-toast.js";
       //Sign-up form
       document.getElementById('signup-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+      
+        // Fix: use document.getElementById instead of getElementById
+        const pass = document.getElementById('password').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
+
+        if (pass !== confirmPass) {
+          toastData.danger.title = "Error!";
+          toastData.danger.message = "Passwords do not match!";
+          showToast('danger');
+          return;
+        }
+        else if (pass.length < 8 && pass.lenght > 20) {
+          toastData.danger.title = "Error!";
+          toastData.danger.message = "Password must be at 8-20 characters long!";
+          showToast('danger');
+          return;
+        }
 
         const data = {
             email: document.getElementById('email').value,
@@ -23,6 +40,7 @@
           
           toastData.success.message = result.message;
           showToast('success');
+          clearForm();
           document.getElementById("signup-form").classList.add("hidden");
           document.getElementById("login-form").classList.remove("hidden");
         }
@@ -65,3 +83,9 @@
         
 
         });
+
+        function clearForm() {
+          document.getElementById("signup-form").reset();
+          document.getElementById("login-form").reset();
+          
+        }

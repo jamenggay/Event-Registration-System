@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       else {
         if (registrationStatus === 'Waitlisted') {
           buttonText = 'Waitlisted';
-        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus === 'Registered') {
+        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus === 'Declined') {
           buttonText = 'Registered';
         }
       }
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const isUserCreated = createdEvents.some(createdEvent => createdEvent.eventID === event.eventID);
         let buttonText = isUserCreated ? 'Manage Event' :
           registrationStatus === 'Waitlisted' ? 'Waitlisted' :
-            (registrationStatus === 'Pending' || registrationStatus === 'Approved') ? 'Registered' : 'Register';
+            (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus == 'Declined') ? 'Registered' : 'Register';
 
         const eventDateHTML = isSameDay
           ? `<span class="event-date">${startDateTime[currentIndex].formattedDate} - ${endTime[currentIndex].endTime}</span>`
@@ -143,43 +143,69 @@ document.addEventListener("DOMContentLoaded", async () => {
         ${buttonText}
       </button>
     </div>
+
+    <div class="cancel-popup-overlay"></div>
+      <div class="cancel-popup">
+        <h3>Register Event</h3>
+        <p>Are you sure you want to register for this event?</p>
+        <div class="cancel-popup-buttons">
+          <button class="cancel-btn">Cancel</button>
+          <button class="confirm-btn" type="button">Confirm</button>
+        </div>
+      </div>
   `;
 
         if (!isUserCreated && !registrationStatus) {
           const popupRegBtn = article.querySelector('.popup-register-button');
           popupRegBtn.addEventListener('click', () => {
-            const confirmed = confirm("Are you sure you want to register for this event?");
-            if (!confirmed) return;
 
-            fetch('/register-event', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
-            })
-              .then(res => res.json())
-              .then(data => {
-                if (!data.success) {
-                  toastData.danger.title = "Registration Failed!";
-                  toastData.danger.message = data.message;
-                  showToast('danger');
-                  return;
-                }
+            overlay.querySelector('.cancel-popup').classList.add('active');
+            overlay.querySelector('.cancel-popup-overlay').classList.add('active');
 
-                // Update global eventStatusMap
-                window.eventStatusMap[event.eventID] = data.status;
-                popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
-                popupRegBtn.disabled = true;
+            overlay.querySelector('.cancel-popup .cancel-btn').addEventListener('click', () => {
+              overlay.querySelector('.cancel-popup').classList.remove('active');
+              overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+            });
 
-                if (data.status === 'Waitlisted') {
-                  toastData.info.title = "You're on Waitlist!";
-                  toastData.info.message = data.message;
-                  showToast('info');
-                } else {
-                  toastData.success.message = data.message;
-                  showToast('success');
-                }
+            overlay.querySelector('.confirm-btn').addEventListener('click', () => {
+              fetch('/register-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
               })
-              .catch(err => console.error('Registration error:', err));
+                .then(res => res.json())
+                .then(data => {
+                  if (!data.success) {
+                    overlay.querySelector('.cancel-popup').classList.remove('active');
+                    overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+                    toastData.danger.title = "Registration Failed!";
+                    toastData.danger.message = data.message;
+                    showToast('danger');
+                    return;
+                  } 
+
+                  // Update global eventStatusMap
+                  window.eventStatusMap[event.eventID] = data.status;
+                  popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
+                  popupRegBtn.disabled = true;
+
+                  if (data.status === 'Waitlisted') {
+                    overlay.querySelector('.cancel-popup').classList.remove('active');
+                    overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+                    toastData.info.title = "You're on Waitlist!";
+                    toastData.info.message = data.message;
+                    showToast('info');
+                  } else {
+                    overlay.querySelector('.cancel-popup').classList.remove('active');
+                    overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+                    toastData.success.message = data.message;
+                    showToast('success');
+                  }
+                })
+                .catch(err => console.error('Registration error:', err));
+
+            });
+
           });
         }
 
@@ -212,7 +238,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           buttonText = 'Manage Event';
         } else if (registrationStatus === 'Waitlisted') {
           buttonText = 'Waitlisted';
-        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus === 'Registered') {
+        } else if (registrationStatus === 'Pending' || registrationStatus === 'Approved' || registrationStatus === 'Declined') {
           buttonText = 'Registered';
         }
 
@@ -230,6 +256,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       ${buttonText}
     </button>
     </div>
+
+    <div class="cancel-popup-overlay"></div>
+      <div class="cancel-popup">
+        <h3>Register Event</h3>
+        <p>Are you sure you want to register for this event?</p>
+        <div class="cancel-popup-buttons">
+          <button class="cancel-btn">Cancel</button>
+          <button class="confirm-btn" type="button">Confirm</button>
+        </div>
+      </div>
   `;
 
         }
@@ -247,6 +283,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       ${buttonText}
     </button>
     </div>
+
+    <div class="cancel-popup-overlay"></div>
+      <div class="cancel-popup">
+        <h3>Register Event</h3>
+        <p>Are you sure you want to register for this event?</p>
+        <div class="cancel-popup-buttons">
+          <button class="cancel-btn">Cancel</button>
+          <button class="confirm-btn" type="button">Confirm</button>
+        </div>
+      </div>
   `;
 
           const popupRegBtn = article.querySelector('.popup-register-button');
@@ -256,41 +302,58 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           if (!registrationStatus && popupRegBtn) {
             popupRegBtn.addEventListener('click', () => {
-              const confirmed = confirm("Are you sure you want to register for this event?");
-              if (!confirmed) return;
+              overlay.querySelector('.cancel-popup').classList.add('active');
+              overlay.querySelector('.cancel-popup-overlay').classList.add('active');
 
-              fetch('/register-event', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
-              })
-                .then(res => res.json())
-                .then(data => {
-                  if (!data.success) {
-                    toastData.danger.title = "Registration Failed!";
-                    toastData.danger.message = data.message; //show backend error
-                    showToast('danger');
-                    return;
-                  }
-                  // Update global eventStatusMap
-                  window.eventStatusMap[event.eventID] = data.status;
-                  popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
-                  popupRegBtn.disabled = true;
-                  if (popupRegBtn.textContent == 'Registered') {
-                    toastData.success.message = data.message; //show backend error
-                    showToast('success');
-                    return;
-                  }
-                  else if (popupRegBtn.textContent == 'Waitlisted') {
-                    toastData.info.title = "You're on Waitlist!";
-                    toastData.info.message = data.message; //show backend error
-                    showToast('info');
-                    return;
-                  }
+              overlay.querySelector('.cancel-popup .cancel-btn').addEventListener('click', () => {
+                overlay.querySelector('.cancel-popup').classList.remove('active');
+                overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+              });
+
+              overlay.querySelector('.confirm-btn').addEventListener('click', () => {
+                fetch('/register-event', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ eventID: event.eventID, requireApproval: event.requireApproval })
                 })
-                .catch(err => {
-                  console.error('Registration error:', err);
-                });
+                  .then(res => res.json())
+                  .then(data => {
+                    if (!data.success) {
+                      overlay.querySelector('.cancel-popup').classList.remove('active');
+                      overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+                      toastData.danger.title = "Registration Failed!";
+                      toastData.danger.message = data.message; //show backend error
+                      showToast('danger');
+                      return;
+                    }
+                    // Update global eventStatusMap
+                    window.eventStatusMap[event.eventID] = data.status;
+                    popupRegBtn.textContent = data.status === 'Waitlisted' ? 'Waitlisted' : 'Registered';
+                    popupRegBtn.disabled = true;
+                    if (popupRegBtn.textContent == 'Registered') {
+                      overlay.querySelector('.cancel-popup').classList.remove('active');
+                      overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+                      toastData.success.message = data.message; //show backend error
+                      showToast('success');
+                      return;
+                    }
+                    else if (popupRegBtn.textContent == 'Waitlisted') {
+                      overlay.querySelector('.cancel-popup').classList.remove('active');
+                      overlay.querySelector('.cancel-popup-overlay').classList.remove('active');
+                      toastData.info.title = "You're on Waitlist!";
+                      toastData.info.message = data.message; //show backend error
+                      showToast('info');
+                      return;
+                    }
+                  })
+                  .catch(err => {
+                    console.error('Registration error:', err);
+
+
+                  });
+
+
+              });
 
             });
           }

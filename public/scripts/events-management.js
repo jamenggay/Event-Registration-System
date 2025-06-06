@@ -1,3 +1,5 @@
+import { showToast, toastData } from "./alert-toast.js";
+
 document.addEventListener('DOMContentLoaded', () => {
     const eventID = window.location.pathname.split('/').pop()
 
@@ -387,18 +389,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Backend Sucess: ", result)
-                    alert('Event deleted successfully!');
+                    toastData.success.message = 'Event deleted successfully.';
+                    showToast('success');
                     closeModalHandler(deleteModal);
-                    window.location.href = '/events'
+                    setTimeout(() => {
+
+                    window.location.href = '/user-profile'
+                    }, 2500);
                 }
                 else {
+                    toastData.danger.message = 'Failed to delete event';
+                    showToast('danger');
                     const error = await response.json()
                     console.log("Backend Sucess: ", error)
                 }
             }
             catch (error) {
                 console.error('Client Error:', error);
-                alert('Failed to delete event. Please try again.');
+                toastData.danger.message = 'Failed to delete event';
+                showToast('danger');
             }
         });
 
@@ -438,7 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         reader.onerror = () => {
                             console.error('Error reading file');
-                            alert('Error reading file. Please try again.');
+                            toastData.danger.message = 'Error reading file.';
+                            showToast('danger');
                         }
 
                         reader.readAsDataURL(file);
@@ -501,15 +511,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Backend Success: ", result)
+                    toastData.success.message = 'Event details updated.';
+                    showToast('success');
                     displayEventData(updatedEventData);
                     closeModalHandler(editModal);
                 }
                 else {
+                    toastData.danger.message = 'Failed to update event details';
+                    showToast('danger');
                     const error = await response.json()
                     console.log("Backend Failed: ", error)
                 }
             }
             catch (error) {
+                toastData.danger.message = 'Failed to update event details';
+                    showToast('danger');
                 console.log("Client Error: ", error)
             }
         });
