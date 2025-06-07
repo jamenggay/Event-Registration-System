@@ -117,7 +117,7 @@
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 15px);
   right: -10px;
   left: auto;
   min-width: 120px;
@@ -138,9 +138,9 @@
 .dropdown-pointer {
   position: absolute;
   top: -10px;
-  right: 16px;
+  right: 21px;
   width: 16px;
-  height: 10px;
+  height: 15px;
   overflow: hidden;
 }
 
@@ -287,8 +287,8 @@
   
   .dropdown-menu {
     position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
+    top: calc(100% + 12px);
+    right: -10px;
     left: auto;
     min-width: 100px;
     z-index: 1000;
@@ -341,8 +341,8 @@
   
   .dropdown-menu {
     position: absolute;
-    top: calc(100% + 6px);
-    right: -20px;
+    top: calc(100% + 10px);
+    right: -15px;
     left: auto;
     min-width: 90px;
     z-index: 1000;

@@ -60,27 +60,38 @@
         </div>
       </div>
     </div>
+
+    <div class="event-group" data-date="${event.startDateTime}">
+                  <div class="event-date">
+                    <strong>${formattedDate}</strong>
+                    <span class="weekday">${formattedDay}</span>
+                  </div>
+
+                  <div class="event-cards">
+                    <div class="event-card theme-${event.themeIndex}">
+                      <div class="event-info">
+                        <div class="event-time">${event.formattedStartTime} - ${event.formattedEndTime}</div>
+                        <div class="event-title">
+                          ${event.eventName}
+                        </div>
+                        <div class="event-meta">
+                          <span><img src="${event.profilePic}" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">${event.fullName}<br><br></span>
+                          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
+                        </div>
+                      </div>
+                      <img class="event-thumbnail"
+                        src="${event.featureImage}"
+                        alt="Event Thumbnail" />
+                    </div>
+                  </div>
+                </div> 
+
   </div>
 
 
 
-  <div class="overlay active" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
+  <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
     aria-describedby="eventDesc">
-  <article class="card-popup">
-  <div class="card-image" style="background-image: url(../assets/images/business-event.jpg)">
-    <span class="popup-event-date">${formattedDate}</span>
-    <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-  </div>
-
-  <div class="card-content">
-    <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
-    <p class="event-description" id="eventDesc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis provident, neque consequatur itaque dolorum iste expedita eligendi corrupti quod aliquid asperiores laboriosam magnam eum tenetur vitae illum saepe. Deserunt, in. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Commodi dignissimos similique veritatis impedit blanditiis minima adipisci cum ab necessitatibus culpa expedita reprehenderit sed hic sunt dolorem, vero laborum nulla repellendus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem ad quae animi, quidem deleniti rem, expedita nemo delectus vero at ex qui maiores eos architecto quam sit voluptate itaque distinctio.  Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur quisquam deleniti minima id minus voluptate. Pariatur autem exercitationem voluptatem perferendis. Veniam nobis quidem ipsa obcaecati officiis iusto assumenda laborum tempore.</p>
-    <p class="event-location">Location: ${event.location}</p>
-    <div class="card-actions">
-      <p class="waitlisted-status ">${status}</p>
-    </div>
-  </div>
-</article>
 
   </div>
 
