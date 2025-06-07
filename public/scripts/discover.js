@@ -606,21 +606,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll(".image-card").forEach((button) => {
     button.addEventListener("click", () => {
       const selectedCategory = button.dataset.category;
+      
+      const cardCategoryH1 = document.getElementById("card-category");
+      cardCategoryH1.textContent = selectedCategory;
+     
+      cardCategoryH1.className = "about-title category-" + selectedCategory;
 
       const hoverSection = document.getElementById("hover-cards-section");
       const carouselSection = document.getElementById("carousel-section");
-
       hoverSection.classList.add("active");
       carouselSection.style.display = "none";
 
       const cards = hoverSection.querySelectorAll(".card-wrap");
       cards.forEach((card) => {
         const cardCategory = card.dataset.category;
+        window.cardCategory = cardCategory;
         card.style.display = cardCategory === selectedCategory ? "block" : "none";
       });
 
       hoverSection.scrollIntoView({ behavior: "smooth" });
-
       attachCardHoverListeners();
     });
   });
@@ -653,5 +657,6 @@ document.addEventListener('keydown', e => {
     closePopup();
   }
 });
+
 
 

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Discover</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="/styles/alert-toast.css">
   <link rel="stylesheet" href="/styles/preloader.css">
   <link rel="stylesheet" href="/styles/discover.css" />
@@ -69,48 +69,47 @@
   <section class="carousel-wrapper" id="carousel-section">
     <h1 class="about-title">ALL EVENTS</h1>
 
-<div class="carousell-container">
-	<button class="nav-arrow left">‹</button>
-	<div class="carousell-track" id="carousell-trackID">
-		  <!-- HTML IN JS -->
-	</div>
-	<button class="nav-arrow right">›</button>
-</div>
+    <div class="carousell-container">
+      <button class="nav-arrow left">‹</button>
+      <div class="carousell-track" id="carousell-trackID">
+        <!-- HTML IN JS -->
+      </div>
+      <button class="nav-arrow right">›</button>
+    </div>
 
-<div class="carousel-event-details" id="event-details">
-	<h2 class="carousel-event-name"></h2>
-	<p class="carousel-event-category"></p>
-  <button id="LearnMore-btn">Learn More!</button> 
-  <!-- LALAGYAN NA LANG NG onclick tas openPopupOverlay dito -->
-</div>
+    <div class="carousel-event-details" id="event-details">
+      <h2 class="carousel-event-name"></h2>
+      <p class="carousel-event-category"></p>
+      <button id="LearnMore-btn">Learn More!</button>
+      <!-- LALAGYAN NA LANG NG onclick tas openPopupOverlay dito -->
+    </div>
   </section>
   <section class="hover-cards-wrapper" id="hover-cards-section">
+     <h1 class="about-title" id="card-category"></h1>
     <div id="app" class="container">
       <!-- HTML IN JS -->
     </div>
   </section>
-
-
   <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
     aria-describedby="eventDesc">
 
     <!-- HTML IN JS -->
-     </div>
-    <footer>
-      <div id="footer"></div>
-    </footer> 
+  </div>
+  <footer>
+    <div id="footer"></div>
+  </footer>
 
-    <script src="/scripts/preloader.js"></script>
-    <script src="/scripts/header.js"></script>
-    <script src="/scripts/footer.js"></script>
-    <script type="module" src="/scripts/discover.js"></script>
-    <script type="module" src="/scripts/alert-toast.js"></script>
-    <script>
-      function scrollToEvents() {
-        const eventsSection = document.getElementById('carousel-section');
-        eventsSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    </script>
+  <script src="/scripts/preloader.js"></script>
+  <script src="/scripts/header.js"></script>
+  <script src="/scripts/footer.js"></script>
+  <script type="module" src="/scripts/discover.js"></script>
+  <script type="module" src="/scripts/alert-toast.js"></script>
+  <script>
+    function scrollToEvents() {
+      const eventsSection = document.getElementById('carousel-section');
+      eventsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
 
 </body>
 

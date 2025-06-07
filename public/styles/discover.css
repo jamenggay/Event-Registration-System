@@ -16,23 +16,61 @@ header {
 
 
 body {
-    background: #0075BB1A;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #0075BB1A;
     background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
     background-size: 30px 30px;
-    font-family: sans-serif;
-}
-
-body::after {
+  }
+  
+  body::before {
     content: '';
     position: fixed;
     inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at top left,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.7) 60%,
-            rgba(255, 255, 255, 0.9) 100%);
     z-index: -1;
+    background:
+      radial-gradient(circle at 20% 30%, #a3c8e1 0%, transparent 40%),
+      radial-gradient(circle at 70% 20%, #f4b0b0 0%, transparent 40%),
+      radial-gradient(circle at 30% 80%, #a1e1a1 0%, transparent 40%),
+      radial-gradient(circle at 80% 75%, #a1e0d1 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #e4a1b3 0%, transparent 40%),
+      radial-gradient(circle at 10% 90%, #c49bdf 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, #a7a7e1 0%, transparent 40%),
+      radial-gradient(circle at 40% 60%, #e4d0a7 0%, transparent 40%),
+      radial-gradient(circle at 60% 40%, #a3d6e6 0%, transparent 40%),
+      radial-gradient(circle at 25% 75%, #e4a1a1 0%, transparent 40%),
+      radial-gradient(circle at 75% 25%, #b3e0a3 0%, transparent 40%);
+    background-size: 200% 200%;
+    animation: popBG 20s ease-in-out infinite;
+    filter: blur(60px);
+    opacity: 0.7;
+  }
+
+  @keyframes popBG {
+
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
 }
+
+.nav-item-wrapper .compass {
+      color: #9065b0 !important;
+    }
+  
+  .nav-item-wrapper .nav-icon .compass {
+    width: 20px;
+    height: 20px;
+    transform: rotate(270deg) !important;
+  }
 
 .discover-container {
     display: flex;
@@ -43,7 +81,7 @@ body::after {
 
 .div9 h1 {
     margin-top: 1rem;
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     font-weight: 700;
     text-align: center;
     line-height: 1.4;
@@ -211,6 +249,88 @@ body::after {
     background-color: #333;
 }
 
+/* CONFIRM ALERT */
+.cancel-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  max-width: 400px;
+  width: 90%;
+  display: none;
+}
+
+.cancel-popup.active {
+  display: block;
+}
+
+.cancel-popup h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.cancel-popup p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.cancel-popup-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.cancel-popup-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-popup-buttons .confirm-btn {
+  background: #2eaa09;
+  color: white;
+}
+
+.cancel-popup-buttons .confirm-btn:hover {
+  background: #2eaa09;
+}
+
+.cancel-popup-buttons .cancel-btn {
+  background: #f1f1f5;
+  color: #666;
+}
+
+.cancel-popup-buttons .cancel-btn:hover {
+  background: #e1e1e5;
+}
+
+.cancel-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+}
+
+.cancel-popup-overlay.active {
+  display: block;
+}
+/* ---------------------------------- */
+
 
 @media (max-width: 1000px) {
     .parent {
@@ -284,8 +404,14 @@ footer {
 
 
 .hover-cards-wrapper {
+    padding: 60px 0 120px;
     display: none;
     transition: opacity 0.3s ease;
+     position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .hover-cards-wrapper.active {
@@ -293,7 +419,7 @@ footer {
 }
 
 .container {
-    padding: 40px 80px;
+    padding: 80px 80px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -640,9 +766,53 @@ button.close-btn:hover {
     background: linear-gradient(to bottom,
             oklch(65% 0.3 230 / 0.35) 30%,
             rgba(255, 255, 255, 0) 76%);
+    
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+}
+
+.about-title.category-Arts {
+  background: linear-gradient(to bottom, oklch(65% 0.3 310 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-title.category-Business {
+  background: linear-gradient(to bottom, oklch(65% 0.3 40 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-title.category-Education {
+  background: linear-gradient(to bottom, oklch(65% 0.3 120 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-title.category-Entertainment {
+  background: linear-gradient(to bottom, oklch(65% 0.3 200 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-title.category-Health {
+  background: linear-gradient(to bottom, oklch(65% 0.3 270 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-title.category-Outreach {
+  background: linear-gradient(to bottom, oklch(65% 0.3 360 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-title.category-Technology {
+  background: linear-gradient(to bottom, oklch(65% 0.3 80 / 0.35) 30%, rgba(255,255,255,0) 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 
@@ -939,7 +1109,6 @@ button.close-btn:hover {
 .cancel-popup-overlay.active {
   display: block;
 }
-/* ---------------------------------- */
 
 @media (max-width: 768px) {
     .carousel-wrapper {
@@ -1002,7 +1171,7 @@ button.close-btn:hover {
     }
 
     .about-title {
-        font-size: 2rem;
+        font-size: 5rem;
         margin-bottom: 40px;
     }
 
@@ -1074,7 +1243,7 @@ button.close-btn:hover {
     }
 
     .about-title {
-        font-size: 1.5rem;
+        font-size: 3rem;
         margin-bottom: 20px;
     }
 

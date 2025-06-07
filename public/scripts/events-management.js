@@ -907,8 +907,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    let updatedAttendeesData = attendeesData.map(attendee => ({
-                        "Attendance ID": attendee.attendanceID,
+                    let updatedAttendeesData = attendeesData.map((attendee, index) => ({
+                        "Attendance ID": index + 1,
                         "Full Name": attendee.fullname,
                         "Checked In At": new Date(attendee.checkedInAt).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'UTC' })
                     }))
