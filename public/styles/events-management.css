@@ -1741,6 +1741,7 @@ h3 {
 .guest-toggle-wrapper.active-right .slider {
     left: 84px;
     background-color: #dc3545;
+    color: #ffffff !important;
     width: 72px;
     height: 28px;
     top: 4px;
@@ -1749,6 +1750,7 @@ h3 {
 .guest-toggle-wrapper.active-left .slider {
     left: 4px;
     background-color: #28a745;
+    color: #ffffff !important;
     width: 72px;
     height: 28px;
     top: 4px;
@@ -1768,6 +1770,27 @@ h3 {
 
 .guest-toggle-wrapper.active-left .decline-label,
 .guest-toggle-wrapper.active-right .dalo-label {
+    color: #666;
+    font-weight: 500;
+}
+
+
+.guest-toggle-wrapper.active-left .attended-label, 
+.guest-toggle-wrapper.active-right .not-attended-label { 
+    color: #ffffff !important; 
+    font-weight: 700; 
+}
+
+
+.guest-toggle-wrapper.active-left .not-attended-label, 
+.guest-toggle-wrapper.active-right .attended-label {  
+    color: #666;
+    font-weight: 500; 
+}
+
+
+.guest-toggle-wrapper.active-neutral .attended-label,
+.guest-toggle-wrapper.active-neutral .not-attended-label {
     color: #666;
     font-weight: 500;
 }
