@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Modal Functions with Animations
   function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = "block"; // Make sure the modal is displayed
+    modal.style.display = "flex";
     modal.classList.remove("hide");
     modal.classList.add("show");
   }
@@ -41,9 +41,17 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.classList.add("hide");
 
     setTimeout(() => {
-      modal.style.display = "none"; // Actually hide it after animation ends
-    }, 300); // Match this timeout with the animation duration
+      modal.style.display = "none";
+    }, 300);
   }
+
+  // Initialize all modals as hidden on page load
+  document.addEventListener("DOMContentLoaded", function() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      modal.style.display = "none";
+    });
+  });
 
   window.saveDescription = function () {
     const description = document.getElementById("descriptionText").value;

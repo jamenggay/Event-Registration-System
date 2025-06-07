@@ -1,82 +1,80 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const eventID = window.location.pathname.split('/').pop()
+    // Sample data
+    const eventData = {
+        "allowWaitlist": "Yes",
+        "capacity": 100,
+        "category": "Technology",
+        "description": "Join us in 𝐒𝐩𝐚𝐫𝐤𝐟𝐞𝐬𝐭 𝟐𝟎𝟐𝟓, a hackathon where brilliant minds come together to solve real-world challenges through 𝐜𝐫𝐞𝐚𝐭𝐢𝐯𝐢𝐭𝐲, 𝐜𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐢𝐨𝐧, 𝐚𝐧𝐝 𝐜𝐮𝐭𝐭𝐢𝐧𝐠-𝐞𝐝𝐠𝐞 𝐢𝐧𝐧𝐨𝐯𝐚𝐭𝐢𝐨𝐧.",
+        "endDateTime": "2025-06-07T18:30:00.000Z",
+        "eventID": 29,
+        "eventName": "SparkFest 2025",
+        "featureImage": "/uploads/featureImage/event_sample 5 (1).jpg",
+        "feedbackLink": "https://www.facebook.com/gdg.pupmnl",
+        "lastUpdated": "2025-05-27T20:05:57.747Z",
+        "location": "The Globe Tower, 2608 7th Ave, Taguig, 1634 Metro Manila",
+        "requireApproval": "Yes",
+        "startDateTime": "2025-06-07T08:00:00.000Z"
+    };
 
-    const socket = new WebSocket(`ws://localhost:3000/event/${eventID}`)
-
-    let eventData = null
-    let registrationData = null
-    let approvedGuestsData = null
-    let attendeesData = null
-
-    let hasEventData = false
-    let hasRegistrationData = false
-    let hasApprovedGuestsData = false
-    let hasAttendeesData = false
-
-    function flagData() {
-        if (hasEventData && hasRegistrationData && hasApprovedGuestsData && hasAttendeesData) {
-            setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData);
+    const registrationData = [
+        {
+            "eventID": 29,
+            "fullname": "Jamaine Tuazon",
+            "profilePic": "/uploads/profilePic/jamaine_pfp.jpg",
+            "registrationID": 3,
+            "status": "Approved",
+            "userID": 7
+        },
+        {
+            "eventID": 29,
+            "fullname": "Jorge Fuertes",
+            "profilePic": "/uploads/profilePic/jorge_pfp.jpg",
+            "registrationID": 4,
+            "status": "Approved",
+            "userID": 8
+        },
+        {
+            "eventID": 29,
+            "fullname": "Reynald Quijano",
+            "profilePic": "/uploads/profilePic/rey_pfp.jpg",
+            "registrationID": 6,
+            "status": "Declined",
+            "userID": 9
+        },
+        {
+            "eventID": 29,
+            "fullname": "Rishaye Melad",
+            "profilePic": "/uploads/profilePic/rishaye_pfp.jpeg",
+            "registrationID": 9,
+            "status": "Waitlisted",
+            "userID": 10
         }
-    }
+    ];
 
-    socket.addEventListener('open', () => {
-        socket.send(JSON.stringify({ type: 'getEventData' }));
-        socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-        socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-        socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+    const approvedGuestsData = [
+        {
+            "eventID": 29,
+            "fullname": "Jamaine Tuazon",
+            "profilePic": "/uploads/profilePic/jamaine_pfp.jpg",
+            "registrationID": 3,
+            "status": "Approved",
+            "userID": 7
+        },
+        {
+            "eventID": 29,
+            "fullname": "Jorge Fuertes",
+            "profilePic": "/uploads/profilePic/jorge_pfp.jpg",
+            "registrationID": 4,
+            "status": "Approved",
+            "userID": 8
+        }
+    ];
 
-        socket.addEventListener('message', event => {
-            let data = JSON.parse(event.data)
+    // Initialize with empty attendees data since it's not provided in the sample
+    const attendeesData = [];
 
-            if (data.type === 'eventData') {
-                if (data.status == 200) {
-                    console.log("Client Selected Event Details: ", data.eventData)
-                    hasEventData = true;
-                    eventData = data.eventData
-                }
-                else if (data.status == 500) {
-                    console.log("Backend Failed: ", data.message, data.error)
-                }
-            }
-            else if (data.type === 'registrationData') {
-                if (data.status == 200) {
-                    console.log("Client Registrants Details: ", data.registrationData)
-                    hasRegistrationData = true;
-                    
-                    let pendingGuests = data.registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
-                    pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
-
-                    let waitlistedGuests = data.registrationData.filter(guest => guest.status == 'Waitlisted')
-                    registrationData = [...pendingGuests, ...waitlistedGuests]
-                }
-                else if (data.status == 500) {
-                    console.log("Backend Failed: ", data.message, data.error)
-                }               
-            }
-            else if (data.type == 'approvedGuestsData') {
-                 if (data.status == 200) {
-                    console.log("Client Approved Guests Details: ", data.approvedGuestsData)
-                    hasApprovedGuestsData = true;                       
-                    approvedGuestsData = data.approvedGuestsData
-                }
-                else if (data.status == 500) {
-                    console.log("Backend Failed: ", data.message, data.error)
-                }                   
-            }
-            else if (data.type == 'attendeesData') {
-                 if (data.status == 200) {
-                    console.log("Client Attendees Details: ", data.attendeesData)
-                    hasAttendeesData = true;                       
-                    attendeesData = data.attendeesData
-                }
-                else if (data.status == 500) {
-                    console.log("Backend Failed: ", data.message, data.error)
-                }                   
-            }
-             
-            flagData()
-        })
-    })
+    // Call setEventManagement directly with the sample data
+    setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData);
 
     async function setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData) {
         //Event Tab Handling
@@ -496,8 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(updatedEventData)
                 })
 
-                socket.send(JSON.stringify({ type: 'getEventData' }));
-
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Backend Success: ", result)
@@ -763,9 +759,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Request updated data from server
-                socket.send(JSON.stringify({ type: 'getRegistrationData' }));
-                socket.send(JSON.stringify({ type: 'getApprovedGuestsData' }));
-                socket.send(JSON.stringify({ type: 'getAttendeesData' }));
+                displayGuestList(registrationData);
 
                 if (response.ok) {
                     const result = await response.json();
@@ -856,8 +850,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     body : JSON.stringify(attendanceData)
                                 })
 
-                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                                socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+                                displayCheckInList(approvedGuestsData);
 
                                 if (response.ok) {
                                     const result = await response.json()
@@ -885,8 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     body : JSON.stringify(attendanceData)
                                 })
 
-                                socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
-                                socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+                                displayCheckInList(approvedGuestsData);
 
                                 if (response.ok) {
                                     const result = await response.json()

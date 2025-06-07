@@ -12,6 +12,7 @@
     <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
     <script src="../scripts/footer.js"></script>
     <script src="../scripts/header.js"></script>
+    <script src="../scripts/sample-data.js"></script>
     <script src="../scripts/events-management.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
@@ -46,7 +47,7 @@
                             <h2 class="event_name"></h2>
                         </div>
                         
-                        <div class="event_date_location_container">
+                        <div class="event_date_container">
                             <div class="event_date">
                                 <div class="event_start">
                                     <div class="date_label">
@@ -61,13 +62,13 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="event_location">
-                                <div class="icon-heading">
-                                    <img src="../assets/icons/location-icon.png" class="icon-flex">
-                                    <h3>Location: </h3> 
-                                    <p class="location-text"></p>
-                                </div>
+                        </div>
+                        
+                        <div class="event_location">
+                            <div class="icon-heading">
+                                <img src="../assets/icons/location-icon.png" class="icon-flex">
+                                <h3>Location: </h3> 
+                                <p class="location-text"></p>
                             </div>
                         </div>
 
@@ -75,8 +76,8 @@
                             <div class="icon-heading">
                                 <img src="../assets/icons/description-icon.png" class="icon-flex">
                                 <h3>Description: </h3>
-                                <p class="description-text"></p>
                             </div>
+                            <p class="description-text"></p>
                         </div>
 
                         <div class="event_category">
@@ -187,7 +188,7 @@
                                 <input type="text" id="eventName" class="event_name" placeholder="Enter event name" required>
                             </div>
 
-                            <div class="event_date_location_container">
+                            <div class="event_date_container">
                                 <div class="event_date">
                                     <div class="event_start">
                                         <div class="date_label">
@@ -208,14 +209,14 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="event_location">
-                                    <div class="icon-heading">
-                                        <img src="../assets/icons/location-icon.png" alt="Location">
-                                        <h3>Event Location</h3>
-                                    </div>
-                                    <input type="text" id="location" name="location" placeholder="Enter event location..." required>
+                            <div class="event_location">
+                                <div class="icon-heading">
+                                    <img src="../assets/icons/location-icon.png" alt="Location">
+                                    <h3>Event Location</h3>
                                 </div>
+                                <input type="text" id="location" name="location" placeholder="Enter event location..." required>
                             </div>
 
                             <div class="event_description">
@@ -258,12 +259,12 @@
                                         <div class="icon-heading">
                                             <img src="../assets/icons/approval-icon.png" alt="Approval">
                                             <h3>Require Approval</h3>
-                                        </div>
-                                        <div class="toggle-wrapper">
-                                            <input type="checkbox" id="require_approval" class="toggle-input">
-                                            <label for="require_approval" class="toggle-label">
-                                                <span class="toggle-slider"></span>
-                                            </label>
+                                            <div class="toggle-wrapper">
+                                                <input type="checkbox" id="require_approval" class="toggle-input">
+                                                <label for="require_approval" class="toggle-label">
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
