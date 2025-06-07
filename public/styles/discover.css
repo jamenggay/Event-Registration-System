@@ -16,23 +16,61 @@ header {
 
 
 body {
-    background: #0075BB1A;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #0075BB1A;
     background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
     background-size: 30px 30px;
-    font-family: sans-serif;
-}
-
-body::after {
+  }
+  
+  body::before {
     content: '';
     position: fixed;
     inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at top left,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.7) 60%,
-            rgba(255, 255, 255, 0.9) 100%);
     z-index: -1;
+    background:
+      radial-gradient(circle at 20% 30%, #a3c8e1 0%, transparent 40%),
+      radial-gradient(circle at 70% 20%, #f4b0b0 0%, transparent 40%),
+      radial-gradient(circle at 30% 80%, #a1e1a1 0%, transparent 40%),
+      radial-gradient(circle at 80% 75%, #a1e0d1 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #e4a1b3 0%, transparent 40%),
+      radial-gradient(circle at 10% 90%, #c49bdf 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, #a7a7e1 0%, transparent 40%),
+      radial-gradient(circle at 40% 60%, #e4d0a7 0%, transparent 40%),
+      radial-gradient(circle at 60% 40%, #a3d6e6 0%, transparent 40%),
+      radial-gradient(circle at 25% 75%, #e4a1a1 0%, transparent 40%),
+      radial-gradient(circle at 75% 25%, #b3e0a3 0%, transparent 40%);
+    background-size: 200% 200%;
+    animation: popBG 20s ease-in-out infinite;
+    filter: blur(60px);
+    opacity: 0.7;
+  }
+
+  @keyframes popBG {
+
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
 }
+
+.nav-item-wrapper .compass {
+      color: #9065b0 !important;
+    }
+  
+  .nav-item-wrapper .nav-icon .compass {
+    width: 20px;
+    height: 20px;
+    transform: rotate(270deg) !important;
+  }
 
 .discover-container {
     display: flex;
@@ -43,7 +81,7 @@ body::after {
 
 .div9 h1 {
     margin-top: 1rem;
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     font-weight: 700;
     text-align: center;
     line-height: 1.4;
@@ -939,7 +977,6 @@ button.close-btn:hover {
 .cancel-popup-overlay.active {
   display: block;
 }
-/* ---------------------------------- */
 
 @media (max-width: 768px) {
     .carousel-wrapper {
@@ -1002,7 +1039,7 @@ button.close-btn:hover {
     }
 
     .about-title {
-        font-size: 2rem;
+        font-size: 5rem;
         margin-bottom: 40px;
     }
 
@@ -1074,7 +1111,7 @@ button.close-btn:hover {
     }
 
     .about-title {
-        font-size: 1.5rem;
+        font-size: 3rem;
         margin-bottom: 20px;
     }
 

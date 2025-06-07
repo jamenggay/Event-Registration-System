@@ -7,15 +7,15 @@
   <title>Discover</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
-  <link rel="stylesheet" href="/styles/alert-toast.css">
-  <link rel="stylesheet" href="/styles/preloader.css">
-  <link rel="stylesheet" href="/styles/discover.css" />
-  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="../styles/alert-toast.css">
+  <link rel="stylesheet" href="../styles/preloader.css">
+  <link rel="stylesheet" href="../styles/discover.css" />
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
   <div id="preloader">
-    <img class="preloader-bg" src="/assets/images/preloader-bg.png" />
+    <img class="preloader-bg" src="../assets/images/preloader-bg.png" />
     <div class="spinner"></div>
   </div>
   <header>
@@ -27,31 +27,31 @@
   <div class="discover-container">
     <div class="parent">
       <div class="image-card div1" data-category="Arts">
-        <img src="/assets/images/discover-arts.jpg" alt="Discover Arts" loading="lazy" />
+        <img src="../assets/images/discover-arts.jpg" alt="Discover Arts" loading="lazy" />
         <span class="card-label">Arts</span>
       </div>
       <div class="image-card div2" data-category="Business">
-        <img src="/assets/images/discover-business.jpg" alt="Discover Business" />
+        <img src="../assets/images/discover-business.jpg" alt="Discover Business" />
         <span class="card-label">Business</span>
       </div>
       <div class="image-card div3" data-category="Education">
-        <img src="/assets/images/discover-education.jpg" alt="Discover Education" />
+        <img src="../assets/images/discover-education.jpg" alt="Discover Education" />
         <span class="card-label">Education</span>
       </div>
       <div class="image-card div4" data-category="Entertainment">
-        <img src="/assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
+        <img src="../assets/images/discover-entertainment.jpg" alt="Discover Entertainment" />
         <span class="card-label">Entertainment</span>
       </div>
       <div class="image-card div5" data-category="Health">
-        <img src="/assets/images/discover-health.jpg" alt="Discover Health" />
+        <img src="../assets/images/discover-health.jpg" alt="Discover Health" />
         <span class="card-label">Health</span>
       </div>
       <div class="image-card div6" data-category="Outreach">
-        <img src="/assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
+        <img src="../assets/images/discover-outreach.jpg" alt="Discover Outreach Programs" />
         <span class="card-label">Outreach</span>
       </div>
       <div class="image-card div7" data-category="Technology">
-        <img src="/assets/images/discover-technology.avif" alt="Discover Technology" />
+        <img src="../assets/images/discover-technology.avif" alt="Discover Technology" />
         <span class="card-label">Technology</span>
       </div>
       <div class="div8">
@@ -86,7 +86,16 @@
   </section>
   <section class="hover-cards-wrapper" id="hover-cards-section">
     <div id="app" class="container">
-      <!-- HTML IN JS -->
+      <div class="card-wrap" data-event-index="${index}" data-category=Arts
+      data-image="${event.featureImage}">
+      <h1 class="about-title">ALL EVENTS</h1>
+      <div class="card">
+        <div class="card-bg"></div>
+        <div class="card-info">
+          <h1>${event.eventName}</h1>
+        </div>
+      </div>
+    </div>`
     </div>
   </section>
 
@@ -100,11 +109,11 @@
       <div id="footer"></div>
     </footer> 
 
-    <script src="/scripts/preloader.js"></script>
-    <script src="/scripts/header.js"></script>
-    <script src="/scripts/footer.js"></script>
-    <script type="module" src="/scripts/discover.js"></script>
-    <script type="module" src="/scripts/alert-toast.js"></script>
+    <script src="../scripts/preloader.js"></script>
+    <script src="../scripts/header.js"></script>
+    <script src="../scripts/footer.js"></script>
+    <script type="module" src="../scripts/discover.js"></script>
+    <script type="module" src="../scripts/alert-toast.js"></script>
     <script>
       function scrollToEvents() {
         const eventsSection = document.getElementById('carousel-section');

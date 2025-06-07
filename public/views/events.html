@@ -7,12 +7,12 @@
   <title>Dalo</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
-  <link rel="stylesheet" href="/styles/alert-toast.css">
-  <link rel="stylesheet" href="/styles/preloader.css">
-  <link rel="stylesheet" href="/styles/preloader.css">
-  <link rel="stylesheet" href="/styles/events.css">
+  <link rel="stylesheet" href="../styles/alert-toast.css">
+  <link rel="stylesheet" href="../styles/preloader.css">
+  <link rel="stylesheet" href="../styles/preloader.css">
+  <link rel="stylesheet" href="../styles/events.css">
   
-  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
 
 </head>
 
@@ -21,7 +21,7 @@
    
 
 <div id="preloader">
-  <img class="preloader-bg" src="/assets/images/preloader-bg.png"/>
+  <img class="preloader-bg" src="../assets/images/preloader-bg.png"/>
   <div class="spinner"></div>
 </div>
 
@@ -46,8 +46,8 @@
       <div class="no-events-content">
         <div class="no-events-text">
           <h2>No Events at the moment.</h2>
-          <p>It looks like there aren't any events happening right now. But there's always something around the corner —
-            hit Discover to see what's brewing in the Dalo community!</p>
+          <p>It looks like there aren't any events happening right now.<span class="mobile-hide"> But there's always something around the corner —
+            hit Discover to see what's brewing in the Dalo community!</span></p>
           <button class="events-discover-button" onclick="window.location.href='/discover';">
             <svg class="nav-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
               <path fill="currentColor" fill-rule="evenodd"
@@ -60,10 +60,9 @@
         </div>
       </div>
     </div>
-
-    <!-- Event Cards handled within js -->
   </div>
 
+  
   <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
     aria-describedby="eventDesc">
     <!-- Handled within js -->
@@ -72,11 +71,11 @@
   <footer>
     <div id="footer"></div>
   </footer>
-  <script src="/scripts/preloader.js"></script>
-<script src="/scripts/footer.js"></script>
-<script src="/scripts/header.js"></script>
-<script type="module" src="/scripts/events.js"></script>
-<script type="module" src="/scripts/alert-toast.js"></script>
+  <script src="../scripts/preloader.js"></script>
+<script src="../scripts/footer.js"></script>
+<script src="../scripts/header.js"></script>
+<script type="module" src="../scripts/events.js"></script>
+<script type="module" src="../scripts/alert-toast.js"></script>
 
 
 
