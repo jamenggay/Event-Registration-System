@@ -357,7 +357,7 @@ button.trigger-btn:hover {
 }
 
 .card-content {
-  background-color: #a3c8e1;
+  background-color: #e4d0a7;
   color: white;
   padding: 2rem;
   position: relative; 
@@ -382,7 +382,7 @@ button.trigger-btn:hover {
     radial-gradient(circle at 25% 75%, #e4a1a1 0%, transparent 40%),
     radial-gradient(circle at 75% 25%, #b3e0a3 0%, transparent 40%);
   background-size: 200% 200%;
-  animation: popBG 20s ease-in-out infinite;
+  animation: popBG 10s ease-in-out infinite;
   filter: blur(60px);
   opacity: 0.7;
   pointer-events: none;
@@ -485,14 +485,14 @@ button.close-btn:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(76, 175, 80, 0.15);
-  color: #4CAF50;
+  background: rgba(46, 125, 50, 0.15);
+  color: #2e7d32;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
   margin-top: 1.5rem;
-  border: 1px solid rgba(76, 175, 80, 0.3);
+  border: 1px solid rgba(46, 125, 50, 0.3);
 }
 
 .going-status::before {
@@ -505,14 +505,14 @@ button.close-btn:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 0, 0, 0.15);
-  color: #ff8585;
+  background: rgba(183, 28, 28, 0.15); /* darker red */
+  color: #b71c1c;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
   margin-top: 1.5rem;
-  border: 1px solid rgba(255, 0, 0, 0.3);
+  border: 1px solid rgba(183, 28, 28, 0.3);
 }
 
 .declined-status::before {
@@ -525,14 +525,14 @@ button.close-btn:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(210, 196, 0, 0.15);
-  color: #ffa500;
+  background: rgba(255, 152, 0, 0.15); /* more orange than yellow */
+  color: #ff9800;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
   margin-top: 1.5rem;
-  border: 1px solid rgba(210, 196, 0, 0.15);
+  border: 1px solid rgba(255, 152, 0, 0.3);
 }
 
 .pending-status::before {
@@ -545,14 +545,14 @@ button.close-btn:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(97, 97, 97, 0.15); /* soft dark gray */
+  color: #424242;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
   margin-top: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(97, 97, 97, 0.3);
 }
 
 .waitlisted-status::before {
@@ -1044,7 +1044,7 @@ button.close-btn:hover {
 }
 
 .rating__star-stroke {
-  stroke: hsl(223,10%,80%);
+  stroke: hsl(223, 10%, 40%);
   transition: stroke 0.3s;
 }
 
