@@ -601,9 +601,8 @@ textarea {
 .preview-field:not(:placeholder-shown) {
   padding: 8px 12px !important;
   border-radius: 4px;
-  background-filter: blur(4px);
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 /* Style for the container labels */
