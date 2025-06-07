@@ -62,7 +62,7 @@ header {
 
 .nav-item-wrapper .ticket {
       color: #9065b0 !important;
-    }
+}
   
   .nav-item-wrapper .nav-icon .ticket {
     width: 20px;
@@ -306,58 +306,54 @@ button.trigger-btn:hover {
   display: flex;
 }
 
-
-.popup-event-date {
-  position: absolute;
-  top: 1rem;
-  left: 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: white;
-  opacity: 0.9;
-  z-index: 2;
-}
-
 .card-popup {
-  position: relative;
   width: 62.5vw;
   max-width: 700px;
-  height: 62.5vh;
-  background: url('../assets/images/clubbing-event.jpg') center/cover no-repeat;
   border-radius: 20px;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.7);
-  color: white;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 2rem;
   cursor: default;
   transition: transform 0.3s ease;
   user-select: none;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-popup:hover {
   transform: scale(1.02);
 }
 
-
-.card-popup::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: brightness(0.7);
-  z-index: 0;
-}
-
-
-.card-content {
+.card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   position: relative;
-  z-index: 1;
-  max-height: 70%;
-  overflow-y: auto;
 }
+
+/* Event Date top-left */
+.popup-event-date {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+/* Content area */
+.card-content {
+  background-color: #f4b0b0;
+  color: white;
+  padding: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
 
 .event-date {
   font-size: 1.1rem;
