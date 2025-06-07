@@ -27,6 +27,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   const learMoreBtn = document.getElementById("LearnMore-btn");
 
 
+    const wordElement = document.getElementById("dynamic-word");
+  let isExperience = true;
+
+  setInterval(() => {
+    isExperience = !isExperience;
+    wordElement.textContent = isExperience ? " Experience" : " Event";
+    wordElement.className = isExperience ? "experience" : "event";
+    wordElement.id = "dynamic-word";
+  }, 2000);
+
+
   try {
     const res1 = await fetch('/event-details');
     const eventsData = await res1.json();
