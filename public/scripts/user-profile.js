@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadButton = document.getElementById('uploadButton');
     const profileUpload = document.getElementById('profileUpload');
     const profilePreview = document.getElementById('profilePreview');
+    const modalProfilePreview = document.getElementById('modalProfilePreview');
 
     uploadButton.addEventListener('click', () => {
         profileUpload.click();
@@ -19,7 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const reader = new FileReader();
         
         reader.onload = function(e) {
+            // Update both previews
             profilePreview.src = e.target.result;
+            modalProfilePreview.src = e.target.result;
         };
 
         reader.onerror = function() {
@@ -78,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.openEditModal = function() {
         const modal = document.getElementById('editProfileModal');
+        
+        // Set the modal preview to match the main preview
+        modalProfilePreview.src = profilePreview.src;
         
         document.getElementById('edit-fullname').value = document.getElementById('fullname').value;
         document.getElementById('edit-username').value = document.getElementById('username').value;
