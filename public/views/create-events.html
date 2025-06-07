@@ -1,26 +1,36 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dalo</title>
-  <link rel="stylesheet" href="../styles/create-events.css" />
-  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="/styles/alert-toast.css">
+  <link rel="stylesheet" href="/styles/preloader.css">
+  <link rel="stylesheet" href="/styles/create-events.css" />
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <script src="../scripts/header.js"></script>
-  <script src="../scripts/footer.js"></script>
-  <script src="../scripts/create-events.js" defer></script>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
 </head>
+
 <body>
+  <div id="preloader">
+    <img class="preloader-bg" src="/assets/images/preloader-bg.png" />
+    <div class="spinner"></div>
+  </div>
   <header>
     <div id="header"></div>
   </header>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <div class="event_info">
     <div class="illustration_container">
       <div class="illustration">
         <div class="illustration_color">
-          <img id="previewImage" src="" alt="" style="display: none;">
+          <img id="previewImage" alt="" style="display: none;">
         </div>
       </div>
       <div class="illustration_controls">
@@ -28,9 +38,9 @@
         <button type="button" class="upload_button">Upload Photo</button>
       </div>
     </div>
-    
+
     <div class="event_details">
-      <form id="eventForm" method="POST" enctype="multipart/form-data">
+      <form id="eventForm" enctype="multipart/form-data">
         <input type="file" id="imageUpload" name="event-image" accept="image/*" style="display: none;" />
         <input type="hidden" name="event-name" id="hiddenEventName">
         <div class="event_name-wrapper">
@@ -59,7 +69,7 @@
           </div>
           <div class="event_location" onclick="openLocationModal()">
             <div class="icon-heading">
-              <img src="../assets/icons/location-icon.png" class="icon-flex">
+              <img src="/assets/icons/location-icon.png" class="icon-flex">
               <h3>Event Location</h3>
             </div>
             <br>
@@ -76,7 +86,7 @@
         </div>
         <div class="event_description" onclick="openDescriptionModal()">
           <div class="icon-heading">
-            <img src="../assets/icons/description-icon.png" class="icon-flex">
+            <img src="/assets/icons/description-icon.png" class="icon-flex">
             <h3>Description</h3>
           </div>
           <p>Add description here</p>
@@ -85,29 +95,30 @@
           <div class="modal-content">
             <span class="close" onclick="closeDescriptionModal()">&times;</span>
             <h2>Add Event Description</h2>
-            <textarea id="descriptionText" name="event-description" placeholder="Type your event description here..."></textarea>
+            <textarea id="descriptionText" name="event-description"
+              placeholder="Type your event description here..."></textarea>
             <button type="button" onclick="saveDescription()">Save</button>
           </div>
         </div>
         <div class="event_category">
           <div class="icon-heading">
-            <img src="../assets/icons/category-icon.png" class="icon-flex">
+            <img src="/assets/icons/category-icon.png" class="icon-flex">
             <h3>Event Category</h3>
           </div>
           <select name="event-category" id="event-category" required>
             <option value="" disabled selected>Select a category</option>
-            <option value="technology">Technology</option>
-            <option value="education">Education</option>
-            <option value="health">Health</option>
-            <option value="business">Business</option>
-            <option value="arts">Arts</option>
-            <option value="outreach">Outreach</option>
-            <option value="entertainment">Entertainment</option>
+            <option value="Technology">Technology</option>
+            <option value="Education">Education</option>
+            <option value="Health">Health</option>
+            <option value="Business">Business</option>
+            <option value="Arts">Arts</option>
+            <option value="Outreach">Outreach</option>
+            <option value="Entertainment">Entertainment</option>
           </select>
         </div>
         <div class="event_feedback" onclick="openFeedbackModal()">
           <div class="icon-heading">
-            <img src="../assets/icons/feedback-icon.png" class="icon-flex">
+            <img src="/assets/icons/feedback-icon.png" class="icon-flex">
             <h3>Feedbank Link</h3>
           </div>
           <p>Click to add feedback link</p>
@@ -125,21 +136,23 @@
         </div>
         <div class="event_approval">
           <div class="event_approval_capacity">
-            <div class="icon-heading">
-              <img src="../assets/icons/approval-icon.png" class="icon-flex">
-              <h3>Require Approval</h3>
-            </div>
-            <div class="toggle-wrapper">
-              <label class="toggle-label">
-                <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
-                <span class="toggle-slider"></span>
-              </label>
+            <div class="require_approval">
+              <span class="label-content">
+                <img src="/assets/icons/approval-icon.png" class="icon-flex">
+                <span>Require Approval</span>
+              </span>
+              <div class="toggle-wrapper">
+                <label class="toggle-label">
+                  <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
         <div class="event_capacity" onclick="openCapacityModal()">
           <div class="icon-heading">
-            <img src="../assets/icons/capacity-icon.png" class="icon-flex">
+            <img src="/assets/icons/capacity-icon.png" class="icon-flex">
             <h3>Maximum Capacity</h3>
           </div>
           <p>Click to set the maximum capacity for your event.</p>
@@ -174,5 +187,11 @@
   <footer>
     <div id="footer"></div>
   </footer>
+  <script src="/scripts/preloader.js"></script>
+  <script src="/scripts/header.js"></script>
+  <script src="/scripts/footer.js"></script>
+  <script type="module" src="/scripts/create-events.js" defer></script>
+  <script type="module" src="/scripts/alert-toast.js"></script>
 </body>
+
 </html>
