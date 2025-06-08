@@ -596,15 +596,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             overlay.innerHTML = `
-                    <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
-                        <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-                        <span class="popup-event-date">${formattedDate}</span>
+                    <article class="card-popup">
+                        <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+              <span class="popup-event-date">${formattedDate}</span>
+              <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
+      </div>
 
-                        <div class="card-content">
+                        <div class="card-content theme-${event.themeIndex}">
                             <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
                             <p class="event-description" id="eventDesc">${event.description}</p>
                             <p class="event-location">Location: ${event.location}</p>
+                        <div class="card-actions">
                             <button class="link-btn" onclick="window.location.href='/event/${event.eventID}'">You're managing this event!</button>
+                        </div>
                         </div>
                     </article>
             `
