@@ -346,7 +346,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             closeEditModal();
         } catch (error) {
             console.error('Error saving profile:', error);
-            alert('Failed to save profile changes. Please try again.');
+            toastData.danger.message = "Failed to save profile changes.";
+            showToast("danger");
         }
     }
 
@@ -421,25 +422,31 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (response.ok) {
                 const result = await response.json()
                 console.log("Server Success: ", result)
-                alert("User password edit success.")
+                toastData.success.message = "User password has been updated.";
+                showToast("success");
                 closeChangePasswordModal();
             }
             else if (response.status == 401) {
                 const error = await response.json()
                 console.log("Server Failed: ", error)
-                alert("Incorrect current password.")
+                toastData.danger.message = "Incorrect current password.";
+                showToast("danger");
             }
             else {
                 const result = await response.json();
                 console.log("Server Failed: ", result)
-                alert("User password edit failed.")
+                toastData.danger.message = "User password edit failed.";
+                showToast("danger");
+                
             }
         }
         catch (e) {
             console.log("Client Error: ", e)
-            alert("An error occurred while updating the password");
+            toastData.danger.message = "An error occurred while updating the password.";
+            showToast("danger");
         }
     }
+
 
     document.querySelector('#changePasswordModal .close').addEventListener('click', function() {
         closeChangePasswordModal();
@@ -600,7 +607,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
       </div>
 
                         <div class="card-content theme-${event.themeIndex}">

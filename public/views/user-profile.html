@@ -25,60 +25,54 @@
    <div class="toast-container" id="toastContainer"></div>
 
     <div class="info_events_container">
-        <div class="account_settings">
+        <!-- <div class="account_settings">
             <h2>Account Settings</h2>
             <div class="divider"></div>
-        </div>
+        </div> -->
 
-        <div class="user_info_container">
+                <div class="user_info_container">
             <div class="user_photo_container">
                 <div class="photo_container">
-                    <img id="profilePreview" src="/assets/icons/profile-icon.jpeg" alt="Profile Photo">
+                    <img id="profilePreview" src="../assets/icons/profile-icon.jpeg" alt="Profile Photo">
                     <input type="file" id="profileUpload" accept="image/*">
                     <button type="button" id="uploadButton" class="upload_button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="upload_icon">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="upload_icon" style="transform: rotate(-90deg);">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                            <path d="M4 12h16" stroke="currentColor" stroke-width="2" fill="none"/>
                         </svg>
                     </button>
+                </div>
+                <div class="bio_container">
+                    <input type="text" id="bio" name="bio" class="preview-field" readonly placeholder="No bio set">
                 </div>
             </div>
 
             <div class="user_details_container">
                 <div class="fullname_container">
-                    <label for="fullname">Full Name</label>
                     <input type="text" id="fullname" name="fullname" class="preview-field" readonly placeholder="No name set">
                 </div>
 
                 <div class="username_container">
-                    <label for="username">Username</label>
                     <input type="text" id="username" name="username" class="preview-field" readonly placeholder="No username set">
                 </div>
 
                 <div class="email_container">
-                    <label for="email">Email</label>
                     <input type="email" id="email" name="email" class="preview-field" readonly placeholder="No email set">
                 </div>
 
                 <div class="mobile_container">
-                    <label for="mobile">Mobile Number</label>
                     <input type="tel" id="mobile" name="mobile" pattern="[0-9]{11}" class="preview-field" readonly placeholder="No mobile number set">
                 </div>
+            </div>
 
-                <div class="bio_container">
-                    <label for="bio">Bio</label>
-                    <input type="text" id="bio" name="bio" class="preview-field" readonly placeholder="No bio set">
-                </div>
-
-                <div class="edit_button_container">
-                    <button type="button" class="edit_button" onclick="openEditModal()">
-                        <img src="/assets/icons/edit-icon.png" alt="Edit" class="edit_icon">
-                        Edit Profile
-                    </button>
-                </div>
+            <div class="edit_button_container">
+                <button type="button" class="edit_button" onclick="openEditModal()">
+                    <img src="../assets/icons/edit-icon.png" alt="Edit" class="edit_icon">
+                    Edit Profile
+                </button>
             </div>
         </div>
+
 
         <div class="event-section">
             <div class="event-header">

@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
             </div>
 
           <div class="card-content theme-${event.themeIndex}">
@@ -457,7 +457,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
             </div>
 
             <div class="card-content theme-${event.themeIndex}">
@@ -469,7 +469,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
             </div>
           </article>`;
-          
+
         } else {
           overlay.innerHTML = `
         <article class="card-popup">
@@ -477,7 +477,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
             </div>
           
 
@@ -496,7 +496,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
           </div>
 
-          <div class="cancel-popup-overlay"></div>
+          
+        </article>
+
+        <div class="cancel-popup-overlay"></div>
               <div class="cancel-popup">
                 <h3>Cancel Event</h3>
                 <p>We understand that sometimes the stars don't quite align, and you may need to step away from an event. Would you like to cancel your spot? If you change your mind later, no worries—you'll just need to register again to rejoin the fun!</p>
@@ -505,7 +508,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                   <button class="confirm-btn" type="button">Confirm</button>
                 </div>
               </div>
-        </article>
       `;
         }
       }

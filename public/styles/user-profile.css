@@ -14,7 +14,9 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: #333;
-  background-color: #ffffff;
+  background-color: #0075BB1A;
+  background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
+  background-size: 30px 30px;
 }
 
 body::before {
@@ -22,7 +24,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, #a3c8e1 0%, transparent 40%),
     radial-gradient(circle at 70% 20%, #f4b0b0 0%, transparent 40%),
     radial-gradient(circle at 30% 80%, #a1e1a1 0%, transparent 40%),
@@ -41,9 +43,12 @@ body::before {
 }
 
 @keyframes popBG {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 0%;
   }
+
   50% {
     background-position: 100% 100%;
   }
@@ -58,17 +63,16 @@ body::before {
 }
 
 .user_info_container {
-height: 100%;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 100px;
   margin-top: 50px;
   position: relative;
   padding: 40px;
-  background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 117, 187, 0.2);
@@ -102,12 +106,13 @@ height: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .photo_container {
-  height: 400px;
-  width: 400px;
-  border-radius: 25px;
+  height: 250px;
+  width: 250px;
+  border-radius: 100%;
   overflow: visible;
   background-color: #f0f0f0;
   display: flex;
@@ -121,7 +126,7 @@ height: 100%;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 25px;
+  border-radius: 100%;
 }
 
 #svg-sprites {
@@ -138,11 +143,11 @@ height: 100%;
 /* Upload Button */
 .upload_button {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  bottom: 8px;
+  right: 8px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   background-color: white;
   border: none;
   cursor: pointer;
@@ -166,11 +171,7 @@ height: 100%;
   height: 100%;
   color: #333;
   transition: color 0.3s ease;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  fill: currentColor;
 }
 
 .upload_button:hover .upload_icon {
@@ -183,25 +184,36 @@ height: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 30px;
+  gap: 0px;
+  flex-grow: 1;
 }
 
 .fullname_container,
-.username_container,
 .email_container,
 .mobile_container,
 .bio_container {
-  margin-bottom: 8px;
-  padding: 20px;
+  padding: 0px;
   border-radius: 12px;
   color: black;
-  background-color: rgba(255, 255, 255, 0.4) !important;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 117, 187, 0.1);
-  width: 530px;
+  width: 100%;
+  margin-bottom: 0;
 }
 
+.username_container {
+  margin-top: 20px; /* Gap from full name */
+}
+
+.fullname_container input {
+  font-weight: 700;
+  font-size: 22px;
+}
+
+#fullname {
+  font-size: 50px !important;
+  font-weight: 900 !important;
+  color: #000 !important;
+
+}
 
 .bio_container input {
   text-align: center;
@@ -214,14 +226,16 @@ height: 100%;
 /* Form Elements */
 input[type="email"],
 input[type="tel"],
+input[type="text"],
 textarea {
   width: 100%;
   border-radius: 6px;
-  font-size: 16px;
-  padding: 8px;
+  font-size: 22px;
+  padding: 6px 12px;
   border: 1px solid #aaccee;
   background-color: rgba(255, 255, 255, 0.95);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: #000;
 }
 
 /* Only show validation styles when the user has interacted with the field */
@@ -244,13 +258,37 @@ input:focus {
 }
 
 input[type="tel"]::placeholder {
-  font-size: 14px;
+  font-size: 20px;
   color: #666;
 }
 
 label {
-  font-size: 1.17em;
+  font-size: 20px;
   font-family: 'Inter', sans-serif;
+}
+
+/* Validation Messages */
+.validation-message {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.edit-field {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
 }
 
 /* Validation Messages */
@@ -449,10 +487,14 @@ textarea {
 
 /* Edit Button */
 .edit_button_container {
-  margin-top: 50px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  margin-top: 0;
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  width: auto;
+  z-index: 10;
 }
 
 .edit_button {
@@ -580,12 +622,13 @@ textarea {
 .preview-field {
   background-color: transparent !important;
   border: none !important;
-  padding: 8px 0 !important;
-  font-size: 16px;
-  color: #333;
+  padding: 6px 0 !important;
+  font-size: 22px;
+  color: #000;
   cursor: default;
   width: 100%;
-  margin-top: 5px;
+  margin-top: 0px;
+  font-weight: 500;
 }
 
 .preview-field:focus {
@@ -599,10 +642,15 @@ textarea {
 
 /* Add highlight for preview field values */
 .preview-field:not(:placeholder-shown) {
-  padding: 8px 12px !important;
+  padding: 12px 16px !important;
   border-radius: 4px;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.preview-field::placeholder {
+  font-size: 20px;
+  color: #666;
+  font-weight: normal;
 }
 
 /* Style for the container labels */
@@ -978,19 +1026,9 @@ button.link-btn {
 }
 
 button.link-btn:hover {
-  background: var(--blue);
-  right: 1rem;
+
   background: rgba(255 255 255 / 0.3);
-  border: none;
-  color: white;
-  font-size: 2rem;
-  line-height: 1;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  transition: background 0.3s ease;
-  z-index: 2;
+  
 }
 button.close-btn {
   position: absolute;
@@ -1474,6 +1512,9 @@ button.close-btn:hover {
 }
 
 @media screen and (max-width: 768px) {
+  .mobile-hide {
+    display: none;
+  }
   .info_events_container {
     padding: 10px;
   }

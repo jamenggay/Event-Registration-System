@@ -153,17 +153,18 @@ document.addEventListener("DOMContentLoaded", async () => {
           : `<span class="event-date">${startDateTime[currentIndex].formattedDate} - ${endDateTime[currentIndex].formattedDate}</span>`;
 
 
-        article.innerHTML = `
+        overlay.innerHTML = `
+        <article class="card-popup">
     <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${eventDateHTML}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
       </div>
       
       <div class="card-content theme-${event.themeIndex}">
-        <div class="popup-event-title">${event.eventName}</div>
+        <h2 class="popup-event-title">${event.eventName}</h2>
         <div class="popup-event-category category-${event.category}" style="color: var(--category-color-${event.category});">${event.category}</div>
-        <div class="popup-event-description">${event.description}</div>
+        <p class="popup-event-description">${event.description}</p>
         <div class="popup-event-location">Location: <i>${event.location}</i></div>
         <div class="card-actions">
         <button class="popup-register-button" ${isUserCreated ? `onclick=\"window.location.href='/event/${event.eventID}'\"` : ''} data-event-id="${event.eventID}">
@@ -171,6 +172,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         </button>
         </div>
     </div>
+
+    </article>
 
     <div class="cancel-popup-overlay"></div>
       <div class="cancel-popup">
@@ -183,13 +186,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
   `;
         // Attach close button event
-        const closeBtn = article.querySelector('.close-btn');
+        const closeBtn = overlay.querySelector('.close-btn');
         if (closeBtn) closeBtn.addEventListener('click', closePopup);
 
-        if (!isUserCreated && !registrationStatus) {
-          const popupRegBtn = article.querySelector('.popup-register-button');
-          popupRegBtn.addEventListener('click', () => {
+        const popupRegBtn = overlay.querySelector('.popup-register-button');
+        if (popupRegBtn) {
+          popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
+        }
 
+        if (!registrationStatus && popupRegBtn) {
+          popupRegBtn.addEventListener('click', () => {
             overlay.querySelector('.cancel-popup').classList.add('active');
             overlay.querySelector('.cancel-popup-overlay').classList.add('active');
 
@@ -275,11 +281,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (buttonText == 'Manage Event') {
 
-          article.innerHTML = `
+          overlay.innerHTML = `
+          <article class="card-popup">
     <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${eventDateHTML}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
       </div>
     <div class="card-content theme-${event.themeIndex}">
       <div class="popup-event-title">${event.eventName}</div>
@@ -292,7 +299,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     </button>
     </div>
     </div>
-
+          </article>
     <div class="cancel-popup-overlay"></div>
       <div class="cancel-popup">
         <h3>Register Event</h3>
@@ -304,17 +311,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
   `;
           // Attach close button event
-          const closeBtn = article.querySelector('.close-btn');
+          const closeBtn = overlay.querySelector('.close-btn');
           if (closeBtn) closeBtn.addEventListener('click', closePopup);
 
         }
         else {
 
-          article.innerHTML = `
+          overlay.innerHTML = `
+          <article class="card-popup">
     <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${eventDateHTML}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-              <div class="scroll-down-indicator">Scroll down ↓</div>
+              <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
       </div>
      <div class="card-content theme-${event.themeIndex}">
       <div class="popup-event-title">${event.eventName}</div>
@@ -327,6 +335,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     </button>
     </div>
     </div>
+    </article>
 
     <div class="cancel-popup-overlay"></div>
       <div class="cancel-popup">
@@ -339,10 +348,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
   `;
           // Attach close button event
-          const closeBtn = article.querySelector('.close-btn');
+          const closeBtn = overlay.querySelector('.close-btn');
           if (closeBtn) closeBtn.addEventListener('click', closePopup);
 
-          const popupRegBtn = article.querySelector('.popup-register-button');
+          const popupRegBtn = overlay.querySelector('.popup-register-button');
           if (popupRegBtn) {
             popupRegBtn.disabled = registrationStatus === 'Registered' || registrationStatus === 'Waitlisted';
           }
