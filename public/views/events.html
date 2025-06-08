@@ -6,24 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dalo</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../styles/alert-toast.css">
   <link rel="stylesheet" href="../styles/preloader.css">
   <link rel="stylesheet" href="../styles/preloader.css">
   <link rel="stylesheet" href="../styles/events.css">
-  
+
   <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
 
 </head>
 
 <body class="loading">
- 
-   
 
-<div id="preloader">
-  <img class="preloader-bg" src="../assets/images/preloader-bg.png"/>
-  <div class="spinner"></div>
-</div>
+
+
+  <div id="preloader">
+    <img class="preloader-bg" src="../assets/images/preloader-bg.png" />
+    <div class="spinner"></div>
+  </div>
 
 
   <header>
@@ -31,7 +31,7 @@
   </header>
 
   <!-- TOAST -->
-   <div class="toast-container" id="toastContainer"></div>
+  <div class="toast-container" id="toastContainer"></div>
 
   <div class="event-section">
     <div class="event-header">
@@ -46,8 +46,9 @@
       <div class="no-events-content">
         <div class="no-events-text">
           <h2>No Events at the moment.</h2>
-          <p>It looks like there aren't any events happening right now.<span class="mobile-hide"> But there's always something around the corner —
-            hit Discover to see what's brewing in the Dalo community!</span></p>
+          <p>It looks like there aren't any events happening right now.<span class="mobile-hide"> But there's always
+              something around the corner —
+              hit Discover to see what's brewing in the Dalo community!</span></p>
           <button class="events-discover-button" onclick="window.location.href='/discover';">
             <svg class="nav-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
               <path fill="currentColor" fill-rule="evenodd"
@@ -62,50 +63,71 @@
     </div>
 
     <div class="event-group" data-date="${event.startDateTime}">
-                  <div class="event-date">
-                    <strong>${formattedDate}</strong>
-                    <span class="weekday">${formattedDay}</span>
-                  </div>
+      <div class="event-date">
+        <strong>${formattedDate}</strong>
+        <span class="weekday">${formattedDay}</span>
+      </div>
 
-                  <div class="event-cards">
-                    <div class="event-card theme-${event.themeIndex}">
-                      <div class="event-info">
-                        <div class="event-time">${event.formattedStartTime} - ${event.formattedEndTime}</div>
-                        <div class="event-title">
-                          ${event.eventName}
-                        </div>
-                        <div class="event-meta">
-                          <span><img src="${event.profilePic}" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">${event.fullName}<br><br></span>
-                          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path><path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path></g></svg> ${event.location}</span>
-                        </div>
-                      </div>
-                      <img class="event-thumbnail"
-                        src="${event.featureImage}"
-                        alt="Event Thumbnail" />
-                    </div>
-                  </div>
-                </div> 
+      <div class="event-cards">
+        <div class="event-card theme-${event.themeIndex}">
+          <div class="event-info">
+            <div class="event-time">${event.formattedStartTime} - ${event.formattedEndTime}</div>
+            <div class="event-title">
+              ${event.eventName}
+            </div>
+            <div class="event-meta">
+              <span><img src="${event.profilePic}"
+                  onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'"
+                  alt="Profile">${event.fullName}<br><br></span>
+              <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="1.5">
+                    <path d="M2 6.854C2 11.02 7.04 15 8 15s6-3.98 6-8.146C14 3.621 11.314 1 8 1S2 3.62 2 6.854"></path>
+                    <path d="M9.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"></path>
+                  </g>
+                </svg> ${event.location}</span>
+            </div>
+          </div>
+          <img class="event-thumbnail" src="${event.featureImage}" alt="Event Thumbnail" />
+        </div>
+      </div>
+    </div>
 
   </div>
 
 
 
-  <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
+  <div class="overlay active" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="eventTitle"
     aria-describedby="eventDesc">
+    <article class="card-popup">
+      <div class="card-image" style="background: url(../assets/images/discover-outreach.jpg) center/cover no-repeat">
+        <span class="popup-event-date">${formattedDate}</span>
+        <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+        <div class="scroll-down-indicator">Scroll down ↓</div>
+      </div>
 
+      <div class="card-content">
+        <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
+        <p class="event-description" id="eventDesc">${event.description}</p>
+        <p class="event-location">Location: ${event.location}</p>
+        <div class="card-actions">
+          <p class="${statusClass}-status">${status}</p>
+        </div>
+      </div>
+    </article>
   </div>
 
   <footer>
     <div id="footer"></div>
   </footer>
   <script src="../scripts/preloader.js"></script>
-<script src="../scripts/footer.js"></script>
-<script src="../scripts/header.js"></script>
-<script type="module" src="../scripts/events.js"></script>
-<script type="module" src="../scripts/alert-toast.js"></script>
+  <script src="../scripts/footer.js"></script>
+  <script src="../scripts/header.js"></script>
+  <script type="module" src="../scripts/events.js"></script>
+  <script type="module" src="../scripts/alert-toast.js"></script>
 
 
 
 </body>
 
-</html> 
+</html>
