@@ -1,84 +1,88 @@
 import { toastData, showToast } from "./alert-toast.js";
+// from user profile HTML file
 
-window.userDataReady = new Promise(async (resolve, reject) => { 
-    try {
-        const response = await fetch("/basic-profile", {
-            method: "GET",
-            headers: {
-                'Accept' : 'application/json'
+ window.userDataReady = new Promise(async (resolve, reject) => { 
+            try {
+                const response = await fetch("/basic-profile", {
+                    method: "GET",
+                    headers: {
+                        'Accept' : 'application/json'
+                    }
+                })
+
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    reject("Backend Failed: ", error)
+                }
             }
-        })
-
-        if (response.ok) {
-            const result = await response.json()
-            resolve(result)
-        }
-        else {
-            const error = await response.json()
-            reject("Backend Failed: ", error)
-        }
-    }
-    catch (e) {
-        console.log("Client Error: ", e)
-        reject("Client Error: ", e);
-    }
-}) 
-
-window.userEventsCreatedReady = new Promise(async (resolve, reject) => { 
-    try {
-        const response = await fetch("/user-events-created", {
-            method: "GET",
-            headers: {
-                'Accept' : 'application/json'
+            catch (e) {
+                console.log("Client Error: ", e)
+                reject("Client Error: ", e);
             }
-        })
+        }) 
 
-        if (response.ok) {
-            const result = await response.json()
-            resolve(result)
-        }
-        else {
-            const error = await response.json()
-            reject("Backend Failed: ", error)
-        }
-    }
-    catch (e) {
-        console.log("Client Error: ", e)
-        reject("Client Error: ", e);
-    }
-}) 
+        window.userEventsCreatedReady = new Promise(async (resolve, reject) => { 
+            try {
+                const response = await fetch("/user-events-created", {
+                    method: "GET",
+                    headers: {
+                        'Accept' : 'application/json'
+                    }
+                })
 
-const saveChangesButton = document.getElementById('save-changes-btn')
+                if (response.ok) {
+                    const result = await response.json()
+                    resolve(result)
+                }
+                else {
+                    const error = await response.json()
+                    reject("Backend Failed: ", error)
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+                reject("Client Error: ", e);
+            }
+        }) 
+        
+        const saveChangesButton = document.getElementById('save-changes-btn')
+        
+        saveChangesButton.addEventListener('click', async (event) => {
+            event.preventDefault();
 
-saveChangesButton.addEventListener('click', async (event) => {
-    event.preventDefault();
+            try {
+                const response = await fetch("/user-info", {
+                    method: "PATCH",
+                    headers: { 'Content-Type' : 'application/json'},
+                    body: JSON.stringify(window.updatedUserData)
+                })
 
-    try {
-        const response = await fetch("/user-info", {
-            method: "PATCH",
-            headers: { 'Content-Type' : 'application/json'},
-            body: JSON.stringify(window.updatedUserData)
-        })
+                if (response.ok) {
+                    const result = await response.json()
+                    console.log("Server Success: ", result)
+                    toastData.success.message = "User profile has been updated.";
+                    showToast("success");
+                }
+                else {
+                    const result = await response.json();
+                    console.log("Server Failed: ", result)
+                    toastData.danger.title = "Failed:"
+                    toastData.danger.message = "User profile update failed.";
+                    showToast("danger");
+                }
+            }
+            catch (e) {
+                console.log("Client Error: ", e)
+                toastData.danger.message = "An error occurred while creating the event";
+                    
+            }
+        })        
 
-        if (response.ok) {
-            const result = await response.json()
-            console.log("Server Success: ", result)
-            toastData.success.message = "User profile has been updated.";
-            showToast("success");
-        }
-        else {
-            const result = await response.json();
-            console.log("Server Failed: ", result)
-            toastData.danger.title = "Failed:"
-            toastData.danger.message = "User profile update failed.";
-            showToast("danger");
-        }
-    }
-    catch (e) {
-        console.log("Client Error: ", e)
-        toastData.danger.message = "An error occurred while creating the event";
-    }
-})        
+
 
 // --------------------------------------------------------
 window.addEventListener('pageshow', function (event) {
@@ -141,6 +145,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
+
             toastData.info.title = "Please select an image file.";
             showToast("info");
             return;
@@ -198,9 +203,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         catch (e) {
             console.log("Client Error: ", e)
             toastData.danger.message = "An error occurred while updating user info.";
-            showToast("danger");
-        }
+                showToast("danger");
+                    }
     });
+
 
     function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -484,6 +490,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     userEventsCreated.sort((a, b) => new Date(b.startDateTime) - new Date(a.startDateTime))
 
     eventsCreatedContainer.innerHTML = userEventsCreated.map((event, index) => {
+
         const startObj = new Date(event.startDateTime)
         const endObj = new Date(event.endDateTime)
         const startYear = new Date(event.startDateTime).getFullYear()
@@ -589,15 +596,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             overlay.innerHTML = `
-                    <article class="card-popup" style="background: url('${event.featureImage}') center/cover no-repeat">
-                        <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
-                        <span class="popup-event-date">${formattedDate}</span>
+                    <article class="card-popup">
+                        <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+              <span class="popup-event-date">${formattedDate}</span>
+              <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
+      </div>
 
-                        <div class="card-content">
+                        <div class="card-content theme-${event.themeIndex}">
                             <h2 class="popup-event-title" id="eventTitle">${event.eventName}</h2>
                             <p class="event-description" id="eventDesc">${event.description}</p>
                             <p class="event-location">Location: ${event.location}</p>
+                        <div class="card-actions">
                             <button class="link-btn" onclick="window.location.href='/event/${event.eventID}'">You're managing this event!</button>
+                        </div>
                         </div>
                     </article>
             `
@@ -621,7 +633,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     document.addEventListener('keydown', e => {
         if(e.key === "Escape" && overlay.classList.contains('active')) {
-            closePopup();
+        closePopup();
         }
     });
 });

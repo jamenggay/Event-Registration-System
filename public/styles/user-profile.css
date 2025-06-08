@@ -64,12 +64,11 @@ body::before {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 100px;
   margin-top: 50px;
   position: relative;
   padding: 40px;
-  background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 117, 187, 0.2);
@@ -103,12 +102,13 @@ body::before {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .photo_container {
-  height: 400px;
-  width: 400px;
-  border-radius: 25px;
+  height: 250px;
+  width: 250px;
+  border-radius: 100%;
   overflow: visible;
   background-color: #f0f0f0;
   display: flex;
@@ -122,7 +122,7 @@ body::before {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 25px;
+  border-radius: 100%;
 }
 
 #svg-sprites {
@@ -139,11 +139,11 @@ body::before {
 /* Upload Button */
 .upload_button {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  bottom: 8px;
+  right: 8px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   background-color: white;
   border: none;
   cursor: pointer;
@@ -167,11 +167,7 @@ body::before {
   height: 100%;
   color: #333;
   transition: color 0.3s ease;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  fill: currentColor;
 }
 
 .upload_button:hover .upload_icon {
@@ -184,23 +180,35 @@ body::before {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 30px;
+  gap: 0px;
+  flex-grow: 1;
 }
 
 .fullname_container,
-.username_container,
 .email_container,
 .mobile_container,
 .bio_container {
-  margin-bottom: 8px;
-  padding: 20px;
+  padding: 0px;
   border-radius: 12px;
   color: black;
-  background-color: rgba(255, 255, 255, 0.4) !important;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 117, 187, 0.1);
-  width: 530px;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.username_container {
+  margin-top: 20px; /* Gap from full name */
+}
+
+.fullname_container input {
+  font-weight: 700;
+  font-size: 22px;
+}
+
+#fullname {
+  font-size: 50px !important;
+  font-weight: 900 !important;
+  color: #000 !important;
+  text-transform: uppercase;
 }
 
 .bio_container input {
@@ -214,14 +222,16 @@ body::before {
 /* Form Elements */
 input[type="email"],
 input[type="tel"],
+input[type="text"],
 textarea {
   width: 100%;
   border-radius: 6px;
-  font-size: 16px;
-  padding: 8px;
+  font-size: 22px;
+  padding: 6px 12px;
   border: 1px solid #aaccee;
   background-color: rgba(255, 255, 255, 0.95);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: #000;
 }
 
 /* Only show validation styles when the user has interacted with the field */
@@ -244,12 +254,12 @@ input:focus {
 }
 
 input[type="tel"]::placeholder {
-  font-size: 14px;
+  font-size: 20px;
   color: #666;
 }
 
 label {
-  font-size: 1.17em;
+  font-size: 20px;
   font-family: 'Inter', sans-serif;
 }
 
@@ -449,10 +459,14 @@ textarea {
 
 /* Edit Button */
 .edit_button_container {
-  margin-top: 50px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  margin-top: 0;
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  width: auto;
+  z-index: 10;
 }
 
 .edit_button {
@@ -504,19 +518,20 @@ textarea {
   font-weight: 500;
   color: #333;
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 18px;
 }
 
 .edit-field input,
 .edit-field textarea {
   width: 100%;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 22px;
   padding: 12px;
   border: 1px solid #aaccee;
   background-color: rgba(255, 255, 255, 0.95);
   transition: all 0.3s ease;
   font-family: 'Inter', sans-serif;
+  color: #000;
 }
 
 .edit-field input:focus,
@@ -525,6 +540,13 @@ textarea {
   box-shadow: 0 0 0 2px rgba(0, 117, 187, 0.1);
   outline: none;
   transform: translateY(-1px);
+}
+
+.edit-field input::placeholder,
+.edit-field textarea::placeholder {
+  font-size: 20px;
+  color: #666;
+  font-weight: normal;
 }
 
 /* Button Styles */
@@ -580,12 +602,13 @@ textarea {
 .preview-field {
   background-color: transparent !important;
   border: none !important;
-  padding: 8px 0 !important;
-  font-size: 16px;
-  color: #333;
+  padding: 6px 0 !important;
+  font-size: 22px;
+  color: #000;
   cursor: default;
   width: 100%;
-  margin-top: 5px;
+  margin-top: 0px;
+  font-weight: 500;
 }
 
 .preview-field:focus {
@@ -599,10 +622,15 @@ textarea {
 
 /* Add highlight for preview field values */
 .preview-field:not(:placeholder-shown) {
-  padding: 8px 12px !important;
+  padding: 12px 16px !important;
   border-radius: 4px;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.preview-field::placeholder {
+  font-size: 20px;
+  color: #666;
+  font-weight: normal;
 }
 
 /* Style for the container labels */
@@ -615,6 +643,7 @@ textarea {
   color: black;
   margin-bottom: 8px;
   display: block;
+  content: '@';
 }
 .bio_container label {
   align-items: center;
@@ -1212,17 +1241,8 @@ button.close-btn:hover {
   margin-bottom: 20px;
 }
 
-.left-column {
-  flex: 0 0 300px;
-}
-
 .right-column {
   flex: 1;
-}
-
-.photo-upload-field .photo_container {
-  height: 300px;
-  width: 300px;
 }
 
 .button-group {
@@ -1245,8 +1265,14 @@ button.close-btn:hover {
   }
 
   .photo_container {
-    height: 350px;
-    width: 350px;
+    height: 220px;
+    width: 220px;
+  }
+
+  .upload_button {
+    width: 55px;
+    height: 55px;
+    padding: 11px;
   }
 
   .fullname_container,
@@ -1267,8 +1293,14 @@ button.close-btn:hover {
   }
 
   .photo_container {
-    height: 300px;
-    width: 300px;
+    height: 180px;
+    width: 180px;
+  }
+
+  .upload_button {
+    width: 45px;
+    height: 45px;
+    padding: 9px;
   }
 
   .user_details_container {
@@ -1283,6 +1315,10 @@ button.close-btn:hover {
   .bio_container {
     width: 100%;
     max-width: 500px;
+  }
+
+  #fullname {
+    font-size: 40px !important;
   }
 
   .event-cards {
@@ -1310,12 +1346,39 @@ button.close-btn:hover {
   }
 
   .user_info_container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     padding: 15px;
   }
 
   .photo_container {
-    height: 250px;
-    width: 250px;
+    height: 150px;
+    width: 150px;
+  }
+
+  .upload_button {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+  }
+
+  .user_details_container {
+    width: 100%;
+    align-items: center;
+  }
+
+  .fullname_container,
+  .username_container,
+  .email_container,
+  .mobile_container,
+  .bio_container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  #fullname {
+    font-size: 32px !important;
   }
 
   .event-group {
@@ -1340,7 +1403,7 @@ button.close-btn:hover {
 
   .event-thumbnail {
     width: 100%;
-    height: 200px;
+    height: 150px;
   }
 
   .modal-content {
@@ -1353,21 +1416,9 @@ button.close-btn:hover {
     gap: 20px;
   }
 
-  .left-column,
   .right-column {
     flex: none;
     width: 100%;
-  }
-
-  .photo-upload-field {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-
-  .photo-upload-field .photo_container {
-    margin: 0 auto;
   }
 
   .button-group {
@@ -1375,6 +1426,8 @@ button.close-btn:hover {
   }
 
   .edit_button_container {
+    position: static;
+    margin-top: 20px;
     justify-content: center;
     width: 100%;
   }
@@ -1392,8 +1445,14 @@ button.close-btn:hover {
   }
 
   .photo_container {
-    height: 200px;
-    width: 200px;
+    height: 120px;
+    width: 120px;
+  }
+
+  .upload_button {
+    width: 35px;
+    height: 35px;
+    padding: 7px;
   }
 
   .fullname_container,
@@ -1401,57 +1460,132 @@ button.close-btn:hover {
   .email_container,
   .mobile_container,
   .bio_container {
-    padding: 15px;
+    padding: 5px;
+    max-width: 280px;
+    min-width: unset;
+  }
+
+  #fullname {
+    font-size: 20px !important;
+  }
+
+  input[type="email"],
+  input[type="tel"],
+  input[type="text"],
+  textarea {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+  .preview-field {
+    font-size: 14px;
+    padding: 4px 0 !important;
+  }
+
+  .preview-field::placeholder {
+    font-size: 12px;
+  }
+
+  label {
+    font-size: 12px;
   }
 
   .account_settings h2,
   .events_created_section h2 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .event-title {
-    font-size: 14px;
-  }
-
-  .event-meta {
     font-size: 12px;
   }
 
-  .event-status {
+  .event-meta {
     font-size: 10px;
-    padding: 3px 8px;
+  }
+
+  .event-status {
+    font-size: 9px;
+    padding: 2px 6px;
   }
 
   .card-popup {
-    width: 90vw;
-    height: 80vh;
+    width: 95vw;
+    height: 85vh;
   }
 
   .poupup-event-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .event-description {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .create-events-button {
-    font-size: 1rem;
-    padding: 0.8em 1.5em;
+    font-size: 0.9rem;
+    padding: 0.7em 1.2em;
   }
 
   .edit_button {
-    width: auto;
-    min-width: 160px;
-    max-width: none;
+    min-width: 140px;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .edit-field {
+    margin-bottom: 12px;
+  }
+
+  .edit-field label {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .edit-field input,
+  .edit-field textarea {
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .edit-field input::placeholder,
+  .edit-field textarea::placeholder {
+    font-size: 12px;
+  }
+
+  .save_button,
+  .change_password_button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .close {
+    font-size: 24px;
+    right: 15px;
+    top: 15px;
   }
 }
 
-/* Fix for very small screens */
 @media screen and (max-width: 360px) {
   .photo_container {
-    height: 180px;
-    width: 180px;
+    height: 100px;
+    width: 100px;
+  }
+
+  .upload_button {
+    width: 30px;
+    height: 30px;
+    padding: 6px;
   }
 
   .fullname_container,
@@ -1459,17 +1593,88 @@ button.close-btn:hover {
   .email_container,
   .mobile_container,
   .bio_container {
-    padding: 10px;
+    padding: 2px;
+    max-width: 200px;
+    min-width: unset;
   }
 
-  .event-thumbnail {
-    height: 150px;
+  #fullname {
+    font-size: 16px !important;
+  }
+
+  input[type="email"],
+  input[type="tel"],
+  input[type="text"],
+  textarea {
+    font-size: 12px;
+    padding: 2px 4px;
+  }
+
+  .preview-field {
+    font-size: 12px;
+    padding: 2px 0 !important;
+  }
+
+  .preview-field::placeholder {
+    font-size: 10px;
+  }
+
+  label {
+    font-size: 10px;
+  }
+
+  .account_settings h2,
+  .events_created_section h2 {
+    font-size: 14px;
   }
 
   .edit_button {
-    width: auto;
-    min-width: 140px;
-    max-width: none;
+    min-width: 80px;
+    font-size: 8px;
+    padding: 4px 8px;
+  }
+
+  .modal-content {
+    width: 98%;
+    padding: 10px;
+  }
+
+  .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .edit-field {
+    margin-bottom: 10px;
+  }
+
+  .edit-field label {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .edit-field input,
+  .edit-field textarea {
+    font-size: 12px;
+    padding: 6px;
+    border-radius: 6px;
+  }
+
+  .edit-field input::placeholder,
+  .edit-field textarea::placeholder {
+    font-size: 10px;
+  }
+
+  .save_button,
+  .change_password_button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+
+  .close {
+    font-size: 20px;
+    right: 10px;
+    top: 10px;
   }
 }
 
@@ -1481,8 +1686,14 @@ button.close-btn:hover {
   }
 
   .photo_container {
-    height: 200px;
-    width: 200px;
+    height: 150px;
+    width: 150px;
+  }
+
+  .upload_button {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
   }
 
   .user_details_container {
