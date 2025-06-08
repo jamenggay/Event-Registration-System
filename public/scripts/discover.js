@@ -8,10 +8,11 @@ function showCarousel() {
 
   carousel.style.display = "block";
   hoverCards.classList.remove("active");
+  hoverCards.style.display = "none"; // Hide the entire hover cards section
 
-  const cards = hoverCards.querySelectorAll(".card-wrap");
-  cards.forEach((card) => {
-    card.style.display = "block";
+  // Hide all .card-wrap elements globally
+  document.querySelectorAll(".card-wrap").forEach((card) => {
+    card.style.display = "none";
   });
 
   carousel?.scrollIntoView({ behavior: "smooth" });
@@ -20,6 +21,17 @@ function showCarousel() {
 window.showCarousel = showCarousel;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Ensure only carousel is visible on load
+  const hoverCardsSection = document.getElementById("hover-cards-section");
+  const carouselSection = document.getElementById("carousel-section");
+  if (hoverCardsSection) {
+    hoverCardsSection.classList.remove("active");
+    hoverCardsSection.style.display = "none";
+  }
+  if (carouselSection) {
+    carouselSection.style.display = "block";
+  }
+
   const carousellTrack = document.getElementById("carousell-trackID");
   const eventDetails = document.getElementById("event-details")
   const app = document.getElementById("app");
@@ -140,19 +152,24 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? `<span class="event-date">${startDateTime[currentIndex].formattedDate} - ${endTime[currentIndex].endTime}</span>`
           : `<span class="event-date">${startDateTime[currentIndex].formattedDate} - ${endDateTime[currentIndex].formattedDate}</span>`;
 
-        article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
 
         article.innerHTML = `
-    <button class="close-btn" onclick="closePopup()">&times;</button>
-    <div class="popup-event-content">
-      ${eventDateHTML}
-      <div class="popup-event-title">${event.eventName}</div>
-      <div class="popup-event-category">${event.category}</div>
-      <div class="popup-event-description">${event.description}</div>
-      <div class="popup-event-location">Location: <i>${event.location}</i></div>
-      <button class="popup-register-button" ${isUserCreated ? `onclick="window.location.href='/event/${event.eventID}'"` : ''} data-event-id="${event.eventID}">
-        ${buttonText}
-      </button>
+    <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+              <span class="popup-event-date">${eventDateHTML}</span>
+              <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
+      </div>
+      
+      <div class="card-content theme-${event.themeIndex}">
+        <div class="popup-event-title">${event.eventName}</div>
+        <div class="popup-event-category category-${event.category}" style="color: var(--category-color-${event.category});">${event.category}</div>
+        <div class="popup-event-description">${event.description}</div>
+        <div class="popup-event-location">Location: <i>${event.location}</i></div>
+        <div class="card-actions">
+        <button class="popup-register-button" ${isUserCreated ? `onclick=\"window.location.href='/event/${event.eventID}'\"` : ''} data-event-id="${event.eventID}">
+          ${buttonText}
+        </button>
+        </div>
     </div>
 
     <div class="cancel-popup-overlay"></div>
@@ -165,6 +182,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       </div>
   `;
+        // Attach close button event
+        const closeBtn = article.querySelector('.close-btn');
+        if (closeBtn) closeBtn.addEventListener('click', closePopup);
 
         if (!isUserCreated && !registrationStatus) {
           const popupRegBtn = article.querySelector('.popup-register-button');
@@ -240,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       app.appendChild(div3);
 
       div3.querySelector('.card-wrap').addEventListener('click', () => {
-        article.style = `background: url('${event.featureImage}') center/cover no-repeat;`;
+      
 
         // Always get the latest registration status from window.eventStatusMap
         const registrationStatus = window.eventStatusMap[event.eventID];
@@ -256,16 +276,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (buttonText == 'Manage Event') {
 
           article.innerHTML = `
-    <button class="close-btn" onclick="closePopup()">&times;</button>
-    <div class="popup-event-content">
-      ${eventDateHTML}
+    <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+              <span class="popup-event-date">${eventDateHTML}</span>
+              <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
+      </div>
+    <div class="card-content theme-${event.themeIndex}">
       <div class="popup-event-title">${event.eventName}</div>
-      <div class="popup-event-category">${event.category}</div>
+      <div class="popup-event-category category-${event.category}" style="color: var(--category-color-${event.category});">${event.category}</div>
       <div class="popup-event-description">${event.description}</div>
       <div class="popup-event-location">Location: <i>${event.location}</i></div>
+      <div class="card-actions">
       <button class="popup-register-button" onclick="window.location.href='/event/${event.eventID}'" data-event-id="${event.eventID}">
       ${buttonText}
     </button>
+    </div>
     </div>
 
     <div class="cancel-popup-overlay"></div>
@@ -278,21 +303,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       </div>
   `;
+          // Attach close button event
+          const closeBtn = article.querySelector('.close-btn');
+          if (closeBtn) closeBtn.addEventListener('click', closePopup);
 
         }
         else {
 
           article.innerHTML = `
-    <button class="close-btn" onclick="closePopup()">&times;</button>
-    <div class="popup-event-content">
-      ${eventDateHTML}
+    <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+              <span class="popup-event-date">${eventDateHTML}</span>
+              <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
+      </div>
+     <div class="card-content theme-${event.themeIndex}">
       <div class="popup-event-title">${event.eventName}</div>
-      <div class="popup-event-category">${event.category}</div>
+      <div class="popup-event-category category-${event.category}" style="color: var(--category-color-${event.category});">${event.category}</div>
       <div class="popup-event-description">${event.description}</div>
       <div class="popup-event-location">Location: <i>${event.location}</i></div>
+      <div class="card-actions">
       <button class="popup-register-button" data-event-id="${event.eventID}">
       ${buttonText}
     </button>
+    </div>
     </div>
 
     <div class="cancel-popup-overlay"></div>
@@ -305,6 +338,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       </div>
   `;
+          // Attach close button event
+          const closeBtn = article.querySelector('.close-btn');
+          if (closeBtn) closeBtn.addEventListener('click', closePopup);
 
           const popupRegBtn = article.querySelector('.popup-register-button');
           if (popupRegBtn) {
@@ -615,10 +651,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const hoverSection = document.getElementById("hover-cards-section");
       const carouselSection = document.getElementById("carousel-section");
       hoverSection.classList.add("active");
+      hoverSection.style.display = "block"; // Show the hover cards section
       carouselSection.style.display = "none";
 
-      const cards = hoverSection.querySelectorAll(".card-wrap");
-      cards.forEach((card) => {
+      // Show only the relevant .card-wrap elements
+      document.querySelectorAll(".card-wrap").forEach((card) => {
         const cardCategory = card.dataset.category;
         window.cardCategory = cardCategory;
         card.style.display = cardCategory === selectedCategory ? "block" : "none";
@@ -639,7 +676,6 @@ function openPopup() {
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
-window.closePopup = openPopup;
 
 function closePopup() {
   overlay.classList.remove('active');

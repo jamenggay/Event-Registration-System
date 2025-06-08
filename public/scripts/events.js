@@ -90,38 +90,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let formattedDate = event.formattedStartDateTime.split(",")[0];
 
-      // if (yearPassed) {
-      //   if (event.sameDay == "True") {
-      //     formattedDate = `${event.formattedStartDateTime.split(",")[0]
-      //       }, ${endYear}`;
-      //   } else if (event.sameMonth == "True") {
-      //     const startDay = event.formattedStartDateTime.split(",")[0];
-      //     const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
-      //     formattedDate = `${startDay} - ${endDay}, ${endYear}`;
-      //   } else if (event.sameYear == "True") {
-      //     const start = event.formattedStartDateTime.split(",")[0];
-      //     const end = event.formattedEndDateTime.split(",")[0];
-      //     formattedDate = `${start} - ${end}, ${endYear}`;
-      //   } else {
-      //     const start = event.formattedStartDateTime.split(",")[0];
-      //     const end = event.formattedEndDateTime.split(",")[0];
-      //     formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
-      //   }
-      // } else if (event.sameDay == "True") {
-      //   formattedDate = event.formattedStartDateTime.split(",")[0];
-      // } else if (event.sameMonth == "True") {
-      //   const startDay = event.formattedStartDateTime.split(",")[0];
-      //   const endDay = event.formattedEndDateTime.split(",")[0].split(" ")[1];
-      //   formattedDate = `${startDay}`;
-      // } else if (event.sameYear == "True") {
-      //   const start = event.formattedStartDateTime.split(",")[0];
-      //   const end = event.formattedEndDateTime.split(",")[0];
-      //   formattedDate = `${start} - ${end}`;
-      // } else {
-      //   const start = event.formattedStartDateTime.split(",")[0];
-      //   const end = event.formattedEndDateTime.split(",")[0];
-      //   formattedDate = `${start}, ${startYear} - ${end}, ${endYear}`;
-      // }
 
       let formattedDay;
 
@@ -263,6 +231,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
             </div>
 
           <div class="card-content theme-${event.themeIndex}">
@@ -488,6 +457,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
             </div>
 
             <div class="card-content theme-${event.themeIndex}">
@@ -499,6 +469,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
             </div>
           </article>`;
+          
         } else {
           overlay.innerHTML = `
         <article class="card-popup">
@@ -506,6 +477,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
+              <div class="scroll-down-indicator">Scroll down ↓</div>
             </div>
           
 
