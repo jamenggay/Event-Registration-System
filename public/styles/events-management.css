@@ -2886,6 +2886,10 @@ h3 {
     box-shadow: 0 4px 8px rgba(0, 117, 187, 0.2);
 }
 
+.save-button:disabled {
+    cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
     .modal-footer {
         padding: 0.75rem;
