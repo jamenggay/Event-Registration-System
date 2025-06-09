@@ -8,17 +8,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <link rel="stylesheet" href="../styles/events-management.css">
-    <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
-    <script src="../scripts/footer.js"></script>
-    <script src="../scripts/header.js"></script>
-    <script src="../scripts/events-management.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="/styles/alert-toast.css">
+    <link rel="stylesheet" href="/styles/preloader.css">
+    <link rel="stylesheet" href="/styles/events-management.css">
+    <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+    
 </head>
-<body>
-    <header>
-        <div id="header"></div>
-    </header>
+<body class="loading">
+ 
+<div id="preloader">
+  <img class="preloader-bg" src="/assets/images/preloader-bg.png"/>
+  <div class="spinner"></div>
+</div>
+<header>
+    <div id="header"></div>
+  </header>
+
+    <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
 
     <div class="tab-wrapper">
         <div class="tab-navigation">
@@ -28,9 +36,10 @@
         </div>
 
         <div class="tab-content">
+             <!-- Overview Tab - Handled within events-management.js -->
             <div class="tab-pane active" id="overview">
                 <h1>Overview</h1>
-
+                <!-- Content dynamically populated by displayEventData() -->
                 <div class="overview-container">
                     <div class="illustration-container">
                         <div class="illustration">
@@ -63,7 +72,7 @@
                             
                             <div class="event_location">
                                 <div class="icon-heading">
-                                    <img src="../assets/icons/location-icon.png" class="icon-flex">
+                                    <img src="/assets/icons/location-icon.png" class="icon-flex">
                                     <h3>Location: </h3> 
                                     <p class="location-text"></p>
                                 </div>
@@ -72,7 +81,7 @@
 
                         <div class="event_description">
                             <div class="icon-heading">
-                                <img src="../assets/icons/description-icon.png" class="icon-flex">
+                                <img src="/assets/icons/description-icon.png" class="icon-flex">
                                 <h3>Description: </h3>
                                 <p class="description-text"></p>
                             </div>
@@ -80,7 +89,7 @@
 
                         <div class="event_category">
                             <div class="icon-heading">
-                                <img src="../assets/icons/category-icon.png" class="icon-flex">
+                                <img src="/assets/icons/category-icon.png" class="icon-flex">
                                 <h3>Category: </h3>
                                 <p class="category-text"></p>
                             </div>
@@ -88,7 +97,7 @@
 
                         <div class="event_feedback">
                             <div class="icon-heading">
-                                <img src="../assets/icons/feedback-icon.png" class="icon-flex">
+                                <img src="/assets/icons/feedback-icon.png" class="icon-flex">
                                 <h3>Feedback Link: </h3>
                                 <p class="feedback-link"></p>
                             </div>
@@ -98,14 +107,14 @@
                             <h3>Event Options</h3>
                             <div class="event_approval_capacity">
                                 <div class="icon-heading">
-                                    <img src="../assets/icons/approval-icon.png" class="icon-flex">
+                                    <img src="/assets/icons/approval-icon.png" class="icon-flex">
                                     <h3>Approval Required: </h3>
                                     <p class="approval-status"></p>
                                 </div>
                             </div>
                             <div class="event_approval_capacity">
                                 <div class="icon-heading">
-                                    <img src="../assets/icons/capacity-icon.png" class="icon-flex">
+                                    <img src="/assets/icons/capacity-icon.png" class="icon-flex">
                                     <h3>Maximum Capacity: </h3>
                                     <p class="capacity-text"></p>
                                 </div>
@@ -126,7 +135,7 @@
                     </button>
                 </div>
             </div>
-
+             <!-- Guest List Tab - Handled within events-management.js -->
             <div class="tab-pane" id="guest">
                 <h1>Guest List</h1>
                 <div class="search-container">
@@ -136,7 +145,7 @@
                 <!-- Handled within events-management.js -->
             </div>
 
-
+             <!-- Check-in Tab - Handled within events-management.js -->
             <div class="tab-pane" id="check-in">
                 <h1>Check In</h1>
                 <div class="search-container">
@@ -318,6 +327,15 @@
             <button class="confirm-btn">Delete Event</button>
         </div>
     </div>
+
+    
+
+  <script src="/scripts/preloader.js"></script>
+  <script src="/scripts/footer.js"></script>
+    <script src="/scripts/header.js"></script>
+    <script type="module" src="/scripts/events-management.js"></script>
+    <script type="module" src="/scripts/alert-toast.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </body>
 </html>
     

@@ -1,21 +1,30 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dalo</title>
-  <link rel="stylesheet" href="/styles/create-events.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
+  <link rel="stylesheet" href="/styles/alert-toast.css">
+  <link rel="stylesheet" href="/styles/preloader.css">
+  <link rel="stylesheet" href="../styles/create-events.css" />
   <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
-  <script src="/scripts/header.js"></script>
-  <script src="/scripts/footer.js"></script>
-  <script src="/scripts/create-events.js" defer></script>
 </head>
+
 <body>
+  <div id="preloader">
+    <img class="preloader-bg" src="/assets/images/preloader-bg.png" />
+    <div class="spinner"></div>
+  </div>
   <header>
     <div id="header"></div>
   </header>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <div class="event_info">
     <div class="illustration_container">
@@ -29,10 +38,10 @@
         <button type="button" class="upload_button">Upload Photo</button>
       </div>
     </div>
-    
+
     <div class="event_details">
       <form id="eventForm" enctype="multipart/form-data">
-        <input type="file" id="imageUpload" name="event-image" accept="image/*" style="display: none;"/>
+        <input type="file" id="imageUpload" name="event-image" accept="image/*" style="display: none;" />
         <input type="hidden" name="event-name" id="hiddenEventName">
         <div class="event_name-wrapper">
           <h1 class="event_name" contenteditable="true">Event Name</h1>
@@ -60,10 +69,9 @@
           </div>
           <div class="event_location" onclick="openLocationModal()">
             <div class="icon-heading">
-              <img src="/assets/icons/location-icon.png" class="icon-flex">
+              <img src="../assets/icons/location-icon.png" class="icon-flex">
               <h3>Event Location</h3>
             </div>
-            <br>
             <p>Offline location or virtual link</p>
           </div>
           <div id="locationModal" class="modal">
@@ -77,7 +85,7 @@
         </div>
         <div class="event_description" onclick="openDescriptionModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/description-icon.png" class="icon-flex">
+            <img src="../assets/icons/description-icon.png" class="icon-flex">
             <h3>Description</h3>
           </div>
           <p>Add description here</p>
@@ -86,13 +94,14 @@
           <div class="modal-content">
             <span class="close" onclick="closeDescriptionModal()">&times;</span>
             <h2>Add Event Description</h2>
-            <textarea id="descriptionText" name="event-description" placeholder="Type your event description here..."></textarea>
+            <textarea id="descriptionText" name="event-description"
+              placeholder="Type your event description here..."></textarea>
             <button type="button" onclick="saveDescription()">Save</button>
           </div>
         </div>
         <div class="event_category">
           <div class="icon-heading">
-            <img src="/assets/icons/category-icon.png" class="icon-flex">
+            <img src="../assets/icons/category-icon.png" class="icon-flex">
             <h3>Event Category</h3>
           </div>
           <select name="event-category" id="event-category" required>
@@ -108,7 +117,7 @@
         </div>
         <div class="event_feedback" onclick="openFeedbackModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/feedback-icon.png" class="icon-flex">
+            <img src="../assets/icons/feedback-icon.png" class="icon-flex">
             <h3>Feedbank Link</h3>
           </div>
           <p>Click to add feedback link</p>
@@ -126,10 +135,10 @@
         </div>
         <div class="event_approval">
           <div class="event_approval_capacity">
-            <div class="icon-heading">
-              <img src="/assets/icons/approval-icon.png" class="icon-flex">
-              <h3>Require Approval</h3>
-            </div>
+            <span class="label-content">
+              <img src="../assets/icons/approval-icon.png" class="icon-flex">
+              <span>Require Approval</span>
+            </span>
             <div class="toggle-wrapper">
               <label class="toggle-label">
                 <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
@@ -140,7 +149,7 @@
         </div>
         <div class="event_capacity" onclick="openCapacityModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/capacity-icon.png" class="icon-flex">
+            <img src="../assets/icons/capacity-icon.png" class="icon-flex">
             <h3>Maximum Capacity</h3>
           </div>
           <p>Click to set the maximum capacity for your event.</p>
@@ -172,93 +181,15 @@
     </div>
   </div>
 
+  
   <footer>
     <div id="footer"></div>
   </footer>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const eventForm = document.getElementById('eventForm')
-
-    eventForm.addEventListener('submit', async (e) => {
-      e.preventDefault()
-
-      if (!document.getElementById('imageUpload').files || document.getElementById('imageUpload').files.length === 0) {
-        alert("Please upload an image.");
-        return
-      }
-
-      const rawFeatureImage = document.getElementById('imageUpload').files[0]
-
-      const getBase64 = rawFeatureImage => new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(rawFeatureImage);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = reject;
-      });
-
-      const featureImage = await getBase64(rawFeatureImage)
-      const imageFileName = rawFeatureImage.name.replace(/\.[^/.]+$/, '')
-      const imageFileExtension = rawFeatureImage.name.split('.').pop().toLowerCase()
-
-      const rawEventName = document.querySelector('.event_name');
-      const eventName = document.getElementById('hiddenEventName');
-      eventName.value = rawEventName.textContent.trim();
-
-      const startDate = document.getElementById('start-date').value
-      const startTime = document.getElementById('start-time').value
-      const endDate   = document.getElementById('end-date').value
-      const endTime   = document.getElementById('end-time').value
-
-      const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
-      const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
-      const requireApproval = document.getElementById('require-approval').value === 'on' ? 'Yes' : 'No'
-      const waitlistToggle  = document.getElementById('waitlistToggle').value === 'on' ? 'Yes' : 'No'
-      const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
-
-      const eventData = {
-        base64FeatureImage  : featureImage,
-        imageFileName       : imageFileName,
-        imageFileExtension  : imageFileExtension,
-        eventName           : eventName.value,
-        startDateTime       : startDateTime,
-        endDateTime         : endDateTime,
-        location            : document.getElementById('locationText').value,
-        description         : document.getElementById('descriptionText').value,
-        category            : document.getElementById('event-category').value,
-        feedback            : document.getElementById('feedbackLinkText').value,
-        requireApproval     : requireApproval,
-        capacity            : document.getElementById('capacityInput').value,
-        allowWaitlist       : waitlistToggle, 
-        lastUpdated         : lastUpdated,
-        themeIndex          : window.eventData.themeIndex || 1
-      }
-
-      try { 
-        const response = await fetch("/create-events", {
-          method: 'POST',
-          headers: { 'Content-Type' : 'application/json' },
-          body: JSON.stringify(eventData)
-        })
-
-        if (response.ok) {
-          const result = await response.json()
-          console.log("Server Success: ", result)
-          alert("Event creation success")
-          window.location.href = "/events"
-        }
-        else if (response.status == 401) {
-          const result = await response.json();
-          console.error('Server Failed:', result);
-          alert("Please log in first.")
-          window.location.href = "/login"
-        }
-      }
-      catch (e) {
-        console.log("Client Error: ", e)
-        alert("An error occurred while creating the event");
-      }
-    })
-    })
-  </script>
+  <script src="/scripts/preloader.js"></script>
+  <script src="../scripts/header.js"></script>
+  <script src="../scripts/footer.js"></script>
+  <script type="module" src="../scripts/create-events.js" defer></script>
+  <script type="module" src="/scripts/alert-toast.js"></script>
 </body>
+
 </html>
