@@ -3226,22 +3226,54 @@ h3 {
     }
 
     .guest-toggle-wrapper {
-        width: 150px;
-        height: 34px;
+        width: 130px;
+        height: 30px;
+        margin: 0 auto;
     }
 
     .guest-toggle-wrapper label {
-        font-size: 0.9rem;
-        padding: 6px 0;
+        font-size: 0.8rem;
+        padding: 4px 0;
+        width: 65px;
     }
 
     .guest-toggle-wrapper .slider {
-        width: 72px;
-        height: 26px;
+        width: 62px;
+        height: 22px;
+        top: 4px;
+    }
+
+    .guest-toggle-wrapper.active-neutral .slider {
+        left: 50px;
+        width: 22px;
     }
 
     .guest-toggle-wrapper.active-right .slider {
-        left: 74px;
+        left: 66px;
+        width: 62px;
+    }
+
+    /* Toggle switch adjustments for iPad */
+    .toggle-wrapper {
+        transform: scale(1);
+    }
+
+    .toggle-input {
+        width: 50px;
+        height: 26px;
+    }
+
+    .toggle-label {
+        font-size: 0.9rem;
+    }
+
+    .toggle-slider {
+        height: 26px;
+    }
+
+    .toggle-slider:before {
+        height: 22px;
+        width: 22px;
     }
 
     .modal-content {
@@ -3260,172 +3292,6 @@ h3 {
     .event_name {
         font-size: 1.1rem;
         padding: 0.75rem;
-    }
-
-    input[type="text"],
-    input[type="url"],
-    textarea,
-    select {
-        padding: 0.75rem;
-        font-size: 1rem;
-    }
-
-    /* Modal adjustments for iPad */
-    .modal {
-        padding: 1rem;
-    }
-
-    .modal-content {
-        width: 90%;
-        max-width: 600px;
-        margin: 1rem auto;
-        border-radius: 16px;
-    }
-
-    .modal-header {
-        padding: 1rem 1.5rem;
-    }
-
-    .modal-header h2 {
-        font-size: 1.5rem;
-    }
-
-    .close-modal {
-        width: 32px;
-        height: 32px;
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-    }
-
-    .event_info {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    .illustration_container {
-        width: 100%;
-        max-width: 300px;
-        margin: 0 auto;
-    }
-
-    .illustration {
-        width: 100%;
-        height: 200px;
-        border-radius: 12px;
-        object-fit: cover;
-    }
-
-    .illustration_controls {
-        margin-top: 1rem;
-        gap: 1rem;
-    }
-
-    .upload_button {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-    }
-
-    .event_details {
-        width: 100%;
-        gap: 1.5rem;
-    }
-
-    .event_name {
-        font-size: 1.5rem;
-        padding: 0.75rem;
-    }
-
-    .date-time-input {
-        gap: 1rem;
-    }
-
-    .date-time-input input {
-        padding: 0.75rem;
-        font-size: 1rem;
-    }
-
-    .icon-heading {
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .icon-heading img {
-        width: 24px;
-        height: 24px;
-    }
-
-    .icon-heading h3 {
-        font-size: 1.125rem;
-    }
-
-    input[type="text"],
-    textarea {
-        padding: 0.75rem;
-        font-size: 1rem;
-        border-radius: 8px;
-    }
-
-    textarea {
-        min-height: 120px;
-    }
-
-    .event_option {
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .event_option h3 {
-        font-size: 1.125rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .event_approval_capacity {
-        padding: 1rem;
-        gap: 1rem;
-    }
-
-    .event_approval_capacity input[type="number"] {
-        width: 100px;
-        padding: 0.75rem;
-        font-size: 1rem;
-    }
-
-    .modal-footer {
-        padding: 1.5rem;
-        gap: 1rem;
-    }
-
-    .cancel-button,
-    .save-button {
-        padding: 0.75rem 2rem;
-        font-size: 1.125rem;
-        min-width: 120px;
-    }
-
-    /* Toggle switch adjustments for iPad */
-    .toggle-wrapper {
-        transform: scale(1.2);
-    }
-
-    .toggle-input {
-        width: 60px;
-        height: 30px;
-    }
-
-    .toggle-label {
-        font-size: 1rem;
-    }
-
-    .toggle-slider {
-        height: 30px;
-    }
-
-    .toggle-slider:before {
-        height: 26px;
-        width: 26px;
     }
 }
 
