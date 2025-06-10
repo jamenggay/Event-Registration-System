@@ -670,6 +670,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         card.style.display = cardCategory === selectedCategory ? "block" : "none";
       });
 
+    
+
       hoverSection.scrollIntoView({ behavior: "smooth" });
       attachCardHoverListeners();
     });

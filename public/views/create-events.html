@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> 
   <link rel="stylesheet" href="/styles/alert-toast.css">
   <link rel="stylesheet" href="/styles/preloader.css">
-  <link rel="stylesheet" href="/styles/create-events.css" />
+  <link rel="stylesheet" href="../styles/create-events.css" />
   <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
   <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
@@ -69,7 +69,7 @@
           </div>
           <div class="event_location" onclick="openLocationModal()">
             <div class="icon-heading">
-              <img src="/assets/icons/location-icon.png" class="icon-flex">
+              <img src="../assets/icons/location-icon.png" class="icon-flex">
               <h3>Event Location</h3>
             </div>
             <p>Offline location or virtual link</p>
@@ -85,7 +85,7 @@
         </div>
         <div class="event_description" onclick="openDescriptionModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/description-icon.png" class="icon-flex">
+            <img src="../assets/icons/description-icon.png" class="icon-flex">
             <h3>Description</h3>
           </div>
           <p>Add description here</p>
@@ -101,7 +101,7 @@
         </div>
         <div class="event_category">
           <div class="icon-heading">
-            <img src="/assets/icons/category-icon.png" class="icon-flex">
+            <img src="../assets/icons/category-icon.png" class="icon-flex">
             <h3>Event Category</h3>
           </div>
           <select name="event-category" id="event-category" required>
@@ -117,7 +117,7 @@
         </div>
         <div class="event_feedback" onclick="openFeedbackModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/feedback-icon.png" class="icon-flex">
+            <img src="../assets/icons/feedback-icon.png" class="icon-flex">
             <h3>Feedbank Link</h3>
           </div>
           <p>Click to add feedback link</p>
@@ -135,23 +135,21 @@
         </div>
         <div class="event_approval">
           <div class="event_approval_capacity">
-            <div class="require_approval">
-              <span class="label-content">
-                <img src="/assets/icons/approval-icon.png" class="icon-flex">
-                <span>Require Approval</span>
-              </span>
-              <div class="toggle-wrapper">
-                <label class="toggle-label">
-                  <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
+            <span class="label-content">
+              <img src="../assets/icons/approval-icon.png" class="icon-flex">
+              <span>Require Approval</span>
+            </span>
+            <div class="toggle-wrapper">
+              <label class="toggle-label">
+                <input type="checkbox" id="require-approval" class="toggle-input" name="require-approval" />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
           </div>
         </div>
         <div class="event_capacity" onclick="openCapacityModal()">
           <div class="icon-heading">
-            <img src="/assets/icons/capacity-icon.png" class="icon-flex">
+            <img src="../assets/icons/capacity-icon.png" class="icon-flex">
             <h3>Maximum Capacity</h3>
           </div>
           <p>Click to set the maximum capacity for your event.</p>
@@ -188,9 +186,9 @@
     <div id="footer"></div>
   </footer>
   <script src="/scripts/preloader.js"></script>
-  <script src="/scripts/header.js"></script>
-  <script src="/scripts/footer.js"></script>
-  <script type="module" src="/scripts/create-events.js" defer></script>
+  <script src="../scripts/header.js"></script>
+  <script src="../scripts/footer.js"></script>
+  <script type="module" src="../scripts/create-events.js" defer></script>
   <script type="module" src="/scripts/alert-toast.js"></script>
 </body>
 

@@ -388,25 +388,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     const result = await response.json()
-                    console.log("Backend Sucess: ", result)
-                    toastData.success.message = 'Event deleted successfully.';
+                    console.log("Backend Sucess: ", result);
+                    toastData.success.message = 'Event deleted successfully!';
                     showToast('success');
                     closeModalHandler(deleteModal);
-                    setTimeout(() => {
-
-                    window.location.href = '/user-profile'
-                    }, 2500);
+                    window.location.href = '/events'
                 }
                 else {
-                    toastData.danger.message = 'Failed to delete event';
-                    showToast('danger');
                     const error = await response.json()
                     console.log("Backend Sucess: ", error)
                 }
             }
             catch (error) {
                 console.error('Client Error:', error);
-                toastData.danger.message = 'Failed to delete event';
+                toastData.danger.message = 'Failed to delete event.';
                 showToast('danger');
             }
         });
@@ -447,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         reader.onerror = () => {
                             console.error('Error reading file');
-                            toastData.danger.message = 'Error reading file.';
+                            toastData.message = 'Error reading file.';
                             showToast('danger');
                         }
 
@@ -511,21 +506,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Backend Success: ", result)
-                    toastData.success.message = 'Event details updated.';
+                    toastData.success.message = 'Event updated successfully!';
                     showToast('success');
                     displayEventData(updatedEventData);
                     closeModalHandler(editModal);
                 }
                 else {
-                    toastData.danger.message = 'Failed to update event details';
-                    showToast('danger');
                     const error = await response.json()
+                    toastData.danger.message = 'Failed to update event.';
+                    showToast('danger');
                     console.log("Backend Failed: ", error)
                 }
             }
             catch (error) {
-                toastData.danger.message = 'Failed to update event details';
-                    showToast('danger');
+                toastData.danger.message = 'Failed to update event.';
+                showToast('danger');
                 console.log("Client Error: ", error)
             }
         });
@@ -860,11 +855,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
 
-                    const isAttending = currentAttendees.some(attendee => attendee.userID === guest.userID); 
-                    let checkInToggleState = 'active-right'; 
+                    const isAttending = currentAttendees.some(attendee => attendee.userID === guest.userID); // Match by userID for reliability
+                    let checkInToggleState = 'active-right'; // Default to neutral or "not attended" visual
                     if (isAttending) {
-                        checkInToggleState = 'active-left';
-                    } 
+                        checkInToggleState = 'active-left'; // "Attended" is on the left
+                    } else {
+                        checkInToggleState = 'active-right'; // "Not Attended" is on the right (or choose 'active-neutral')
+                    }
 
                     guestElement.innerHTML = `
                         <div class="guest-info">
@@ -881,6 +878,75 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     checkinList.appendChild(guestElement);
 
+                    // // Add click event listeners to the toggle buttons
+                    // const checkbox = guestElement.querySelector('.checkin-onoffswitch-checkbox');
+
+                    // checkbox.addEventListener('change', async function(e) {
+                    //     // Toggle between states
+                    //     if (this.checked) {                            
+                    //         const attendanceData = {
+                    //             eventID : eventData.eventID,
+                    //             userID : guest.userID,
+                    //             checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+                    //         }          
+
+                    //         try {
+                    //             const response = await fetch("/checkin-attendee", {
+                    //                 method : 'POST',
+                    //                 headers : { 'Content-Type' : 'application/json' },
+                    //                 body : JSON.stringify(attendanceData)
+                    //             })
+
+                    //             socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                    //             socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+
+                    //             if (response.ok) {
+                    //                 const result = await response.json()
+                    //                 console.log("Backend Success: ", result)
+                    //             }
+                    //             else {
+                    //                 const error = await response.json()
+                    //                 console.log("Backend Failed: ", error)
+                    //             }
+                    //         }
+                    //         catch (e) {
+                    //             console.log("Client Error: ", e)
+                    //         }
+                    //     } 
+                    //     else {
+                    //         const attendanceData = {
+                    //             eventID : eventData.eventID,
+                    //             userID : guest.userID,
+                    //         }
+
+                    //         try {
+                    //             const response = await fetch("/checkin-attendee", {
+                    //                 method : 'DELETE',
+                    //                 headers : { 'Content-Type' : 'application/json' },
+                    //                 body : JSON.stringify(attendanceData)
+                    //             })
+
+                    //             socket.send(JSON.stringify({ type : 'getApprovedGuestsData' }))
+                    //             socket.send(JSON.stringify({ type : 'getAttendeesData' }))
+
+                    //             if (response.ok) {
+                    //                 const result = await response.json()
+                    //                 console.log("Backend Success: ", result)
+                    //             }
+                    //             else if (response.status == 404) {
+                    //                 const result = await response.json()
+                    //                 console.log("Backend Message: ", result)
+                    //             }
+                    //             else {
+                    //                 const error = await response.json()
+                    //                 console.log("Backend Failed: ", error)
+                    //             }
+                    //         }
+                    //         catch (e) {
+                    //             console.log("Client Error: ", e)
+                    //         }
+                    //     }
+                    // });
                 });
 
                 // Add download button functionality
@@ -942,13 +1008,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
              toggleWrapper.classList.remove('active-neutral', 'active-left', 'active-right');
     if (isNowAttending) {
-        toggleWrapper.classList.add('active-left'); // Attended
+        toggleWrapper.classList.add('active-left'); // "Attended"
     } else {
-        toggleWrapper.classList.add('active-right'); // Not Attended 
+        toggleWrapper.classList.add('active-right'); // "Not Attended" 
     }
 
         console.log(`Searching for userID: ${userID} (type: ${typeof userID}) in approvedGuestsData.`);
-    if (approvedGuestsData && approvedGuestsData.length > 0 && approvedGuestsData[0].hasOwnProperty('userID')) { 
+    if (approvedGuestsData && approvedGuestsData.length > 0 && approvedGuestsData[0].hasOwnProperty('userID')) { // Check if property exists
         console.log(`First guest in approvedGuestsData has userID: ${approvedGuestsData[0].userID} (type: ${typeof approvedGuestsData[0].userID})`);
     } else if (approvedGuestsData && approvedGuestsData.length > 0) {
         console.warn("First guest in approvedGuestsData does not have a 'userID' property. Object:", approvedGuestsData[0]);
@@ -956,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("approvedGuestsData is empty or undefined.");
     }
 
-     const guestForEvent = approvedGuestsData.find(g => String(g.userID) === String(userID));
+     const guestForEvent = approvedGuestsData.find(g => String(g.userID) === String(userID)); // Or find in registrationData if more appropriate
     
      if (!guestForEvent) {
         console.error("Guest not found in approvedGuestsData for check-in (userID):", userID);
@@ -969,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // CHECK IN
         const attendanceData = {
             eventID: eventData.eventID,
-            userID: userID, 
+            userID: userID, // Use userID passed to the function
             checkedInAt: new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
         };
 
@@ -986,10 +1052,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Client Error (Check-in): ", e);
         }
     } else {
-      
+        // CHECK OUT (Remove from attendees)
         const attendanceData = {
             eventID: eventData.eventID,
-            userID: userID 
+            userID: userID // Use userID passed to the function
         };
         try {
             const response = await fetch("/checkin-attendee", {
@@ -1006,14 +1072,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Refresh relevant data
-    socket.send(JSON.stringify({ type: 'getApprovedGuestsData' })); 
-    socket.send(JSON.stringify({ type: 'getAttendeesData' }));   
+    socket.send(JSON.stringify({ type: 'getApprovedGuestsData' })); // Approved list might not change, but good to be safe
+    socket.send(JSON.stringify({ type: 'getAttendeesData' }));    // Attendees list definitely changes
 };
 
             displayEventData(eventData);
             displayGuestList(registrationData);
             displayCheckInList(approvedGuestsData);
 
-            
+            // Guest Toggle Switch Functionality
+            // function initializeGuestToggles() {
+            //     const toggleWrappers = document.querySelectorAll('.guest-toggle-wrapper');
+
+            //     toggleWrappers.forEach(wrapper => {
+            //         const leftLabel = wrapper.querySelector('label:first-child');
+            //         const rightLabel = wrapper.querySelector('label:last-child');
+
+            //         // Set initial state to neutral
+            //         wrapper.classList.add('active-neutral');
+
+            //         leftLabel.addEventListener('click', () => {
+            //             wrapper.classList.remove('active-neutral', 'active-right');
+            //             wrapper.classList.add('active-left');
+            //         });
+
+            //         rightLabel.addEventListener('click', () => {
+            //             wrapper.classList.remove('active-neutral', 'active-left');
+            //             wrapper.classList.add('active-right');
+            //         });
+
+            //         // Add click outside handler to reset to neutral
+            //         document.addEventListener('click', (e) => {
+            //             if (!wrapper.contains(e.target)) {
+            //                 wrapper.classList.remove('active-left', 'active-right');
+            //                 wrapper.classList.add('active-neutral');
+            //             }
+            //         });
+            //     });
+            // }
+
+            // Call the initialization function when the DOM is loaded
+            // initializeGuestToggles();
         }
     });
