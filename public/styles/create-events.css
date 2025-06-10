@@ -37,7 +37,7 @@ body {
       radial-gradient(circle at 25% 75%, #e4a1a1 0%, transparent 40%),
       radial-gradient(circle at 75% 25%, #b3e0a3 0%, transparent 40%);
     background-size: 200% 200%;
-    animation: popBG 20s ease-in-out infinite;
+    animation: popBG 10s ease-in-out infinite;
     filter: blur(60px);
     opacity: 0.7;
   }

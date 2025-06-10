@@ -148,8 +148,8 @@
     }
 }
 
-.close {
-    background: none;
+.close-toast {
+    background: none; 
     border: none;
     position: absolute;
     right: 10px;

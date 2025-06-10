@@ -50,7 +50,7 @@ function showToast(type) {
   toast.id = currentToastId;
 
   toast.innerHTML = `
-  <button class="close" onclick="hideToast('${currentToastId}')">
+  <button class="close-toast">
     <i class="fa fa-times ${data.closeIcon}"></i>
   </button>
   <i class="start-icon ${data.icon}"></i>
@@ -58,6 +58,8 @@ function showToast(type) {
 `;
 
   container.appendChild(toast);
+
+  toast.querySelector('.close-toast').addEventListener('click', () => hideToast(currentToastId));
 
   setTimeout(() => {
     toast.classList.add("show");

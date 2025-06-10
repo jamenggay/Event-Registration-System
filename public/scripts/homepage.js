@@ -67,12 +67,10 @@ import { toastData, showToast } from "./alert-toast.js";
           let result = await response.json();
         if(result.success){
           
-          toastData.success.message = result.message;
-          showToast('success');
           localStorage.setItem('currentUser', data.userName)
-          setTimeout(() => {
-            window.location.href = "/events"
-          }, 3000);
+    
+            window.location.href = "/events";
+        
           
         }
         else{

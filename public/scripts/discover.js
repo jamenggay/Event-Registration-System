@@ -662,6 +662,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       hoverSection.classList.add("active");
       hoverSection.style.display = "block"; // Show the hover cards section
       carouselSection.style.display = "none";
+      const scrollCategory = document.querySelector(".div8");
 
       // Show only the relevant .card-wrap elements
       document.querySelectorAll(".card-wrap").forEach((card) => {
@@ -672,7 +673,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     
 
-      hoverSection.scrollIntoView({ behavior: "smooth" });
+      scrollCategory.scrollIntoView({ behavior: "smooth" });
       attachCardHoverListeners();
     });
   });

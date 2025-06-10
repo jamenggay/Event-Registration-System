@@ -64,7 +64,7 @@ import { toastData, showToast } from "./alert-toast.js";
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Server Success: ", result)
-                    toastData.success.message = "User profile has been updated.";
+                    toastData.success.message = "User profile updated.";
                     showToast("success");
                 }
                 else {
