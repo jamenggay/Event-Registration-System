@@ -1,80 +1,84 @@
+import { showToast, toastData } from "./alert-toast.js";
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Sample data
-    const eventData = {
-        "allowWaitlist": "Yes",
-        "capacity": 100,
-        "category": "Technology",
-        "description": "Join us in 𝐒𝐩𝐚𝐫𝐤𝐟𝐞𝐬𝐭 𝟐𝟎𝟐𝟓, a hackathon where brilliant minds come together to solve real-world challenges through 𝐜𝐫𝐞𝐚𝐭𝐢𝐯𝐢𝐭𝐲, 𝐜𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐢𝐨𝐧, 𝐚𝐧𝐝 𝐜𝐮𝐭𝐭𝐢𝐧𝐠-𝐞𝐝𝐠𝐞 𝐢𝐧𝐧𝐨𝐯𝐚𝐭𝐢𝐨𝐧.",
-        "endDateTime": "2025-06-07T18:30:00.000Z",
-        "eventID": 29,
-        "eventName": "SparkFest 2025",
-        "featureImage": "/uploads/featureImage/event_sample 5 (1).jpg",
-        "feedbackLink": "https://www.facebook.com/gdg.pupmnl",
-        "lastUpdated": "2025-05-27T20:05:57.747Z",
-        "location": "The Globe Tower, 2608 7th Ave, Taguig, 1634 Metro Manila",
-        "requireApproval": "Yes",
-        "startDateTime": "2025-06-07T08:00:00.000Z"
-    };
+    const eventID = window.location.pathname.split('/').pop()
 
-    const registrationData = [
-        {
-            "eventID": 29,
-            "fullname": "Jamaine Tuazon",
-            "profilePic": "/uploads/profilePic/jamaine_pfp.jpg",
-            "registrationID": 3,
-            "status": "Approved",
-            "userID": 7
-        },
-        {
-            "eventID": 29,
-            "fullname": "Jorge Fuertes",
-            "profilePic": "/uploads/profilePic/jorge_pfp.jpg",
-            "registrationID": 4,
-            "status": "Approved",
-            "userID": 8
-        },
-        {
-            "eventID": 29,
-            "fullname": "Reynald Quijano",
-            "profilePic": "/uploads/profilePic/rey_pfp.jpg",
-            "registrationID": 6,
-            "status": "Declined",
-            "userID": 9
-        },
-        {
-            "eventID": 29,
-            "fullname": "Rishaye Melad",
-            "profilePic": "/uploads/profilePic/rishaye_pfp.jpeg",
-            "registrationID": 9,
-            "status": "Waitlisted",
-            "userID": 10
+    const socket = new WebSocket(`ws://localhost:3000/event/${eventID}`)
+
+    let eventData = null
+    let registrationData = null
+    let approvedGuestsData = null
+    let attendeesData = null
+
+    let hasEventData = false
+    let hasRegistrationData = false
+    let hasApprovedGuestsData = false
+    let hasAttendeesData = false
+
+    function flagData() {
+        if (hasEventData && hasRegistrationData && hasApprovedGuestsData && hasAttendeesData) {
+            setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData);
         }
-    ];
+    }
 
-    const approvedGuestsData = [
-        {
-            "eventID": 29,
-            "fullname": "Jamaine Tuazon",
-            "profilePic": "/uploads/profilePic/jamaine_pfp.jpg",
-            "registrationID": 3,
-            "status": "Approved",
-            "userID": 7
-        },
-        {
-            "eventID": 29,
-            "fullname": "Jorge Fuertes",
-            "profilePic": "/uploads/profilePic/jorge_pfp.jpg",
-            "registrationID": 4,
-            "status": "Approved",
-            "userID": 8
-        }
-    ];
+    socket.addEventListener('open', () => {
+        socket.send(JSON.stringify({ type: 'getEventData' }));
+        socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+        socket.send(JSON.stringify({ type: 'getApprovedGuestsData' }))
+        socket.send(JSON.stringify({ type: 'getAttendeesData' }))
 
-    // Initialize with empty attendees data since it's not provided in the sample
-    const attendeesData = [];
+        socket.addEventListener('message', event => {
+            let data = JSON.parse(event.data)
 
-    // Call setEventManagement directly with the sample data
-    setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData);
+            if (data.type === 'eventData') {
+                if (data.status == 200) {
+                    console.log("Client Selected Event Details: ", data.eventData)
+                    hasEventData = true;
+                    eventData = data.eventData
+                }
+                else if (data.status == 500) {
+                    console.log("Backend Failed: ", data.message, data.error)
+                }
+            }
+            else if (data.type === 'registrationData') {
+                if (data.status == 200) {
+                    console.log("Client Registrants Details: ", data.registrationData)
+                    hasRegistrationData = true;
+
+                    let pendingGuests = data.registrationData.filter(guest => guest.status == 'Pending' || guest.status == 'Approved' || guest.status == 'Declined')
+                    pendingGuests.sort((a, b) => b.registrationID - a.registrationID)
+
+                    let waitlistedGuests = data.registrationData.filter(guest => guest.status == 'Waitlisted')
+                    registrationData = [...pendingGuests, ...waitlistedGuests]
+                }
+                else if (data.status == 500) {
+                    console.log("Backend Failed: ", data.message, data.error)
+                }
+            }
+            else if (data.type == 'approvedGuestsData') {
+                if (data.status == 200) {
+                    console.log("Client Approved Guests Details: ", data.approvedGuestsData)
+                    hasApprovedGuestsData = true;
+                    approvedGuestsData = data.approvedGuestsData
+                }
+                else if (data.status == 500) {
+                    console.log("Backend Failed: ", data.message, data.error)
+                }
+            }
+            else if (data.type == 'attendeesData') {
+                if (data.status == 200) {
+                    console.log("Client Attendees Details: ", data.attendeesData)
+                    hasAttendeesData = true;
+                    attendeesData = data.attendeesData
+                }
+                else if (data.status == 500) {
+                    console.log("Backend Failed: ", data.message, data.error)
+                }
+            }
+
+            flagData()
+        })
+    })
 
     async function setEventManagement(eventData, registrationData, approvedGuestsData, attendeesData) {
         //Event Tab Handling
@@ -98,11 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.dataset.tab;
-                
+
                 // Remove active class from all buttons and panes
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabPanes.forEach(pane => pane.classList.remove('active'));
-                
+
                 // Add active class to clicked button and corresponding pane
                 button.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
@@ -124,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     minute: 'numeric',
                     hour12: true
                 });
-            } 
+            }
             catch (error) {
                 console.error('Error formatting date:', error);
                 return 'Invalid date';
@@ -146,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     date: dateTimeObj.toISOString().split('T')[0],
                     time: dateTimeObj.toTimeString().slice(0, 5)
                 };
-            } 
+            }
             catch (error) {
                 console.error('Error parsing date:', error);
                 return { date: '', time: '' };
@@ -165,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const eventImage = document.getElementById('eventImage');
                     eventImage.src = eventData.featureImage;
 
-                    eventImage.onerror =  function() {
+                    eventImage.onerror = function () {
                         this.onerror = null; // prevent infinite loop if fallback fails
                         this.src = "../assets/icons/profile-icon.jpeg";
                     };
@@ -207,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const capacityText = document.querySelector('.capacity-text');
                 const waitlistStatus = document.querySelector('.waitlist-status');
-            
+
                 if (eventData.capacity == 0) {
                     capacityText.textContent = ``;
                     waitlistStatus.textContent =
@@ -215,10 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else if (eventData.capacity) {
                     capacityText.textContent = `${eventData.capacity}`;
-                    waitlistStatus.textContent = 
+                    waitlistStatus.textContent =
                         `Waitlist: ${eventData.allowWaitlist === 'Yes' ? 'Enabled' : 'Disabled'}`;
                 }
-            } 
+            }
             catch (error) {
                 console.error('Error displaying event data:', error);
             }
@@ -248,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('category').value = currentEventData.category || '';
                 document.getElementById('feedbackLink').value = currentEventData.feedbackLink || '';
                 document.getElementById('max_capacity').value = currentEventData.capacity || '';
-                
+
                 document.getElementById('require_approval').checked = currentEventData.requireApproval
                 document.getElementById('over_capacity_waitlist').checked = currentEventData.waitlist
 
@@ -261,22 +265,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error populating modal form:', error);
             }
         };
-    
+
         const saveChangesButton = document.getElementById('save-changes-btn');
-        
-        const eventFormFields = [ 
-            {   new : document.getElementById('eventName'),     original : eventData.eventName },
-            {   new : document.getElementById('startDate'),     original : new Date(eventData.startDateTime).toISOString().split('T')[0] },      
-            {   new : document.getElementById('startTime'),     original : new Date(eventData.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
-            {   new : document.getElementById('endDate'),       original : new Date(eventData.endDateTime).toISOString().split('T')[0] },        
-            {   new : document.getElementById('endTime'),       original : new Date(eventData.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
-            {   new : document.getElementById('location'),      original : eventData.location },
-            {   new : document.getElementById('description'),   original : eventData.description },
-            {   new : document.getElementById('category'),      original : eventData.category },
-            {   new : document.getElementById('feedbackLink'),  original : eventData.feedbackLink },
-            {   new : document.getElementById('max_capacity'),  original : eventData.capacity },
-            {   new : document.getElementById('require_approval'), original : eventData.requireApproval === 'Yes' ? true : false, isCheckbox : true },
-            {   new : document.getElementById('over_capacity_waitlist'), original : eventData.allowWaitlist === 'Yes' ? true : false, isCheckbox : true }
+
+        const eventFormFields = [
+            { new: document.getElementById('eventName'), original: eventData.eventName },
+            { new: document.getElementById('startDate'), original: new Date(eventData.startDateTime).toISOString().split('T')[0] },
+            { new: document.getElementById('startTime'), original: new Date(eventData.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+            { new: document.getElementById('endDate'), original: new Date(eventData.endDateTime).toISOString().split('T')[0] },
+            { new: document.getElementById('endTime'), original: new Date(eventData.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' }) },
+            { new: document.getElementById('location'), original: eventData.location },
+            { new: document.getElementById('description'), original: eventData.description },
+            { new: document.getElementById('category'), original: eventData.category },
+            { new: document.getElementById('feedbackLink'), original: eventData.feedbackLink },
+            { new: document.getElementById('max_capacity'), original: eventData.capacity },
+            { new: document.getElementById('require_approval'), original: eventData.requireApproval === 'Yes' ? true : false, isCheckbox: true },
+            { new: document.getElementById('over_capacity_waitlist'), original: eventData.allowWaitlist === 'Yes' ? true : false, isCheckbox: true }
         ]
 
         eventFormFields.forEach(data => {
@@ -284,9 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             data.new.addEventListener(eventType, () => {
                 // use String() to convert non-string values 
-                const hasChanges = eventFormFields.some(item => { 
+                const hasChanges = eventFormFields.some(item => {
                     const currentValue = item.isCheckbox === true ? item.new.checked : item.new.value
-                    return String(currentValue) !== String(item.original) 
+                    return String(currentValue) !== String(item.original)
                 })
 
                 saveChangesButton.disabled = !hasChanges
@@ -299,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const startDateTime = parseDateTime(document.querySelector('.start-datetime').textContent);
                 const endDateTime = parseDateTime(document.querySelector('.end-datetime').textContent);
-                
+
                 return {
                     eventName: document.querySelector('.event_name').textContent,
                     startDate: startDateTime.date,
@@ -377,26 +381,33 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteModalConfirmBtn.addEventListener('click', async () => {
             try {
                 const response = await fetch('/delete-event', {
-                    method : 'DELETE',
-                    headers : { 'Content-Type' : 'application/json' },
-                    body : JSON.stringify({ eventID : eventData.eventID })
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eventID: eventData.eventID })
                 })
 
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Backend Sucess: ", result)
-                    alert('Event deleted successfully!');
+                    toastData.success.message = 'Event deleted successfully.';
+                    showToast('success');
                     closeModalHandler(deleteModal);
-                    window.location.href = '/events'
+                    setTimeout(() => {
+
+                    window.location.href = '/user-profile'
+                    }, 2500);
                 }
                 else {
+                    toastData.danger.message = 'Failed to delete event';
+                    showToast('danger');
                     const error = await response.json()
                     console.log("Backend Sucess: ", error)
                 }
-            } 
+            }
             catch (error) {
                 console.error('Client Error:', error);
-                alert('Failed to delete event. Please try again.');
+                toastData.danger.message = 'Failed to delete event';
+                showToast('danger');
             }
         });
 
@@ -416,14 +427,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let imageFileName = null
         let imageFileExtension = null
 
-        uploadButton.addEventListener('click', () => 
+        uploadButton.addEventListener('click', () =>
             eventImage.click()
         );
 
         eventImage.addEventListener('change', async (e) => {
             try {
                 const file = e.target.files[0];
-                
+
                 if (file) {
                     const getBase64 = file => new Promise(async (resolve, reject) => {
                         const reader = new FileReader();
@@ -436,7 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         reader.onerror = () => {
                             console.error('Error reading file');
-                            alert('Error reading file. Please try again.');
+                            toastData.danger.message = 'Error reading file.';
+                            showToast('danger');
                         }
 
                         reader.readAsDataURL(file);
@@ -447,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageFileExtension = file.name.split('.').pop().toLowerCase()
                 }
                 saveChangesButton.disabled = false
-            } 
+            }
             catch (error) {
                 console.error('Error handling image upload:', error);
             }
@@ -459,53 +471,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const startDate = document.getElementById('startDate').value
             const startTime = document.getElementById('startTime').value
-            const endDate   = document.getElementById('endDate').value
-            const endTime   = document.getElementById('endTime').value
+            const endDate = document.getElementById('endDate').value
+            const endTime = document.getElementById('endTime').value
 
-            const startDateTime   = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
-            const endDateTime     = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
+            const startDateTime = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
+            const endDateTime = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
             const requireApproval = document.getElementById('require_approval').checked ? 'Yes' : 'No'
-            const waitlistToggle  = document.getElementById('over_capacity_waitlist').checked ? 'Yes' : 'No'
-            const lastUpdated     = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
-            
+            const waitlistToggle = document.getElementById('over_capacity_waitlist').checked ? 'Yes' : 'No'
+            const lastUpdated = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+
             const updatedEventData = {
-                eventID             : eventData.eventID,
-                base64FeatureImage  : featureImage,
-                imageFileName       : imageFileName,
-                imageFileExtension  : imageFileExtension,
-                dbImagePath     : eventData.featureImage,
-                eventName       : document.getElementById('eventName').value,
-                startDateTime   : startDateTime,
-                endDateTime     : endDateTime,
-                location        : document.getElementById('location').value,
-                description     : document.getElementById('description').value,
-                category        : document.getElementById('category').value,
-                feedbackLink    : document.getElementById('feedbackLink').value,
-                requireApproval : requireApproval,
-                capacity        : document.getElementById('max_capacity').value || 0,
-                allowWaitlist   : waitlistToggle,
-                lastUpdated     : lastUpdated
+                eventID: eventData.eventID,
+                base64FeatureImage: featureImage,
+                imageFileName: imageFileName,
+                imageFileExtension: imageFileExtension,
+                dbImagePath: eventData.featureImage,
+                eventName: document.getElementById('eventName').value,
+                startDateTime: startDateTime,
+                endDateTime: endDateTime,
+                location: document.getElementById('location').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                feedbackLink: document.getElementById('feedbackLink').value,
+                requireApproval: requireApproval,
+                capacity: document.getElementById('max_capacity').value || 0,
+                allowWaitlist: waitlistToggle,
+                lastUpdated: lastUpdated
             }
 
             try {
                 const response = await fetch(`/event/${eventData.eventID}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type' : 'application/json' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedEventData)
                 })
+
+                socket.send(JSON.stringify({ type: 'getEventData' }));
 
                 if (response.ok) {
                     const result = await response.json()
                     console.log("Backend Success: ", result)
+                    toastData.success.message = 'Event details updated.';
+                    showToast('success');
                     displayEventData(updatedEventData);
                     closeModalHandler(editModal);
                 }
                 else {
+                    toastData.danger.message = 'Failed to update event details';
+                    showToast('danger');
                     const error = await response.json()
                     console.log("Backend Failed: ", error)
-                }                
-            } 
+                }
+            }
             catch (error) {
+                toastData.danger.message = 'Failed to update event details';
+                    showToast('danger');
                 console.log("Client Error: ", error)
             }
         });
@@ -530,13 +550,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             guests.forEach(guest => {
                 const guestName = guest.querySelector('.attendee-name, .guest-name').textContent.toLowerCase();
-                
+
                 // Check if the name starts with the search term (prefix matching)
                 const matchFound = guestName.startsWith(searchTerm);
-                
+
                 // Apply smooth transition for showing/hiding
                 guest.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
+
                 if (matchFound) {
                     guest.style.display = '';
                     guest.style.opacity = '1';
@@ -584,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearButton.className = 'clear-search';
             clearButton.innerHTML = '&times;';
             clearButton.style.display = 'none';
-            
+
             input.parentNode.style.position = 'relative';
             input.parentNode.appendChild(clearButton);
 
@@ -592,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.value = '';
                 input.focus();
                 clearButton.style.display = 'none';
-                
+
                 // Reset all guests in the current tab
                 const container = input.closest('.tab-pane');
                 const guests = container.querySelectorAll('.attendee-container, .checkin-guest');
@@ -621,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (guestSearchInput) addClearSearchButton(guestSearchInput);
         if (checkinSearchInput) addClearSearchButton(checkinSearchInput);
 
-        
+
         // Guest Tab Handling
 
         // Function to display guest list
@@ -721,27 +741,46 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // Add the handleToggleClick function to the window object so it can be called from onclick
-        window.handleToggleClick = async function(element, registrationID, newStatus) {
+        window.handleToggleClick = async function (element, registrationID, newStatus) {
+
+            console.log(`handleToggleClick: regID=${registrationID},
+                newStatus=${newStatus}`);
+
             const toggleWrapper = element.parentElement;
-            const guest = registrationData.find(g => g.registrationID === registrationID);
-            
-            if (!guest) {
-                console.error('Guest not found');
+
+
+            // --- Start: Crucial UI Update ---
+            if (!toggleWrapper || !toggleWrapper.classList.contains('guest-toggle-wrapper')) {
+                console.error("Could not find .guest-toggle-wrapper as parent of clicked label:", clickedLabelElement);
                 return;
             }
 
-            // Update toggle state
+            // Clear any existing active state
             toggleWrapper.classList.remove('active-neutral', 'active-left', 'active-right');
+
+            // Apply the new active state based on the click
             if (newStatus === 'approved') {
                 toggleWrapper.classList.add('active-left');
+                console.log("Applied active-left to:", toggleWrapper); // DEBUG
             } else if (newStatus === 'declined') {
                 toggleWrapper.classList.add('active-right');
+                console.log("Applied active-right to:", toggleWrapper); // DEBUG
+            }
+            //------------------------------
+
+            const guest = registrationData.find(g => String(g.registrationID) === String(registrationID));
+
+            if (!guest) {
+                console.error('Guest not found in registrationData for ID:', registrationID);
+
+                console.log("Current registrationData content:", JSON.stringify(registrationData, null, 2));
+                return;
             }
 
             const guestData = {
                 eventID: guest.eventID,
                 userID: guest.userID,
-                status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
+                status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1), // 'Approved' or 'Declined'
                 approvedAt: newStatus === 'approved' ? new Date(new Date().getTime() + (8 * 60 * 60 * 1000)) : null
             };
 
@@ -752,31 +791,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(guestData)
                 });
 
-                // Update the local registration data
+                // Optimistically update local data
                 const guestIndex = registrationData.findIndex(g => g.registrationID === registrationID);
                 if (guestIndex !== -1) {
                     registrationData[guestIndex].status = guestData.status;
                 }
 
-                // Request updated data from server
-                displayGuestList(registrationData);
+                // Request fresh data from server (this will eventually re-render the list)
+                socket.send(JSON.stringify({ type: 'getRegistrationData' }));
+                socket.send(JSON.stringify({ type: 'getApprovedGuestsData' }));
+                socket.send(JSON.stringify({ type: 'getAttendeesData' }));
 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log("Backend Success: ", result);
-                    alert(`Guest ${newStatus === 'approved' ? 'Accepted' : 'Declined'}!`);
+                    console.log("Backend Success (Guest Status Update): ", result);
+                    // No alert here, the visual change is immediate.
+                    // The re-render from WebSocket will confirm the state.
                 } else {
                     const error = await response.json();
-                    console.log("Backend Failed: ", error);
+                    console.error("Backend Failed (Guest Status Update): ", error);
+                    // Optionally, revert the UI change if the backend failed critically,
+                    // though often you might let the WebSocket refresh handle the true state.
                 }
             } catch (e) {
-                console.log("Client Error: ", e);
+                console.error("Client Error in handleToggleClick: ", e);
             }
-            
-            // Optionally, re-filter the list if there's a search term
-            const currentSearchTerm = document.querySelector('.search-input')?.value;
-            if (currentSearchTerm) {
-                filterGuests(currentSearchTerm, document.getElementById('guest'));
+
+            // Re-filter if needed
+            const guestSearchInput = document.querySelector('#guest .search-input');
+            if (guestSearchInput && guestSearchInput.value) {
+                filterGuests(guestSearchInput.value, document.getElementById('guest'));
             }
         };
 
@@ -800,7 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="checkin-list"></div>
                     <div class="download-button-container">
                         <button class="download-button" type="button">
-                            <img src="../assets/icons/download-icon.png" class="download-icon" alt="Download">
+                            <img src="/assets/icons/download-icon.png" class="download-icon" alt="Download">
                             Download 
                         </button>
                     </div>
@@ -808,109 +852,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const checkinList = checkInContainer.querySelector('.checkin-list');
 
+                const currentAttendees = attendeesData || [];
+
                 guests.forEach(guest => {
                     const guestElement = document.createElement('div');
                     guestElement.className = 'checkin-guest';
-                    
+
                     const profilePicPath = guest.profilePic.startsWith('/') ? guest.profilePic : `/${guest.profilePic}`;
-                    
+
+                    const isAttending = currentAttendees.some(attendee => attendee.userID === guest.userID); 
+                    let checkInToggleState = 'active-right'; 
+                    if (isAttending) {
+                        checkInToggleState = 'active-left';
+                    } 
+
                     guestElement.innerHTML = `
                         <div class="guest-info">
-                            <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
-                            <span class="guest-name">${guest.fullname}</span>
-                        </div>
-                        <div class="checkin-actions">
-                            <div class="checkin-onoffswitch">
-                                <input type="checkbox" name="checkin-onoffswitch" class="checkin-onoffswitch-checkbox" id="checkin-onoffswitch-${guest.registrationID}" ${attendeesData.some(attendee => attendee.fullname == guest.fullname) ? 'checked' : ''}>
-                                <label class="checkin-onoffswitch-label" for="checkin-onoffswitch-${guest.registrationID}">
-                                    <span class="checkin-onoffswitch-inner"></span>
-                                    <span class="checkin-onoffswitch-switch"></span>
-                                </label>
-                            </div>
-                        </div>
+                    <img src="${profilePicPath}" class="icon-flex" onerror="this.onerror=null; this.src='../assets/icons/profile-icon.jpeg'" alt="Profile">
+                    <span class="guest-name">${guest.fullname}</span>
+                </div>
+                <div class="attendee-actions"> 
+                    <div class="guest-toggle-wrapper ${checkInToggleState}" data-user-id="${guest.userID}" data-registration-id="${guest.registrationID}"> 
+                        <label class="attended-label" onclick="handleCheckInToggle(this, '${guest.userID}', '${guest.registrationID}', true)">Dumalo</label> 
+                        <label class="not-attended-label" onclick="handleCheckInToggle(this, '${guest.userID}', '${guest.registrationID}', false)">Away</label> 
+                        <div class="slider"></div>
+                    </div>
+                </div>
                     `;
                     checkinList.appendChild(guestElement);
 
-                    // Add click event listeners to the toggle buttons
-                    const checkbox = guestElement.querySelector('.checkin-onoffswitch-checkbox');
-                    
-                    checkbox.addEventListener('change', async function(e) {
-                        // Toggle between states
-                        if (this.checked) {                            
-                            const attendanceData = {
-                                eventID : eventData.eventID,
-                                userID : guest.userID,
-                                checkedInAt : new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
-                            }          
-                            
-                            try {
-                                const response = await fetch("/checkin-attendee", {
-                                    method : 'POST',
-                                    headers : { 'Content-Type' : 'application/json' },
-                                    body : JSON.stringify(attendanceData)
-                                })
-
-                                displayCheckInList(approvedGuestsData);
-
-                                if (response.ok) {
-                                    const result = await response.json()
-                                    console.log("Backend Success: ", result)
-                                }
-                                else {
-                                    const error = await response.json()
-                                    console.log("Backend Failed: ", error)
-                                }
-                            }
-                            catch (e) {
-                                console.log("Client Error: ", e)
-                            }
-                        } 
-                        else {
-                            const attendanceData = {
-                                eventID : eventData.eventID,
-                                userID : guest.userID,
-                            }
-
-                            try {
-                                const response = await fetch("/checkin-attendee", {
-                                    method : 'DELETE',
-                                    headers : { 'Content-Type' : 'application/json' },
-                                    body : JSON.stringify(attendanceData)
-                                })
-
-                                displayCheckInList(approvedGuestsData);
-
-                                if (response.ok) {
-                                    const result = await response.json()
-                                    console.log("Backend Success: ", result)
-                                }
-                                else if (response.status == 404) {
-                                    const result = await response.json()
-                                    console.log("Backend Message: ", result)
-                                }
-                                else {
-                                    const error = await response.json()
-                                    console.log("Backend Failed: ", error)
-                                }
-                            }
-                            catch (e) {
-                                console.log("Client Error: ", e)
-                            }
-                        }
-                    });
-                }); 
+                });
 
                 // Add download button functionality
                 const downloadButton = checkInContainer.querySelector('.download-button');
                 downloadButton.addEventListener('click', async () => {
-                    const downloadCSV = (args) => {  
+                    const downloadCSV = (args) => {
                         let filename = args.filename
                         let columns = args.columns
 
-                        let csv = Papa.unparse({ data: args.data, fields: columns})
-                        
+                        let csv = Papa.unparse({ data: args.data, fields: columns })
+
                         let blob = new Blob([csv], { type: "text/csv" });
-                        
+
                         if (window.navigator.msSaveOrOpenBlob) {
                             window.navigator.msSaveBlob(blob, args.filename);
                         }
@@ -919,18 +902,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             a.href = window.URL.createObjectURL(blob);
                             a.download = filename;
                             document.body.appendChild(a);
-                            a.click();  
+                            a.click();
                             document.body.removeChild(a);
                         }
                     }
 
-                    let updatedAttendeesData = attendeesData.map(attendee => ({
-                        "Attendance ID" : attendee.attendanceID,
-                        "Full Name" : attendee.fullname,
-                        "Checked In At" : new Date(attendee.checkedInAt).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone : 'UTC'})
+                    let updatedAttendeesData = attendeesData.map((attendee, index) => ({
+                        "Attendance ID": index + 1,
+                        "Full Name": attendee.fullname,
+                        "Checked In At": new Date(attendee.checkedInAt).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'UTC' })
                     }))
 
-                    downloadCSV({ filename: `${eventData.eventName} Attendance.csv`, data: updatedAttendeesData, columns: ["Attendance ID", "Full Name", "Checked In At"]});
+                    downloadCSV({ filename: `${eventData.eventName} Attendance.csv`, data: updatedAttendeesData, columns: ["Attendance ID", "Full Name", "Checked In At"] });
                 });
 
                 // Initialize search functionality
@@ -946,42 +929,91 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        displayEventData(eventData);
-        displayGuestList(registrationData);
-        displayCheckInList(approvedGuestsData);
+        //handler for check-in toggle
+        window.handleCheckInToggle = async function (clickedLabelElement, userID, registrationID, isNowAttending) {
+                  
+            console.log(`handleCheckInToggle: userID=${userID}, regID=${registrationID}, isNowAttending=${isNowAttending}`);
+            const toggleWrapper = clickedLabelElement.parentElement;
 
-        // Guest Toggle Switch Functionality
-        function initializeGuestToggles() {
-            const toggleWrappers = document.querySelectorAll('.guest-toggle-wrapper');
-            
-            toggleWrappers.forEach(wrapper => {
-                const leftLabel = wrapper.querySelector('label:first-child');
-                const rightLabel = wrapper.querySelector('label:last-child');
-                
-                // Set initial state to neutral
-                wrapper.classList.add('active-neutral');
-                
-                leftLabel.addEventListener('click', () => {
-                    wrapper.classList.remove('active-neutral', 'active-right');
-                    wrapper.classList.add('active-left');
-                });
-                
-                rightLabel.addEventListener('click', () => {
-                    wrapper.classList.remove('active-neutral', 'active-left');
-                    wrapper.classList.add('active-right');
-                });
-                
-                // Add click outside handler to reset to neutral
-                document.addEventListener('click', (e) => {
-                    if (!wrapper.contains(e.target)) {
-                        wrapper.classList.remove('active-left', 'active-right');
-                        wrapper.classList.add('active-neutral');
-                    }
-                });
-            });
-        }
+            if (!toggleWrapper || !toggleWrapper.classList.contains('guest-toggle-wrapper')) {
+                console.error("Could not find .guest-toggle-wrapper for check-in:", clickedLabelElement);
+                return;
+            }
 
-        // Call the initialization function when the DOM is loaded
-        initializeGuestToggles();
+             toggleWrapper.classList.remove('active-neutral', 'active-left', 'active-right');
+    if (isNowAttending) {
+        toggleWrapper.classList.add('active-left'); // Attended
+    } else {
+        toggleWrapper.classList.add('active-right'); // Not Attended 
     }
-});
+
+        console.log(`Searching for userID: ${userID} (type: ${typeof userID}) in approvedGuestsData.`);
+    if (approvedGuestsData && approvedGuestsData.length > 0 && approvedGuestsData[0].hasOwnProperty('userID')) { 
+        console.log(`First guest in approvedGuestsData has userID: ${approvedGuestsData[0].userID} (type: ${typeof approvedGuestsData[0].userID})`);
+    } else if (approvedGuestsData && approvedGuestsData.length > 0) {
+        console.warn("First guest in approvedGuestsData does not have a 'userID' property. Object:", approvedGuestsData[0]);
+    } else {
+        console.warn("approvedGuestsData is empty or undefined.");
+    }
+
+     const guestForEvent = approvedGuestsData.find(g => String(g.userID) === String(userID));
+    
+     if (!guestForEvent) {
+        console.error("Guest not found in approvedGuestsData for check-in (userID):", userID);
+         console.log("Current approvedGuestsData content:", JSON.stringify(approvedGuestsData, null, 2));
+          } else {
+        console.log("Found guestForEvent:", guestForEvent);
+    }
+// ----------------
+    if (isNowAttending) {
+        // CHECK IN
+        const attendanceData = {
+            eventID: eventData.eventID,
+            userID: userID, 
+            checkedInAt: new Date(new Date().getTime() + (8 * 60 * 60 * 1000))
+        };
+
+        // FETCHING
+        try {
+            const response = await fetch("/checkin-attendee", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(attendanceData)
+            });
+            if (response.ok) console.log("Backend Success (Check-in): ", await response.json());
+            else console.error("Backend Failed (Check-in): ", await response.json());
+        } catch (e) {
+            console.error("Client Error (Check-in): ", e);
+        }
+    } else {
+      
+        const attendanceData = {
+            eventID: eventData.eventID,
+            userID: userID 
+        };
+        try {
+            const response = await fetch("/checkin-attendee", {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(attendanceData)
+            });
+            if (response.ok) console.log("Backend Success (Check-out): ", await response.json());
+            else if (response.status === 404) console.log("Backend Message (Check-out - already not an attendee): ", await response.json());
+            else console.error("Backend Failed (Check-out): ", await response.json());
+        } catch (e) {
+            console.error("Client Error (Check-out): ", e);
+        }
+    }
+
+    // Refresh relevant data
+    socket.send(JSON.stringify({ type: 'getApprovedGuestsData' })); 
+    socket.send(JSON.stringify({ type: 'getAttendeesData' }));   
+};
+
+            displayEventData(eventData);
+            displayGuestList(registrationData);
+            displayCheckInList(approvedGuestsData);
+
+            
+        }
+    });
