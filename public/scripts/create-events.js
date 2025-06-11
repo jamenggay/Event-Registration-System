@@ -1,3 +1,100 @@
+import {toastData, showToast} from "./alert-toast.js"
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const eventForm = document.getElementById('eventForm')
+
+      eventForm.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        if (!document.getElementById('imageUpload').files || document.getElementById('imageUpload').files.length === 0) {
+          
+          toastData.warning.message = "Please upload an image.";
+          showToast("warning");
+          return
+        }
+
+        const rawFeatureImage = document.getElementById('imageUpload').files[0]
+
+        const getBase64 = rawFeatureImage => new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(rawFeatureImage);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+        });
+
+        const featureImage = await getBase64(rawFeatureImage)
+        const imageFileName = rawFeatureImage.name.replace(/\.[^/.]+$/, '')
+        const imageFileExtension = rawFeatureImage.name.split('.').pop().toLowerCase()
+
+        const rawEventName = document.querySelector('.event_name');
+        const eventName = document.getElementById('hiddenEventName');
+        eventName.value = rawEventName.textContent.trim();
+
+        const startDate = document.getElementById('start-date').value
+        const startTime = document.getElementById('start-time').value
+        const endDate = document.getElementById('end-date').value
+        const endTime = document.getElementById('end-time').value
+
+        const startDateTime = new Date(new Date(`${startDate}T${startTime}`).getTime() + (8 * 60 * 60 * 1000));
+        const endDateTime = new Date(new Date(`${endDate}T${endTime}`).getTime() + (8 * 60 * 60 * 1000));
+        const requireApproval = document.getElementById('require-approval').checked ? 'Yes' : 'No';
+        const waitlistToggle = document.getElementById('waitlistToggle').checked ? 'Yes' : 'No';
+        const lastUpdated = new Date(new Date().getTime() + (8 * 60 * 60 * 1000));
+
+        const eventData = {
+          base64FeatureImage: featureImage,
+          imageFileName: imageFileName,
+          imageFileExtension: imageFileExtension,
+          eventName: eventName.value,
+          startDateTime: startDateTime,
+          endDateTime: endDateTime,
+          location: document.getElementById('locationText').value,
+          description: document.getElementById('descriptionText').value,
+          category: document.getElementById('event-category').value,
+          feedback: document.getElementById('feedbackLinkText').value,
+          requireApproval: requireApproval,
+          capacity: document.getElementById('capacityInput').value,
+          allowWaitlist: waitlistToggle,
+          lastUpdated: lastUpdated,
+          themeIndex: window.eventData.themeIndex || 1
+        }
+
+        try {
+          const response = await fetch("/create-events", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventData)
+          })
+
+          if (response.ok) {
+            const result = await response.json()
+            console.log("Server Success: ", result)
+            toastData.success.message = "Event created."
+            showToast("success");
+
+            setTimeout(() => {
+              window.location.href = "/discover"
+            },2500);
+            
+          }
+          else if (response.status == 401) {
+            const result = await response.json();
+            console.error('Server Failed:', result);
+            toastData.info.title = "Please log in first"
+            showToast();
+            setTimeout(() => {
+              window.location.href = "/login"
+            }, 3000);
+          }
+        }
+        catch (e) {
+          console.log("Client Error: ", e)
+          toastData.danger.message = "An error occurred while creating the event";
+        }
+      })
+    });
+
+
 document.addEventListener("DOMContentLoaded", function () {
   const startDate = document.getElementById("start-date");
   const endDate = document.getElementById("end-date");
@@ -120,11 +217,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const themeButton = document.querySelector(".switch_color_button");
   let themeIndex = 1;
   const totalThemes = 12;
+  window.eventData = {}
 
   themeButton.addEventListener("click", () => {
     document.body.classList.remove(`theme-${themeIndex}`);
     themeIndex = (themeIndex % totalThemes) + 1;
     document.body.classList.add(`theme-${themeIndex}`);
+    window.eventData.themeIndex = themeIndex
   });
 
   document.body.classList.add("theme-1");
@@ -173,17 +272,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
   
-  const eventForm = document.getElementById('eventForm');
-  const h1 = document.querySelector('.event_name');
-  const hiddenInput = document.getElementById('hiddenEventName');
-
-  eventForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Set the hidden event name value
-    hiddenInput.value = h1.textContent.trim();
-  });
-
   // Background Image Upload
   document.getElementById('imageUpload').addEventListener('change', function (event) {
     const file = event.target.files[0];

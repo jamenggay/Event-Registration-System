@@ -4,26 +4,59 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+html{
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+    overflow-y: scroll; 
 }
 
 body {
-  background-size: 30px 30px;
-  color: black;
-  font-family: 'Inter', sans-serif;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at top left,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0.9) 100%
-  );
-  z-index: -1;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #0075BB1A;
+    background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
+    background-size: 30px 30px;
+  }
+ 
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 20% 30%, #a3c8e1 0%, transparent 40%),
+      radial-gradient(circle at 70% 20%, #f4b0b0 0%, transparent 40%),
+      radial-gradient(circle at 30% 80%, #a1e1a1 0%, transparent 40%),
+      radial-gradient(circle at 80% 75%, #a1e0d1 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #e4a1b3 0%, transparent 40%),
+      radial-gradient(circle at 10% 90%, #c49bdf 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, #a7a7e1 0%, transparent 40%),
+      radial-gradient(circle at 40% 60%, #e4d0a7 0%, transparent 40%),
+      radial-gradient(circle at 60% 40%, #a3d6e6 0%, transparent 40%),
+      radial-gradient(circle at 25% 75%, #e4a1a1 0%, transparent 40%),
+      radial-gradient(circle at 75% 25%, #b3e0a3 0%, transparent 40%);
+    background-size: 200% 200%;
+    animation: popBG 10s ease-in-out infinite;
+    filter: blur(60px);
+    opacity: 0.7;
+  }
+ 
+  @keyframes popBG {
+ 
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+ 
+  50% {
+    background-position: 100% 100%;
+  }
 }
 
 .event_info {
@@ -106,7 +139,7 @@ body::after {
   padding: 14px 28px;
   border-radius: 15px;
   font-size: 18px;
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -379,16 +412,20 @@ form select:focus {
 .modal-content {
   background-color: white;
   color: black;
-  margin: 15% auto;
   padding: 15px;
   border-radius: 8px;
   width: 55%;
   max-width: 450px;
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content h2 {
   margin-top: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 .modal-content input[type="text"],
@@ -404,6 +441,7 @@ form select:focus {
   word-wrap: break-word;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+  font-family: 'Inter', sans-serif;
 }
 
 .modal-content textarea {
@@ -413,20 +451,23 @@ form select:focus {
 
 .modal-content button {
   margin-top: 15px;
-  padding: 8px 15px;
-  background-color: white;
-  color: black;
-  border: 1px solid black;
+  padding: 10px 20px;
+  background-color: #0075BB;
+  color: white;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 10px rgba(0, 117, 187, 0.3);
 }
 
 .modal-content button:hover {
-  background-color: #f1f1f1;
-  border-color: #888;
+  background-color: #005a99;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 117, 187, 0.4);
 }
 
 .close {
@@ -437,6 +478,7 @@ form select:focus {
   color: black;
   cursor: pointer;
   font-weight: bold;
+  font-family: 'Inter', sans-serif;
 }
 
 .close:hover {
@@ -506,6 +548,7 @@ form select:focus {
   box-shadow: 0 2px 6px rgba(0, 117, 187, 0.2);
   width: 100%;
   text-align: center;
+  font-family: 'Inter', sans-serif;
 }
 
 .create_event_button button:hover {
@@ -526,12 +569,14 @@ form select:focus {
   font-weight: 600;
   color: black;
   text-align: center;
+  font-family: 'Inter', sans-serif;
 }
 
 .event_approval_capacity {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
   background-color: rgba(240, 248, 255, 0.75);
   margin-bottom: 15px;
   padding: 15px;
@@ -540,6 +585,42 @@ form select:focus {
   border: 1px solid rgba(0, 117, 187, 0.15);
   backdrop-filter: blur(4px);
   transition: all 0.3s ease;
+}
+
+.event_approval_capacity > * {
+  width: auto;
+  min-width: 0;
+}
+
+.event_approval_capacity > *:first-child {
+  flex-grow: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.event_approval_capacity .label-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event_approval_capacity .label-content span {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: black;
+}
+
+.event_approval_capacity .toggle-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.event_approval_capacity .toggle-label {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .event_approval_capacity input {
@@ -582,3 +663,147 @@ body.theme-9  { background-color: #e4d0a7; background-image: radial-gradient(hsl
 body.theme-10 { background-color: #a3d6e6; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 0); background-size: 30px 30px; }
 body.theme-11 { background-color: #e4a1a1; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 0); background-size: 30px 30px; }
 body.theme-12 { background-color: #b3e0a3; background-image: radial-gradient(hsla(209, 100%, 40%, 1.00) 5%, transparent 0); background-size: 30px 30px; }
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+  .event_info {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .illustration_container {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .event_details {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .event_name {
+    font-size: 40px;
+  }
+
+  .event_date_location_container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .event_start,
+  .event_end {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date-time-input {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .date-input,
+  .time-input {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .modal-content {
+    width: 90%;
+    margin: 10% auto;
+  }
+
+  .illustration_color {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .event_approval_capacity .toggle-wrapper {
+    margin-left: 0;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .event_name {
+    font-size: 32px;
+  }
+
+  .illustration_controls {
+    flex-direction: column;
+  }
+
+  .illustration_controls button {
+    width: 100%;
+  }
+
+  .event_date,
+  .event_location,
+  .event_description,
+  .event_category,
+  .event_feedback,
+  .event_capacity,
+  .event_approval_capacity {
+    padding: 10px;
+  }
+
+  .create_event_button button {
+    padding: 12px 20px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 5% auto;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .date-input,
+  .time-input {
+    padding: 8px; /* Slightly reduce padding for smaller screens */
+    font-size: 14px; /* Reduce font size if needed */
+  }
+
+  .illustration_controls button {
+    padding: 8px 16px; /* Even smaller padding */
+    font-size: 14px; /* Even smaller font size */
+  }
+}
+
+/* Fix for mobile devices */
+@media (hover: none) {
+  .event_date:hover,
+  .event_location:hover,
+  .event_description:hover,
+  .event_category:hover,
+  .event_feedback:hover,
+  .event_capacity:hover,
+  .event_approval_capacity:hover {
+    transform: none;
+  }
+}
+
+/* Ensure form elements are touch-friendly on mobile */
+@media screen and (max-width: 768px) {
+  form input,
+  form select,
+  form textarea,
+  .custom-dropdown {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 12px;
+  }
+
+  .toggle-slider {
+    width: 50px;
+    height: 25px;
+  }
+
+  .toggle-slider::before {
+    width: 19px;
+    height: 19px;
+  }
+}
