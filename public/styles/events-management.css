@@ -7,6 +7,11 @@
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 }
+html{
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+    overflow-y: scroll; 
+}
 
 body {
    margin: 0;
@@ -18,8 +23,8 @@ body {
     background-color: #0075BB1A;
     background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
     background-size: 30px 30px;
-
 }
+
 
 body::before {
   content: '';

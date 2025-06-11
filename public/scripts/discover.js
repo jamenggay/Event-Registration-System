@@ -6,6 +6,7 @@ function showCarousel() {
   const carousel = document.getElementById("carousel-section");
   const hoverCards = document.getElementById("hover-cards-section");
 
+
   carousel.style.display = "block";
   hoverCards.classList.remove("active");
   hoverCards.style.display = "none"; // Hide the entire hover cards section
@@ -155,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         overlay.innerHTML = `
         <article class="card-popup">
-    <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+    <div class="card-image" style="background: url('${event.featureImage}') center top/cover no-repeat">
               <span class="popup-event-date">${eventDateHTML}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
               <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
@@ -252,6 +253,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
       //  CATEGORY
+
+      
+
       div3.innerHTML = `
       <div class="card-wrap" data-event-index="${index}" data-category="${event.category}"
         data-image="${event.featureImage}">
@@ -283,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           overlay.innerHTML = `
           <article class="card-popup">
-    <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+    <div class="card-image" style="background: url('${event.featureImage}') center top/cover no-repeat">
               <span class="popup-event-date">${eventDateHTML}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
               <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
@@ -319,7 +323,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           overlay.innerHTML = `
           <article class="card-popup">
-    <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+    <div class="card-image" style="background: url('${event.featureImage}') center top/cover no-repeat">
               <span class="popup-event-date">${eventDateHTML}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
               <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>
@@ -618,6 +622,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const cardBg = card.querySelector(".card-bg");
 
       cardBg.style.backgroundImage = `url("${cardWrap.dataset.image}")`;
+      
 
       const width = card.offsetWidth;
       const height = card.offsetHeight;

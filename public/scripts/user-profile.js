@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             overlay.innerHTML = `
                     <article class="card-popup">
-                        <div class="card-image" style="background: url('${event.featureImage}') center/cover no-repeat">
+                        <div class="card-image" style="background: url('${event.featureImage}') center top/cover no-repeat">
               <span class="popup-event-date">${formattedDate}</span>
               <button class="close-btn" aria-label="Close popup" id="closePopup">&times;</button>
               <div class="scroll-down-indicator mobile-hide">Scroll down ↓</div>

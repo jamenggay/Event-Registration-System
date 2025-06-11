@@ -7,6 +7,11 @@
     padding: 0;
     box-sizing: border-box;
 }
+html{
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
+    overflow-y: scroll;
+}
 
 header {
     position: sticky;
@@ -25,7 +30,10 @@ body {
     background-color: #0075BB1A;
     background-image: radial-gradient(hsla(209, 100%, 47%, 1.00) 5%, transparent 0);
     background-size: 30px 30px;
+    
 }
+
+
 
 body::before {
     content: '';
@@ -61,6 +69,7 @@ body::before {
         background-position: 100% 100%;
     }
 }
+
 
 .nav-item-wrapper .compass {
     color: #9065b0 !important;
